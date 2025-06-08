@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 interface UserOffer {
   id: string;
   buy_request_id: string;
+  seller_id: string;
   title: string;
   description: string | null;
   price: number;
