@@ -4,15 +4,15 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import ImageGallery from '@/components/ImageGallery';
-import SendOfferDialog from '@/components/SendOfferDialog';
+import ProductInfo from '@/components/ProductInfo';
+import PriceAndLocation from '@/components/PriceAndLocation';
+import BuyerInfo from '@/components/BuyerInfo';
 import OffersForRequest from '@/components/OffersForRequest';
 import PublicOffersList from '@/components/PublicOffersList';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, ExternalLink, Calendar, ArrowLeft, User, Search } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -38,23 +38,6 @@ const PostDetail = () => {
     },
     enabled: !!id
   });
-
-  const formatPrice = (min: number | null, max: number | null) => {
-    if (!min && !max) return 'Presupuesto abierto';
-    if (min && max && min !== max) return `$${min} - $${max}`;
-    if (min) return `Desde $${min}`;
-    if (max) return `Hasta $${max}`;
-    return 'Presupuesto abierto';
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
 
   if (isLoading) {
     return (
@@ -115,111 +98,14 @@ const PostDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Columna principal */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Galería de imágenes */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <ImageGallery images={post.images || []} />
-            </div>
-
-            {/* Información del producto */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Search className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                  BUSCO
-                </span>
-              </div>
-              
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                {post.title}
-              </h1>
-
-              {post.description && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-foreground mb-2">Descripción</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {post.description}
-                  </p>
-                </div>
-              )}
-
-              {post.characteristics && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-foreground mb-2">Características</h3>
-                  <pre className="text-sm text-muted-foreground bg-muted p-3 rounded">
-                    {JSON.stringify(post.characteristics, null, 2)}
-                  </pre>
-                </div>
-              )}
-
-              {post.reference_link && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-foreground mb-2">Enlace de referencia</h3>
-                  <a
-                    href={post.reference_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-primary hover:text-primary/80 text-sm"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    Ver ejemplo
-                  </a>
-                </div>
-              )}
-            </div>
-
-            {/* Lista pública de ofertas */}
+            <ProductInfo post={post} />
             <PublicOffersList buyRequestId={post.id} />
           </div>
 
           {/* Columna lateral */}
           <div className="space-y-6">
-            {/* Precio y ubicación */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <div className="mb-4">
-                <Badge variant="secondary" className="text-lg font-bold p-2">
-                  {formatPrice(post.min_price, post.max_price)}
-                </Badge>
-              </div>
-
-              <div className="flex items-center gap-2 text-muted-foreground mb-4">
-                <MapPin className="h-4 w-4" />
-                <span>{post.zone}</span>
-              </div>
-
-              <div className="flex items-center gap-2 text-muted-foreground mb-6">
-                <Calendar className="h-4 w-4" />
-                <span>Publicado el {formatDate(post.created_at)}</span>
-              </div>
-
-              {!isOwner && (
-                <SendOfferDialog 
-                  buyRequestId={post.id}
-                  buyRequestTitle={post.title}
-                />
-              )}
-            </div>
-
-            {/* Información del vendedor */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Comprador
-              </h3>
-              <div className="text-muted-foreground">
-                <p className="font-medium">
-                  {post.profiles?.full_name || 'Usuario anónimo'}
-                </p>
-                {post.contact_info && (
-                  <div className="mt-2 text-sm">
-                    <pre className="bg-muted p-2 rounded text-xs">
-                      {JSON.stringify(post.contact_info, null, 2)}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Ofertas recibidas (solo para el dueño) */}
+            <PriceAndLocation post={post} isOwner={isOwner} />
+            <BuyerInfo post={post} />
             {isOwner && (
               <div className="bg-card rounded-lg border border-border p-6">
                 <OffersForRequest buyRequestId={post.id} />
