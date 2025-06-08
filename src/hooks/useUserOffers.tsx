@@ -74,7 +74,7 @@ export const useUserOffers = () => {
     }
   };
 
-  // Subscribe to real-time updates for offers
+  // Subscribe to real-time updates for offers - improved version
   useEffect(() => {
     if (!user) return;
 
@@ -90,7 +90,43 @@ export const useUserOffers = () => {
         },
         (payload) => {
           console.log('Real-time offer update for seller:', payload);
-          // Refetch offers when any offer is updated
+          
+          // Update the specific offer in state immediately for better UX
+          setOffers(currentOffers => 
+            currentOffers.map(offer => 
+              offer.id === payload.new.id 
+                ? { ...offer, ...payload.new }
+                : offer
+            )
+          );
+          
+          // Also refetch to ensure consistency
+          fetchUserOffers();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('New offer created for seller:', payload);
+          fetchUserOffers();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Offer deleted for seller:', payload);
           fetchUserOffers();
         }
       )

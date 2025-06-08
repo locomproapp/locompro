@@ -70,7 +70,12 @@ const MyOffers = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {offers.map((offer) => (
-                    <OfferCard key={offer.id} offer={offer} onStatusUpdate={refetch} />
+                    <OfferCard 
+                      key={offer.id} 
+                      offer={offer} 
+                      onStatusUpdate={refetch}
+                      currentUserId={user.id}
+                    />
                   ))}
                 </div>
               </>

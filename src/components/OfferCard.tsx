@@ -38,9 +38,10 @@ interface OfferCardProps {
   showActions?: boolean;
   showPublicInfo?: boolean;
   onStatusUpdate?: () => void;
+  currentUserId?: string; // Add current user ID to determine if user is buyer or seller
 }
 
-const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatusUpdate }: OfferCardProps) => {
+const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatusUpdate, currentUserId }: OfferCardProps) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-AR', {
@@ -51,6 +52,10 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
       minute: '2-digit'
     });
   };
+
+  // Determine if current user should see chat
+  const shouldShowChat = offer.status === 'accepted' && currentUserId && offer.buy_requests;
+  const isSeller = currentUserId === offer.seller_id;
 
   return (
     <div className="space-y-4">
@@ -94,12 +99,14 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
         </div>
       </Card>
 
-      {/* Show chat when offer is accepted */}
-      {offer.status === 'accepted' && offer.buy_requests && (
+      {/* Show chat when offer is accepted - for both buyer and seller */}
+      {shouldShowChat && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-4">
             <MessageCircle className="h-5 w-5 text-green-600" />
-            <h4 className="font-medium text-green-800">¡Oferta aceptada! Chatea con el comprador</h4>
+            <h4 className="font-medium text-green-800">
+              {isSeller ? '¡Oferta aceptada! Chatea con el comprador' : '¡Oferta aceptada! Chatea con el vendedor'}
+            </h4>
           </div>
           <Chat 
             buyRequestId={offer.buy_request_id}
