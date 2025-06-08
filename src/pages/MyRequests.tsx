@@ -9,7 +9,7 @@ import { Plus, Search } from 'lucide-react';
 
 const MyRequests = () => {
   const { user } = useAuth();
-  const { buyRequests, loading, refetch } = useUserBuyRequests();
+  const { buyRequests, loading, refetch, deleteBuyRequest } = useUserBuyRequests();
 
   if (!user) {
     return (
@@ -66,7 +66,13 @@ const MyRequests = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {buyRequests.map((request) => (
-                <BuyRequestCard key={request.id} buyRequest={request} />
+                <BuyRequestCard 
+                  key={request.id} 
+                  buyRequest={request}
+                  showActions={true}
+                  onDelete={deleteBuyRequest}
+                  onUpdate={refetch}
+                />
               ))}
             </div>
           </>

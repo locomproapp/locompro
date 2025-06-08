@@ -9,11 +9,9 @@ interface BuyRequest {
   description: string | null;
   min_price: number | null;
   max_price: number | null;
-  reference_link: string | null;
+  reference_image: string | null;
   zone: string;
-  contact_info: any;
-  characteristics: any;
-  images: string[] | null;
+  status: string;
   created_at: string;
 }
 
@@ -33,7 +31,7 @@ export const useUserBuyRequests = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('posts')
+        .from('buy_requests')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -48,6 +46,24 @@ export const useUserBuyRequests = () => {
     }
   };
 
+  const deleteBuyRequest = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('buy_requests')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      // Actualizar la lista local
+      setBuyRequests(prev => prev.filter(request => request.id !== id));
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting buy request:', err);
+      return { success: false, error: err instanceof Error ? err.message : 'Error desconocido' };
+    }
+  };
+
   useEffect(() => {
     fetchUserBuyRequests();
   }, [user]);
@@ -56,6 +72,7 @@ export const useUserBuyRequests = () => {
     buyRequests,
     loading,
     error,
-    refetch: fetchUserBuyRequests
+    refetch: fetchUserBuyRequests,
+    deleteBuyRequest
   };
 };

@@ -29,6 +29,12 @@ const PriceInput = ({ field }: PriceInputProps) => {
     return numericValue === '' ? undefined : parseInt(numericValue);
   };
 
+  const getCurrentDisplayValue = () => {
+    // Si no hay valor o es 0, mostrar cadena vacía
+    if (!field.value || field.value === 0) return '';
+    return formatPrice(field.value.toString());
+  };
+
   return (
     <FormItem>
       <FormLabel>Precio</FormLabel>
@@ -36,7 +42,7 @@ const PriceInput = ({ field }: PriceInputProps) => {
         <Input 
           type="text"
           placeholder="Ingresa el precio" 
-          value={field.value ? formatPrice(field.value.toString()) : ''}
+          value={getCurrentDisplayValue()}
           onChange={(e) => {
             const rawValue = e.target.value;
             const numericValue = parseFormattedPrice(rawValue);

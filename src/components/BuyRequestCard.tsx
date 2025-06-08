@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
 import SendOfferDialog from './SendOfferDialog';
+import BuyRequestActions from './BuyRequestActions';
 
 interface BuyRequest {
   id: string;
@@ -12,11 +13,9 @@ interface BuyRequest {
   description: string | null;
   min_price: number | null;
   max_price: number | null;
-  reference_link: string | null;
+  reference_image: string | null;
   zone: string;
-  contact_info: any;
-  characteristics: any;
-  images: string[] | null;
+  status: string;
   created_at: string;
   profiles?: {
     full_name: string | null;
@@ -26,9 +25,18 @@ interface BuyRequest {
 interface BuyRequestCardProps {
   buyRequest: BuyRequest;
   showOfferButton?: boolean;
+  showActions?: boolean;
+  onDelete?: (id: string) => Promise<{ success: boolean; error?: string }>;
+  onUpdate?: () => void;
 }
 
-const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardProps) => {
+const BuyRequestCard = ({ 
+  buyRequest, 
+  showOfferButton = false, 
+  showActions = false,
+  onDelete,
+  onUpdate
+}: BuyRequestCardProps) => {
   const formatPrice = (min: number | null, max: number | null) => {
     if (!min && !max) return 'Presupuesto abierto';
     if (min && max && min !== max) return `$${min} - $${max}`;
@@ -49,11 +57,11 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       {/* Imagen principal */}
-      {buyRequest.images && buyRequest.images.length > 0 && (
-        <Link to={`/post/${buyRequest.id}`}>
+      {buyRequest.reference_image && (
+        <Link to={`/buy-request/${buyRequest.id}`}>
           <div className="aspect-video bg-muted overflow-hidden">
             <img
-              src={buyRequest.images[0]}
+              src={buyRequest.reference_image}
               alt={buyRequest.title}
               className="w-full h-full object-cover hover:scale-105 transition-transform"
             />
@@ -70,7 +78,7 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
                 BUSCO
               </span>
             </div>
-            <Link to={`/post/${buyRequest.id}`}>
+            <Link to={`/buy-request/${buyRequest.id}`}>
               <h3 className="font-semibold text-lg line-clamp-2 hover:text-primary transition-colors">
                 {buyRequest.title}
               </h3>
@@ -81,16 +89,13 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
               </p>
             )}
           </div>
-          {buyRequest.reference_link && (
-            <a
-              href={buyRequest.reference_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:text-primary/80 ml-2"
-              title="Ver enlace de referencia"
-            >
-              <ExternalLink className="h-4 w-4" />
-            </a>
+          {showActions && onDelete && onUpdate && (
+            <BuyRequestActions
+              buyRequestId={buyRequest.id}
+              buyRequestTitle={buyRequest.title}
+              onDelete={onDelete}
+              onUpdate={onUpdate}
+            />
           )}
         </div>
 

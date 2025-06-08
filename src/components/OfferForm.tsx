@@ -38,7 +38,7 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
     defaultValues: {
       title: '',
       description: '',
-      price: undefined,
+      price: undefined, // Cambio importante: undefined en lugar de 0
       message: '',
       delivery_time: ''
     }
@@ -83,7 +83,13 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
         description: "Tu oferta ha sido enviada exitosamente"
       });
 
-      form.reset();
+      form.reset({
+        title: '',
+        description: '',
+        price: undefined, // Resetear a undefined
+        message: '',
+        delivery_time: ''
+      });
       setImages([]);
       setOpen(false);
       onOfferCreated?.();
