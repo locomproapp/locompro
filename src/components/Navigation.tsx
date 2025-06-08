@@ -10,7 +10,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
-import { Package, Menu, ShoppingCart, Tag, LogOut } from "lucide-react";
+import { Package, Menu, ShoppingCart, Tag, LogOut, Home, Bell, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -35,21 +35,26 @@ interface MobileLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> 
   to: string;
   children: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
+  icon?: React.ReactNode;
 }
 
 function MobileLink({
   to,
   children,
   onOpenChange,
+  icon,
   ...props
 }: MobileLinkProps) {
   return (
     <Link
       to={to}
-      className="text-sm font-medium hover:underline text-sidebar-foreground hover:text-sidebar-accent-foreground"
+      className="flex items-center gap-3 text-base font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md p-3 transition-colors"
       onClick={() => onOpenChange?.(false)}
       {...props}
-    />
+    >
+      {icon}
+      <span>{children}</span>
+    </Link>
   );
 }
 
@@ -145,7 +150,7 @@ export default function Navigation() {
           </NavigationMenu>
         </div>
 
-        <Sheet>
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button
               variant="ghost"
@@ -155,50 +160,116 @@ export default function Navigation() {
               <span className="sr-only">Alternar menú</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="pr-0 bg-sidebar border-sidebar-border">
-            <div className="flex items-center mb-6">
-              <img 
-                src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
-                alt="LoCompro" 
-                className="h-6 w-6 object-contain mr-2"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-              <Package className="mr-2 h-4 w-4 text-sidebar-primary hidden" />
-              <span className="font-bold text-sidebar-foreground">LoCompro</span>
-            </div>
-            <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-              <div className="flex flex-col space-y-4">
-                <MobileLink to="/marketplace" onOpenChange={setOpen}>
-                  Marketplace
-                </MobileLink>
-                <MobileLink to="/market" onOpenChange={setOpen}>
-                  Solicitudes
-                </MobileLink>
-                {user && (
-                  <>
-                    <MobileLink to="/my-posts" onOpenChange={setOpen}>
-                      Mis Publicaciones
-                    </MobileLink>
-                    <MobileLink to="/my-requests" onOpenChange={setOpen}>
-                      Mis Solicitudes
-                    </MobileLink>
-                    <MobileLink to="/my-offers" onOpenChange={setOpen}>
-                      <span className="flex items-center">
-                        Mis Ofertas
-                        {notificationCount > 0 && (
-                          <Badge variant="destructive" className="ml-2 text-xs">
-                            {notificationCount}
-                          </Badge>
-                        )}
-                      </span>
-                    </MobileLink>
-                  </>
-                )}
+          <SheetContent side="left" className="w-80 bg-sidebar border-sidebar-border p-0">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center p-6 border-b border-sidebar-border">
+                <img 
+                  src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                  alt="LoCompro" 
+                  className="h-8 w-8 object-contain mr-3"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <Package className="mr-3 h-6 w-6 text-sidebar-primary hidden" />
+                <span className="text-xl font-bold text-sidebar-foreground">LoCompro</span>
               </div>
-            </ScrollArea>
+              
+              <ScrollArea className="flex-1 p-4">
+                <div className="flex flex-col space-y-2">
+                  <MobileLink 
+                    to="/" 
+                    onOpenChange={setOpen}
+                    icon={<Home className="h-5 w-5" />}
+                  >
+                    Inicio
+                  </MobileLink>
+                  
+                  <MobileLink 
+                    to="/marketplace" 
+                    onOpenChange={setOpen}
+                    icon={<Package className="h-5 w-5" />}
+                  >
+                    Marketplace
+                  </MobileLink>
+                  
+                  <MobileLink 
+                    to="/market" 
+                    onOpenChange={setOpen}
+                    icon={<ShoppingCart className="h-5 w-5" />}
+                  >
+                    Solicitudes de Compra
+                  </MobileLink>
+                  
+                  {user && (
+                    <>
+                      <div className="border-t border-sidebar-border my-4 pt-4">
+                        <h4 className="text-sm font-semibold text-sidebar-foreground/70 mb-3 px-3">
+                          Mi Cuenta
+                        </h4>
+                        
+                        <MobileLink 
+                          to="/my-requests" 
+                          onOpenChange={setOpen}
+                          icon={<ShoppingCart className="h-5 w-5" />}
+                        >
+                          Mis Solicitudes
+                        </MobileLink>
+                        
+                        <MobileLink 
+                          to="/my-offers" 
+                          onOpenChange={setOpen}
+                          icon={<Tag className="h-5 w-5" />}
+                        >
+                          <span className="flex items-center justify-between w-full">
+                            <span>Mis Ofertas</span>
+                            {notificationCount > 0 && (
+                              <Badge variant="destructive" className="text-xs">
+                                {notificationCount}
+                              </Badge>
+                            )}
+                          </span>
+                        </MobileLink>
+                        
+                        <div className="flex items-center gap-3 p-3 mt-4 rounded-md bg-sidebar-accent/50">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={user.user_metadata?.avatar_url} />
+                            <AvatarFallback>
+                              {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">
+                              {user.user_metadata?.full_name || 'Usuario'}
+                            </p>
+                            <p className="text-xs text-sidebar-foreground/70 truncate">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </ScrollArea>
+              
+              {user && (
+                <div className="p-4 border-t border-sidebar-border">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => {
+                      handleSignOut();
+                      setOpen(false);
+                    }}
+                  >
+                    <LogOut className="mr-3 h-5 w-5" />
+                    Cerrar Sesión
+                  </Button>
+                </div>
+              )}
+            </div>
           </SheetContent>
         </Sheet>
 
@@ -239,12 +310,6 @@ export default function Navigation() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/my-posts" className="w-full">
-                    <Package className="mr-2 h-4 w-4" />
-                    Mis Publicaciones
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/my-requests" className="w-full">
                     <ShoppingCart className="mr-2 h-4 w-4" />
