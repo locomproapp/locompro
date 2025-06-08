@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, Clock, MessageCircle, Truck, X, Trash2, RefreshCw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Check, Clock, MessageCircle, Truck, X, Trash2, Edit } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import RejectOfferDialog from './RejectOfferDialog';
 import Chat from './Chat';
@@ -43,6 +43,8 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [offerToReject, setOfferToReject] = useState<string | null>(null);
   const [acceptedOfferId, setAcceptedOfferId] = useState<string | null>(null);
+  const [counterOfferMode, setCounterOfferMode] = useState<string | null>(null);
+  const [newPrice, setNewPrice] = useState<number>(0);
 
   const { data: offers, isLoading } = useQuery({
     queryKey: ['offers', buyRequestId],
@@ -169,6 +171,38 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
     }
   });
 
+  const counterOfferMutation = useMutation({
+    mutationFn: async ({ offerId, newPrice }: { offerId: string; newPrice: number }) => {
+      const { error } = await supabase
+        .from('offers')
+        .update({ 
+          price: newPrice,
+          status: 'pending',
+          rejection_reason: null
+        })
+        .eq('id', offerId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Contraoferta enviada",
+        description: "Tu contraoferta ha sido enviada con el nuevo precio"
+      });
+      queryClient.invalidateQueries({ queryKey: ['offers', buyRequestId] });
+      setCounterOfferMode(null);
+      setNewPrice(0);
+    },
+    onError: (error) => {
+      console.error('Error sending counter offer:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo enviar la contraoferta",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleRejectOffer = (offerId: string) => {
     setOfferToReject(offerId);
     setRejectDialogOpen(true);
@@ -180,6 +214,22 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
     }
   };
 
+  const handleCounterOffer = (offerId: string, currentPrice: number) => {
+    setCounterOfferMode(offerId);
+    setNewPrice(currentPrice);
+  };
+
+  const submitCounterOffer = (offerId: string) => {
+    if (newPrice > 0) {
+      counterOfferMutation.mutate({ offerId, newPrice });
+    }
+  };
+
+  const cancelCounterOffer = () => {
+    setCounterOfferMode(null);
+    setNewPrice(0);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -187,7 +237,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       case 'accepted':
         return <Badge variant="default" className="bg-green-500"><Check className="h-3 w-3 mr-1" />Aceptada</Badge>;
       case 'rejected':
-        return <Badge variant="destructive"><X className="h-3 w-3 mr-1" />Rechazada</Badge>;
+        return <Badge variant="destructive" className="bg-red-500"><X className="h-3 w-3 mr-1" />Rechazada</Badge>;
       case 'finalized':
         return <Badge variant="outline" className="text-muted-foreground">No seleccionada</Badge>;
       default:
@@ -251,10 +301,12 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
           const isUserOffer = user?.id === offer.seller_id;
           const isRejected = offer.status === 'rejected';
           const isFinalized = offer.status === 'finalized';
+          const isInCounterOfferMode = counterOfferMode === offer.id;
           
           return (
             <Card key={offer.id} className={`${
               offer.status === 'accepted' ? 'ring-2 ring-green-500' : 
+              isRejected ? 'ring-2 ring-red-500 bg-red-50' :
               isFinalized ? 'opacity-60' : ''
             }`}>
               <CardHeader>
@@ -274,9 +326,36 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                     </div>
                   </div>
                   <div className="text-right space-y-2">
-                    <div className="text-2xl font-bold text-primary">
-                      ${offer.price}
-                    </div>
+                    {isInCounterOfferMode ? (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          value={newPrice}
+                          onChange={(e) => setNewPrice(parseFloat(e.target.value) || 0)}
+                          className="w-24"
+                          step="0.01"
+                          min="0.01"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => submitCounterOffer(offer.id)}
+                          disabled={newPrice <= 0 || counterOfferMutation.isPending}
+                        >
+                          Enviar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={cancelCounterOffer}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="text-2xl font-bold text-primary">
+                        ${offer.price}
+                      </div>
+                    )}
                     {getStatusBadge(offer.status)}
                   </div>
                 </div>
@@ -364,7 +443,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                 )}
 
                 {/* Botones para ofertas rechazadas del vendedor */}
-                {isUserOffer && isRejected && (
+                {isUserOffer && isRejected && !isInCounterOfferMode && (
                   <div className="flex gap-2 pt-2">
                     <Button
                       variant="outline"
@@ -377,13 +456,11 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                     </Button>
                     <Button
                       variant="default"
-                      asChild
+                      onClick={() => handleCounterOffer(offer.id, offer.price)}
                       className="flex-1"
                     >
-                      <Link to={`/buy-request/${buyRequestId}/send-offer?edit=${offer.id}`}>
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Contraofertar
-                      </Link>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Contraofertar
                     </Button>
                   </div>
                 )}
