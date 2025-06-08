@@ -33,6 +33,8 @@ export const useOffers = (buyRequestId?: string) => {
   const fetchOffers = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       let query = supabase
         .from('offers')
         .select(`
@@ -46,15 +48,22 @@ export const useOffers = (buyRequestId?: string) => {
             zone
           )
         `)
+        .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
       if (buyRequestId) {
         query = query.eq('buy_request_id', buyRequestId);
       }
 
+      console.log('Fetching offers for buy request:', buyRequestId);
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Offers fetched successfully:', data);
       
       const transformedData: Offer[] = (data || []).map(offer => ({
         ...offer,
@@ -72,7 +81,9 @@ export const useOffers = (buyRequestId?: string) => {
   };
 
   useEffect(() => {
-    fetchOffers();
+    if (buyRequestId) {
+      fetchOffers();
+    }
   }, [buyRequestId]);
 
   return {

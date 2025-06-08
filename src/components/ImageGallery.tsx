@@ -14,7 +14,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
   if (!images || images.length === 0) {
     return (
-      <div className="w-[500px] h-[500px] mx-auto bg-muted rounded-lg flex items-center justify-center">
+      <div className="w-full max-w-[500px] h-[300px] sm:h-[500px] mx-auto bg-muted rounded-lg flex items-center justify-center">
         <div className="text-center">
           <ImageIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">Sin imágenes</p>
@@ -25,9 +25,9 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
   return (
     <>
-      <div className="space-y-4">
-        {/* Imagen principal - 500x500 centrada */}
-        <div className="w-[500px] h-[500px] mx-auto bg-muted rounded-lg overflow-hidden">
+      <div className="space-y-4 w-full">
+        {/* Imagen principal - responsive */}
+        <div className="w-full max-w-[500px] h-[300px] sm:h-[500px] mx-auto bg-muted rounded-lg overflow-hidden">
           <img
             src={images[0]}
             alt="Imagen principal"
@@ -38,7 +38,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
         {/* Miniaturas */}
         {images.length > 1 && (
-          <div className="grid grid-cols-4 gap-2 max-w-[500px] mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-[500px] mx-auto px-4 sm:px-0">
             {images.slice(1, 5).map((image, index) => (
               <div
                 key={index + 1}
@@ -51,7 +51,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                   className="w-full h-full object-cover"
                 />
                 {index === 3 && images.length > 5 && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold">
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold text-sm">
                     +{images.length - 5}
                   </div>
                 )}
@@ -61,7 +61,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
         )}
 
         {images.length > 1 && (
-          <div className="max-w-[500px] mx-auto">
+          <div className="w-full max-w-[500px] mx-auto px-4 sm:px-0">
             <Button
               variant="outline"
               className="w-full"
