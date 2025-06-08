@@ -340,126 +340,131 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
 
       <div className="grid gap-4">
         {/* Accepted offers first */}
-        {acceptedOffers.map((offer) => (
-          <Card key={offer.id} className="ring-2 ring-green-500">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={offer.profiles?.avatar_url || undefined} />
-                    <AvatarFallback>
-                      {offer.profiles?.full_name?.charAt(0) || 'V'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-lg">{offer.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      Por: {offer.profiles?.full_name || 'Vendedor anónimo'}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right space-y-2">
-                  <div className="text-2xl font-bold text-primary">
-                    ${offer.price}
-                  </div>
-                  {getStatusBadge(offer.status)}
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              {offer.images && offer.images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {offer.images.slice(0, 3).map((image, index) => (
-                    <img
-                      key={index}
-                      src={image}
-                      alt={`Producto ${index + 1}`}
-                      className="h-20 w-full object-cover rounded"
-                      onError={(e) => {
-                        console.error('Error cargando imagen:', image);
-                        e.currentTarget.src = '/placeholder.svg';
-                      }}
-                    />
-                  ))}
-                  {offer.images.length > 3 && (
-                    <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
-                      +{offer.images.length - 3} más
+        {acceptedOffers.map((offer) => {
+          const isUserOffer = user?.id === offer.seller_id;
+          const isInCounterOfferMode = counterOfferMode === offer.id;
+          
+          return (
+            <Card key={offer.id} className="ring-2 ring-green-500">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={offer.profiles?.avatar_url || undefined} />
+                      <AvatarFallback>
+                        {offer.profiles?.full_name?.charAt(0) || 'V'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-lg">{offer.title}</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        Por: {offer.profiles?.full_name || 'Vendedor anónimo'}
+                      </p>
                     </div>
-                  )}
+                  </div>
+                  <div className="text-right space-y-2">
+                    <div className="text-2xl font-bold text-primary">
+                      ${offer.price}
+                    </div>
+                    {getStatusBadge(offer.status)}
+                  </div>
                 </div>
-              )}
+              </CardHeader>
 
-              {(!offer.images || offer.images.length === 0) && (
-                <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
-                  Sin imágenes
-                </div>
-              )}
-
-              {offer.message && (
-                <div className="bg-muted p-3 rounded">
-                  <p className="text-sm font-medium mb-1">Mensaje del vendedor:</p>
-                  <p className="text-sm">{offer.message}</p>
-                </div>
-              )}
-
-              {offer.description && (
-                <div>
-                  <p className="text-sm font-medium mb-1">Descripción:</p>
-                  <p className="text-sm text-muted-foreground">{offer.description}</p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                {offer.delivery_time && (
-                  <div className="flex items-center gap-2">
-                    <Truck className="h-4 w-4 text-muted-foreground" />
-                    <span>Entrega: {offer.delivery_time}</span>
+              <CardContent className="space-y-4">
+                {offer.images && offer.images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2">
+                    {offer.images.slice(0, 3).map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`Producto ${index + 1}`}
+                        className="h-20 w-full object-cover rounded"
+                        onError={(e) => {
+                          console.error('Error cargando imagen:', image);
+                          e.currentTarget.src = '/placeholder.svg';
+                        }}
+                      />
+                    ))}
+                    {offer.images.length > 3 && (
+                      <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
+                        +{offer.images.length - 3} más
+                      </div>
+                    )}
                   </div>
                 )}
-                
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span>{formatDate(offer.created_at)}</span>
-                </div>
-              </div>
 
-              {isOwner && (
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    onClick={() => acceptOfferMutation.mutate(offer.id)}
-                    disabled={acceptOfferMutation.isPending}
-                    className="flex-1"
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    Aceptar oferta
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleRejectOffer(offer.id)}
-                    disabled={rejectOfferMutation.isPending}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
+                {(!offer.images || offer.images.length === 0) && (
+                  <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
+                    Sin imágenes
+                  </div>
+                )}
 
-              {isUserOffer && !isInCounterOfferMode && (
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => deleteOfferMutation.mutate(offer.id)}
-                    disabled={deleteOfferMutation.isPending}
-                    className="flex-1"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Eliminar oferta
-                  </Button>
+                {offer.message && (
+                  <div className="bg-muted p-3 rounded">
+                    <p className="text-sm font-medium mb-1">Mensaje del vendedor:</p>
+                    <p className="text-sm">{offer.message}</p>
+                  </div>
+                )}
+
+                {offer.description && (
+                  <div>
+                    <p className="text-sm font-medium mb-1">Descripción:</p>
+                    <p className="text-sm text-muted-foreground">{offer.description}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  {offer.delivery_time && (
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-4 w-4 text-muted-foreground" />
+                      <span>Entrega: {offer.delivery_time}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span>{formatDate(offer.created_at)}</span>
+                  </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+
+                {isOwner && (
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={() => acceptOfferMutation.mutate(offer.id)}
+                      disabled={acceptOfferMutation.isPending}
+                      className="flex-1"
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Aceptar oferta
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleRejectOffer(offer.id)}
+                      disabled={rejectOfferMutation.isPending}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+
+                {isUserOffer && !isInCounterOfferMode && (
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => deleteOfferMutation.mutate(offer.id)}
+                      disabled={deleteOfferMutation.isPending}
+                      className="flex-1"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar oferta
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
 
         {/* Pending offers */}
         {pendingOffers.map((offer) => {

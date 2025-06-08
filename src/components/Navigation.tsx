@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -26,7 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { SearchBar } from "@/components/SearchBar";
+import SearchBar from "@/components/SearchBar";
 import { Badge } from "@/components/ui/badge";
 import { useSellerNotifications } from '@/hooks/useSellerNotifications';
 
