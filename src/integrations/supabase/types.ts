@@ -9,15 +9,91 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      buy_requests: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          max_price: number | null
+          min_price: number | null
+          reference_image: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          zone: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          max_price?: number | null
+          min_price?: number | null
+          reference_image?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          zone: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          max_price?: number | null
+          min_price?: number | null
+          reference_image?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          zone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buy_requests_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       offers: {
         Row: {
           buy_request_id: string
           buyer_rating: number | null
           contact_info: Json | null
           created_at: string
+          delivery_time: string | null
           description: string | null
           id: string
           images: string[] | null
+          message: string | null
           price: number
           public_visibility: boolean | null
           seller_id: string
@@ -30,9 +106,11 @@ export type Database = {
           buyer_rating?: number | null
           contact_info?: Json | null
           created_at?: string
+          delivery_time?: string | null
           description?: string | null
           id?: string
           images?: string[] | null
+          message?: string | null
           price: number
           public_visibility?: boolean | null
           seller_id: string
@@ -45,9 +123,11 @@ export type Database = {
           buyer_rating?: number | null
           contact_info?: Json | null
           created_at?: string
+          delivery_time?: string | null
           description?: string | null
           id?: string
           images?: string[] | null
+          message?: string | null
           price?: number
           public_visibility?: boolean | null
           seller_id?: string
@@ -163,6 +243,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          offer_id: string | null
+          rating: number
+          review_text: string | null
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          offer_id?: string | null
+          rating: number
+          review_text?: string | null
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          offer_id?: string | null
+          rating?: number
+          review_text?: string | null
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
