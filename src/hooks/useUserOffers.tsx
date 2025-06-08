@@ -13,11 +13,13 @@ interface UserOffer {
   images: string[] | null;
   contact_info: any;
   status: string;
+  rejection_reason: string | null;
   created_at: string;
   updated_at: string;
   buy_requests: {
     title: string;
     zone: string;
+    status: string;
   } | null;
 }
 
@@ -36,19 +38,27 @@ export const useUserOffers = () => {
 
     try {
       setLoading(true);
+      console.log('Fetching offers for seller:', user.id);
+      
       const { data, error } = await supabase
         .from('offers')
         .select(`
           *,
           buy_requests (
             title,
-            zone
+            zone,
+            status
           )
         `)
         .eq('seller_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching offers:', error);
+        throw error;
+      }
+      
+      console.log('Offers fetched:', data);
       
       const transformedData: UserOffer[] = (data || []).map(offer => ({
         ...offer,
@@ -63,6 +73,33 @@ export const useUserOffers = () => {
       setLoading(false);
     }
   };
+
+  // Subscribe to real-time updates for offers
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('user-offers-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Real-time offer update for seller:', payload);
+          // Refetch offers when any offer is updated
+          fetchUserOffers();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   useEffect(() => {
     fetchUserOffers();

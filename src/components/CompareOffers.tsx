@@ -42,7 +42,6 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
   const queryClient = useQueryClient();
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [offerToReject, setOfferToReject] = useState<string | null>(null);
-  const [acceptedOfferId, setAcceptedOfferId] = useState<string | null>(null);
   const [counterOfferMode, setCounterOfferMode] = useState<string | null>(null);
   const [newPrice, setNewPrice] = useState<number>(0);
 
@@ -114,10 +113,9 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       return offerId;
     },
     onSuccess: (offerId) => {
-      setAcceptedOfferId(offerId);
       toast({
         title: "¡Oferta aceptada!",
-        description: "Has aceptado la oferta y cerrado la solicitud de compra"
+        description: "Has aceptado la oferta y cerrado la solicitud de compra. Ahora puedes chatear con el vendedor."
       });
       queryClient.invalidateQueries({ queryKey: ['offers', buyRequestId] });
       queryClient.invalidateQueries({ queryKey: ['buy-request', buyRequestId] });
@@ -250,22 +248,6 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
     }
   };
 
-  const handleCounterOffer = (offerId: string, currentPrice: number) => {
-    setCounterOfferMode(offerId);
-    setNewPrice(currentPrice);
-  };
-
-  const submitCounterOffer = (offerId: string) => {
-    if (newPrice > 0) {
-      counterOfferMutation.mutate({ offerId, newPrice });
-    }
-  };
-
-  const cancelCounterOffer = () => {
-    setCounterOfferMode(null);
-    setNewPrice(0);
-  };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -330,19 +312,25 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         )}
       </div>
 
+      {/* Show chat when an offer is accepted */}
       {showChat && (
-        <Chat 
-          buyRequestId={buyRequestId}
-          sellerId={acceptedOffer.seller_id}
-          offerId={acceptedOffer.id}
-        />
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <MessageCircle className="h-5 w-5 text-green-600" />
+            <h4 className="font-medium text-green-800">¡Oferta aceptada! Chatea con el vendedor</h4>
+          </div>
+          <Chat 
+            buyRequestId={buyRequestId}
+            sellerId={acceptedOffer.seller_id}
+            offerId={acceptedOffer.id}
+          />
+        </div>
       )}
 
       <div className="grid gap-4">
         {/* Accepted offers first */}
         {acceptedOffers.map((offer) => {
           const isUserOffer = user?.id === offer.seller_id;
-          const isInCounterOfferMode = counterOfferMode === offer.id;
           
           return (
             <Card key={offer.id} className="ring-2 ring-green-500">
@@ -444,20 +432,6 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                       disabled={rejectOfferMutation.isPending}
                     >
                       <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-
-                {isUserOffer && !isInCounterOfferMode && (
-                  <div className="flex gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => deleteOfferMutation.mutate(offer.id)}
-                      disabled={deleteOfferMutation.isPending}
-                      className="flex-1"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Eliminar oferta
                     </Button>
                   </div>
                 )}
@@ -681,7 +655,6 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                       </div>
                     )}
 
-                    {/* ... keep existing image and description display ... */}
                     {offer.images && offer.images.length > 0 && (
                       <div className="grid grid-cols-3 gap-2">
                         {offer.images.slice(0, 3).map((image, index) => (
@@ -725,7 +698,6 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                       </div>
                     </div>
 
-                    {/* Action buttons for rejected offers (only for offer owner) */}
                     {isUserOffer && !isInCounterOfferMode && (
                       <div className="flex gap-2 pt-2">
                         <Button
