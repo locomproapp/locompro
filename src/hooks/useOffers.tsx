@@ -23,6 +23,7 @@ interface Offer {
   buy_requests?: {
     title: string;
     zone: string;
+    status: string;
   } | null;
 }
 
@@ -46,7 +47,8 @@ export const useOffers = (buyRequestId?: string) => {
           ),
           buy_requests (
             title,
-            zone
+            zone,
+            status
           )
         `)
         .eq('status', 'pending')
