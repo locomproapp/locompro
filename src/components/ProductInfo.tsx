@@ -17,6 +17,24 @@ interface ProductInfoProps {
 }
 
 const ProductInfo = ({ post }: ProductInfoProps) => {
+  const formatCharacteristics = (characteristics: any) => {
+    if (!characteristics) return null;
+    
+    // If it's a string, display it directly
+    if (typeof characteristics === 'string') {
+      return characteristics;
+    }
+    
+    // If it's an object, format it nicely
+    if (typeof characteristics === 'object') {
+      return Object.entries(characteristics)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ');
+    }
+    
+    return JSON.stringify(characteristics, null, 2);
+  };
+
   return (
     <div className="space-y-6">
       {/* Galería de imágenes */}
@@ -49,9 +67,9 @@ const ProductInfo = ({ post }: ProductInfoProps) => {
         {post.characteristics && (
           <div className="mb-6">
             <h3 className="font-semibold text-foreground mb-2">Características</h3>
-            <pre className="text-sm text-muted-foreground bg-muted p-3 rounded">
-              {JSON.stringify(post.characteristics, null, 2)}
-            </pre>
+            <div className="text-muted-foreground bg-muted p-3 rounded">
+              {formatCharacteristics(post.characteristics)}
+            </div>
           </div>
         )}
 
