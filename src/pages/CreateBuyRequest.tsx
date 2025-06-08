@@ -24,7 +24,6 @@ const CreateBuyRequest = () => {
     maxPrice: '',
     referenceLink: '',
     zone: '',
-    contactInfo: '',
     images: [] as string[]
   });
 
@@ -179,18 +178,6 @@ const CreateBuyRequest = () => {
                 onChange={(e) => handleInputChange('zone', e.target.value)}
                 placeholder="Capital Federal, Zona Norte, etc."
                 required
-                className="mt-2"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="contactInfo">Datos de Contacto</Label>
-              <Textarea
-                id="contactInfo"
-                value={formData.contactInfo}
-                onChange={(e) => handleInputChange('contactInfo', e.target.value)}
-                placeholder="WhatsApp, email, horarios preferidos para contacto, etc."
-                rows={2}
                 className="mt-2"
               />
             </div>
