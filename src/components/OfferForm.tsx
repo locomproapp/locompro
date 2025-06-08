@@ -16,10 +16,9 @@ import { toast } from '@/hooks/use-toast';
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
   description: z.string().optional(),
-  price: z.number().min(0, 'El precio debe ser mayor a 0'),
+  price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
   message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-  delivery_time: z.string().min(1, 'El tiempo de entrega es requerido'),
-  contact_info: z.string().min(5, 'La información de contacto es requerida')
+  delivery_time: z.string().min(1, 'El tiempo de entrega es requerido')
 });
 
 interface OfferFormProps {
@@ -39,10 +38,9 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
     defaultValues: {
       title: '',
       description: '',
-      price: 0,
+      price: undefined,
       message: '',
-      delivery_time: '',
-      contact_info: ''
+      delivery_time: ''
     }
   });
 
@@ -57,22 +55,28 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
     }
 
     try {
+      console.log('Enviando oferta con datos:', values);
+      console.log('Buy request ID:', buyRequestId);
+      console.log('User ID:', user.id);
+
       const { error } = await supabase
         .from('offers')
         .insert({
           buy_request_id: buyRequestId,
           seller_id: user.id,
           title: values.title,
-          description: values.description,
+          description: values.description || null,
           price: values.price,
           message: values.message,
           delivery_time: values.delivery_time,
-          contact_info: { info: values.contact_info },
           images: images.length > 0 ? images : null,
           status: 'pending'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error insertando oferta:', error);
+        throw error;
+      }
 
       toast({
         title: "¡Oferta enviada!",
@@ -186,9 +190,14 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
                   <FormControl>
                     <Input 
                       type="number" 
-                      placeholder="1000" 
+                      step="0.01"
+                      placeholder="Ingresa el precio" 
                       {...field}
-                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value === '' ? undefined : Number(value));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -239,20 +248,6 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
                       placeholder="Información adicional sobre el producto..."
                       {...field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="contact_info"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Información de contacto</FormLabel>
-                  <FormControl>
-                    <Input placeholder="WhatsApp, email, teléfono, etc." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
