@@ -2,11 +2,12 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import PostBuyRequest from '@/components/PostBuyRequest';
 import SearchBuyRequests from '@/components/SearchBuyRequests';
 import TransactionHistory from '@/components/TransactionHistory';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { Search, Plus, History } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Marketplace = () => {
   return (
@@ -51,7 +52,12 @@ const Marketplace = () => {
                 <p className="text-muted-foreground mb-6">
                   Cuéntanos qué estás buscando y recibe ofertas de vendedores
                 </p>
-                <PostBuyRequest />
+                <Button asChild size="lg" className="flex items-center gap-2">
+                  <Link to="/create-buy-request">
+                    <Plus className="h-4 w-4" />
+                    Crear Solicitud de Compra
+                  </Link>
+                </Button>
               </div>
             </div>
           </TabsContent>

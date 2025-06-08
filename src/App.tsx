@@ -12,6 +12,7 @@ import MyRequests from "./pages/MyRequests";
 import MyOffers from "./pages/MyOffers";
 import Marketplace from "./pages/Marketplace";
 import BuyRequestDetail from "./pages/BuyRequestDetail";
+import CreateBuyRequest from "./pages/CreateBuyRequest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/buy-request/:id" element={<BuyRequestDetail />} />
+          <Route path="/create-buy-request" element={<CreateBuyRequest />} />
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/my-offers" element={<MyOffers />} />
           <Route path="/profile/:id" element={<NotFound />} />

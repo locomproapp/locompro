@@ -3,7 +3,6 @@ import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import BuyRequestCard from '@/components/BuyRequestCard';
-import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
 import { Button } from '@/components/ui/button';
 import { Search, Package, Handshake, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -65,7 +64,12 @@ const Index = () => {
                 Explorar Mercado
               </Link>
             </Button>
-            <CreateBuyRequestDialog onRequestCreated={refetch} />
+            <Button asChild size="lg" className="text-lg px-8 py-6">
+              <Link to="/create-buy-request">
+                <Search className="mr-2 h-5 w-5" />
+                ¿Qué Buscás?
+              </Link>
+            </Button>
           </div>
         </div>
 
