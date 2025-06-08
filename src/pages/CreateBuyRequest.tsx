@@ -39,6 +39,16 @@ const CreateBuyRequest = () => {
       return;
     }
 
+    // Validar que se haya subido al menos una imagen
+    if (formData.images.length === 0) {
+      toast({
+        title: "Error",
+        description: "Debes subir al menos una imagen de referencia",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase
@@ -49,7 +59,7 @@ const CreateBuyRequest = () => {
           description: formData.description || null,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
-          reference_image: formData.images[0] || null,
+          reference_image: formData.images[0],
           zone: formData.zone
         });
 
@@ -81,26 +91,68 @@ const CreateBuyRequest = () => {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
+    // Validar archivos antes de subir
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.startsWith('image/');
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB máximo
+      
+      if (!isValidType) {
+        toast({
+          title: "Error",
+          description: `${file.name} no es una imagen válida`,
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      if (!isValidSize) {
+        toast({
+          title: "Error",
+          description: `${file.name} es demasiado grande (máximo 5MB)`,
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
     setUploading(true);
+    console.log('Iniciando subida de', validFiles.length, 'archivos');
+
     try {
-      const uploadPromises = files.map(async (file) => {
+      const uploadPromises = validFiles.map(async (file, index) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+        const fileName = `buy-request-${Date.now()}-${index}.${fileExt}`;
         
-        const { error: uploadError } = await supabase.storage
+        console.log('Subiendo archivo:', fileName, 'Tamaño:', file.size);
+        
+        const { data, error: uploadError } = await supabase.storage
           .from('buy-requests')
-          .upload(fileName, file);
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Error en upload:', uploadError);
+          throw new Error(`Error subiendo ${file.name}: ${uploadError.message}`);
+        }
 
-        const { data } = supabase.storage
+        console.log('Archivo subido exitosamente:', data);
+
+        const { data: urlData } = supabase.storage
           .from('buy-requests')
           .getPublicUrl(fileName);
 
-        return data.publicUrl;
+        return urlData.publicUrl;
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
+      console.log('URLs generadas:', uploadedUrls);
+      
       setFormData(prev => ({
         ...prev,
         images: [...prev.images, ...uploadedUrls]
@@ -108,17 +160,19 @@ const CreateBuyRequest = () => {
       
       toast({
         title: "Imágenes subidas",
-        description: "Las imágenes se han subido correctamente"
+        description: `${uploadedUrls.length} imagen(es) subida(s) correctamente`
       });
     } catch (error) {
-      console.error('Error uploading images:', error);
+      console.error('Error completo en upload:', error);
       toast({
         title: "Error",
-        description: "No se pudieron subir las imágenes",
+        description: error instanceof Error ? error.message : "No se pudieron subir las imágenes",
         variant: "destructive"
       });
     } finally {
       setUploading(false);
+      // Limpiar el input para permitir subir los mismos archivos otra vez
+      event.target.value = '';
     }
   };
 
@@ -218,7 +272,7 @@ const CreateBuyRequest = () => {
             </div>
 
             <div>
-              <Label>Fotos de Referencia (Opcional)</Label>
+              <Label>Fotos de Referencia *</Label>
               <div className="space-y-3 mt-2">
                 <Input
                   type="file"
@@ -239,10 +293,16 @@ const CreateBuyRequest = () => {
                   >
                     <span className="flex items-center justify-center gap-2">
                       <Upload className="h-4 w-4" />
-                      {uploading ? 'Subiendo imágenes...' : 'Subir imágenes desde dispositivo'}
+                      {uploading ? 'Subiendo imágenes...' : 'Subir imágenes desde dispositivo *'}
                     </span>
                   </Button>
                 </label>
+                
+                {formData.images.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    Debes subir al menos una imagen de referencia
+                  </p>
+                )}
                 
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
@@ -252,6 +312,10 @@ const CreateBuyRequest = () => {
                           src={url}
                           alt={`Imagen ${index + 1}`}
                           className="w-full h-24 object-cover rounded border"
+                          onError={(e) => {
+                            console.error('Error cargando imagen:', url);
+                            e.currentTarget.src = '/placeholder.svg';
+                          }}
                         />
                         <button
                           type="button"
@@ -271,7 +335,11 @@ const CreateBuyRequest = () => {
               <Button type="button" variant="outline" asChild className="flex-1">
                 <Link to="/">Cancelar</Link>
               </Button>
-              <Button type="submit" disabled={loading || uploading} className="flex-1">
+              <Button 
+                type="submit" 
+                disabled={loading || uploading || formData.images.length === 0} 
+                className="flex-1"
+              >
                 {loading ? 'Creando...' : 'Crear Solicitud'}
               </Button>
             </div>
