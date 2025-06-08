@@ -31,7 +31,7 @@ interface Offer {
     full_name: string | null;
     avatar_url: string | null;
   } | null;
-  posts: {
+  buy_requests: {
     title: string;
   } | null;
 }
@@ -72,7 +72,7 @@ const TransactionHistory = () => {
             full_name,
             avatar_url
           ),
-          posts:buy_requests (
+          buy_requests (
             title
           )
         `)
@@ -203,7 +203,7 @@ const TransactionHistory = () => {
                       <div>
                         <CardTitle className="text-lg">{offer.title}</CardTitle>
                         <p className="text-sm text-muted-foreground mb-2">
-                          Para: {offer.posts?.title || 'Solicitud eliminada'}
+                          Para: {offer.buy_requests?.title || 'Solicitud eliminada'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           Enviada el {formatDate(offer.created_at)}

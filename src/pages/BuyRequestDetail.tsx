@@ -1,12 +1,11 @@
 
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import OfferForm from '@/components/OfferForm';
 import CompareOffers from '@/components/CompareOffers';
-import { supabase } from '@/integrations/supabase/client';
+import { useBuyRequestDetail } from '@/hooks/useBuyRequestDetail';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,29 +16,7 @@ const BuyRequestDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
 
-  const { data: buyRequest, isLoading, error } = useQuery({
-    queryKey: ['buy-request', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('buy_requests')
-        .select(`
-          *,
-          categories (name),
-          profiles (
-            full_name,
-            avatar_url,
-            bio,
-            location
-          )
-        `)
-        .eq('id', id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!id
-  });
+  const { data: buyRequest, isLoading, error } = useBuyRequestDetail(id || '');
 
   if (isLoading) {
     return (

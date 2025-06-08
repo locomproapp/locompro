@@ -60,6 +60,13 @@ export type Database = {
             referencedRelation: "categories"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "buy_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       categories: {
@@ -140,7 +147,7 @@ export type Database = {
             foreignKeyName: "offers_buy_request_id_fkey"
             columns: ["buy_request_id"]
             isOneToOne: false
-            referencedRelation: "posts"
+            referencedRelation: "buy_requests"
             referencedColumns: ["id"]
           },
           {
