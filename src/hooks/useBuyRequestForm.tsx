@@ -4,6 +4,8 @@ import { useState } from 'react';
 export interface BuyRequestFormData {
   title: string;
   description: string;
+  categoryId: string;
+  condition: string;
   minPrice: string;
   maxPrice: string;
   zone: string;
@@ -15,6 +17,8 @@ export const useBuyRequestForm = () => {
   const [formData, setFormData] = useState<BuyRequestFormData>({
     title: '',
     description: '',
+    categoryId: '',
+    condition: '',
     minPrice: '',
     maxPrice: '',
     zone: '',
@@ -30,6 +34,8 @@ export const useBuyRequestForm = () => {
     setFormData({
       title: '',
       description: '',
+      categoryId: '',
+      condition: '',
       minPrice: '',
       maxPrice: '',
       zone: '',
