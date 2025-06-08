@@ -90,6 +90,83 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          chat_id: string
+          created_at: string
+          id: string
+          message: string
+          sender_id: string
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          id?: string
+          message: string
+          sender_id: string
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chats: {
+        Row: {
+          buy_request_id: string
+          buyer_id: string
+          created_at: string
+          id: string
+          offer_id: string
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          buy_request_id: string
+          buyer_id: string
+          created_at?: string
+          id?: string
+          offer_id: string
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          buy_request_id?: string
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          offer_id?: string
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chats_buy_request_id_fkey"
+            columns: ["buy_request_id"]
+            isOneToOne: false
+            referencedRelation: "buy_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chats_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           buy_request_id: string
@@ -103,6 +180,7 @@ export type Database = {
           message: string | null
           price: number
           public_visibility: boolean | null
+          rejection_reason: string | null
           seller_id: string
           status: string
           title: string
@@ -120,6 +198,7 @@ export type Database = {
           message?: string | null
           price: number
           public_visibility?: boolean | null
+          rejection_reason?: string | null
           seller_id: string
           status?: string
           title: string
@@ -137,6 +216,7 @@ export type Database = {
           message?: string | null
           price?: number
           public_visibility?: boolean | null
+          rejection_reason?: string | null
           seller_id?: string
           status?: string
           title?: string

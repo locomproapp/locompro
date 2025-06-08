@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,8 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, Clock, Star, MessageCircle, Truck, X } from 'lucide-react';
+import { Check, Clock, MessageCircle, Truck, X, Trash2, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import RejectOfferDialog from './RejectOfferDialog';
+import Chat from './Chat';
+import { Link } from 'react-router-dom';
 
 interface Offer {
   id: string;
@@ -20,7 +23,9 @@ interface Offer {
   images: string[] | null;
   contact_info: any;
   status: string;
+  rejection_reason: string | null;
   created_at: string;
+  seller_id: string;
   profiles: {
     full_name: string | null;
     avatar_url: string | null;
@@ -35,6 +40,9 @@ interface CompareOffersProps {
 const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [offerToReject, setOfferToReject] = useState<string | null>(null);
+  const [acceptedOfferId, setAcceptedOfferId] = useState<string | null>(null);
 
   const { data: offers, isLoading } = useQuery({
     queryKey: ['offers', buyRequestId],
@@ -69,7 +77,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       // Reject all other offers for this buy request
       const { error: rejectError } = await supabase
         .from('offers')
-        .update({ status: 'rejected' })
+        .update({ status: 'finalized' })
         .eq('buy_request_id', buyRequestId)
         .neq('id', offerId);
 
@@ -82,8 +90,11 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         .eq('id', buyRequestId);
 
       if (requestError) throw requestError;
+
+      return offerId;
     },
-    onSuccess: () => {
+    onSuccess: (offerId) => {
+      setAcceptedOfferId(offerId);
       toast({
         title: "¡Oferta aceptada!",
         description: "Has aceptado la oferta y cerrado la solicitud de compra"
@@ -102,10 +113,13 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
   });
 
   const rejectOfferMutation = useMutation({
-    mutationFn: async (offerId: string) => {
+    mutationFn: async ({ offerId, reason }: { offerId: string; reason: string }) => {
       const { error } = await supabase
         .from('offers')
-        .update({ status: 'rejected' })
+        .update({ 
+          status: 'rejected',
+          rejection_reason: reason 
+        })
         .eq('id', offerId);
 
       if (error) throw error;
@@ -116,6 +130,8 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         description: "La oferta ha sido rechazada"
       });
       queryClient.invalidateQueries({ queryKey: ['offers', buyRequestId] });
+      setRejectDialogOpen(false);
+      setOfferToReject(null);
     },
     onError: (error) => {
       console.error('Error rejecting offer:', error);
@@ -127,15 +143,41 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
     }
   });
 
-  const formatContactInfo = (contactInfo: any) => {
-    if (!contactInfo) return null;
-    if (typeof contactInfo === 'string') return contactInfo;
-    if (typeof contactInfo === 'object') {
-      return Object.entries(contactInfo)
-        .map(([key, value]) => `${value}`)
-        .join(', ');
+  const deleteOfferMutation = useMutation({
+    mutationFn: async (offerId: string) => {
+      const { error } = await supabase
+        .from('offers')
+        .delete()
+        .eq('id', offerId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Oferta eliminada",
+        description: "Tu oferta ha sido eliminada"
+      });
+      queryClient.invalidateQueries({ queryKey: ['offers', buyRequestId] });
+    },
+    onError: (error) => {
+      console.error('Error deleting offer:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la oferta",
+        variant: "destructive"
+      });
     }
-    return String(contactInfo);
+  });
+
+  const handleRejectOffer = (offerId: string) => {
+    setOfferToReject(offerId);
+    setRejectDialogOpen(true);
+  };
+
+  const confirmRejectOffer = (reason: string) => {
+    if (offerToReject) {
+      rejectOfferMutation.mutate({ offerId: offerToReject, reason });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -146,6 +188,8 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         return <Badge variant="default" className="bg-green-500"><Check className="h-3 w-3 mr-1" />Aceptada</Badge>;
       case 'rejected':
         return <Badge variant="destructive"><X className="h-3 w-3 mr-1" />Rechazada</Badge>;
+      case 'finalized':
+        return <Badge variant="outline" className="text-muted-foreground">No seleccionada</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -160,6 +204,9 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       minute: '2-digit'
     });
   };
+
+  const acceptedOffer = offers?.find(offer => offer.status === 'accepted');
+  const showChat = acceptedOffer && isOwner;
 
   if (isLoading) {
     return (
@@ -191,111 +238,167 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         )}
       </div>
 
-      <div className="grid gap-4">
-        {offers.map((offer) => (
-          <Card key={offer.id} className={`${offer.status === 'accepted' ? 'ring-2 ring-green-500' : ''}`}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={offer.profiles?.avatar_url || undefined} />
-                    <AvatarFallback>
-                      {offer.profiles?.full_name?.charAt(0) || 'V'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-lg">{offer.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      Por: {offer.profiles?.full_name || 'Vendedor anónimo'}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right space-y-2">
-                  <div className="text-2xl font-bold text-primary">
-                    ${offer.price}
-                  </div>
-                  {getStatusBadge(offer.status)}
-                </div>
-              </div>
-            </CardHeader>
+      {showChat && (
+        <Chat 
+          buyRequestId={buyRequestId}
+          sellerId={acceptedOffer.seller_id}
+          offerId={acceptedOffer.id}
+        />
+      )}
 
-            <CardContent className="space-y-4">
-              {offer.images && offer.images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {offer.images.slice(0, 3).map((image, index) => (
-                    <img
-                      key={index}
-                      src={image}
-                      alt={`Producto ${index + 1}`}
-                      className="h-20 w-full object-cover rounded"
-                    />
-                  ))}
-                  {offer.images.length > 3 && (
-                    <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
-                      +{offer.images.length - 3} más
+      <div className="grid gap-4">
+        {offers.map((offer) => {
+          const isUserOffer = user?.id === offer.seller_id;
+          const isRejected = offer.status === 'rejected';
+          const isFinalized = offer.status === 'finalized';
+          
+          return (
+            <Card key={offer.id} className={`${
+              offer.status === 'accepted' ? 'ring-2 ring-green-500' : 
+              isFinalized ? 'opacity-60' : ''
+            }`}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={offer.profiles?.avatar_url || undefined} />
+                      <AvatarFallback>
+                        {offer.profiles?.full_name?.charAt(0) || 'V'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-lg">{offer.title}</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        Por: {offer.profiles?.full_name || 'Vendedor anónimo'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right space-y-2">
+                    <div className="text-2xl font-bold text-primary">
+                      ${offer.price}
+                    </div>
+                    {getStatusBadge(offer.status)}
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {offer.images && offer.images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2">
+                    {offer.images.slice(0, 3).map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`Producto ${index + 1}`}
+                        className="h-20 w-full object-cover rounded"
+                      />
+                    ))}
+                    {offer.images.length > 3 && (
+                      <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
+                        +{offer.images.length - 3} más
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {!offer.images || offer.images.length === 0 && (
+                  <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
+                    Sin imágenes
+                  </div>
+                )}
+
+                {offer.message && (
+                  <div className="bg-muted p-3 rounded">
+                    <p className="text-sm font-medium mb-1">Mensaje del vendedor:</p>
+                    <p className="text-sm">{offer.message}</p>
+                  </div>
+                )}
+
+                {offer.description && (
+                  <div>
+                    <p className="text-sm font-medium mb-1">Descripción:</p>
+                    <p className="text-sm text-muted-foreground">{offer.description}</p>
+                  </div>
+                )}
+
+                {isRejected && offer.rejection_reason && (
+                  <div className="bg-red-50 border border-red-200 p-3 rounded">
+                    <p className="text-sm font-medium text-red-800 mb-1">Motivo del rechazo:</p>
+                    <p className="text-sm text-red-700">{offer.rejection_reason}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  {offer.delivery_time && (
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-4 w-4 text-muted-foreground" />
+                      <span>Entrega: {offer.delivery_time}</span>
                     </div>
                   )}
-                </div>
-              )}
-
-              {offer.message && (
-                <div className="bg-muted p-3 rounded">
-                  <p className="text-sm font-medium mb-1">Mensaje del vendedor:</p>
-                  <p className="text-sm">{offer.message}</p>
-                </div>
-              )}
-
-              {offer.description && (
-                <div>
-                  <p className="text-sm font-medium mb-1">Descripción:</p>
-                  <p className="text-sm text-muted-foreground">{offer.description}</p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                {offer.delivery_time && (
+                  
                   <div className="flex items-center gap-2">
-                    <Truck className="h-4 w-4 text-muted-foreground" />
-                    <span>Entrega: {offer.delivery_time}</span>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span>{formatDate(offer.created_at)}</span>
+                  </div>
+                </div>
+
+                {/* Botones para el propietario de la solicitud */}
+                {isOwner && offer.status === 'pending' && (
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={() => acceptOfferMutation.mutate(offer.id)}
+                      disabled={acceptOfferMutation.isPending}
+                      className="flex-1"
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Aceptar oferta
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleRejectOffer(offer.id)}
+                      disabled={rejectOfferMutation.isPending}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
                 )}
-                
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span>{formatDate(offer.created_at)}</span>
-                </div>
 
-                {offer.contact_info && (
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="h-4 w-4 text-muted-foreground" />
-                    <span>{formatContactInfo(offer.contact_info)}</span>
+                {/* Botones para ofertas rechazadas del vendedor */}
+                {isUserOffer && isRejected && (
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => deleteOfferMutation.mutate(offer.id)}
+                      disabled={deleteOfferMutation.isPending}
+                      className="flex-1"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar oferta
+                    </Button>
+                    <Button
+                      variant="default"
+                      asChild
+                      className="flex-1"
+                    >
+                      <Link to={`/buy-request/${buyRequestId}/send-offer?edit=${offer.id}`}>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Contraofertar
+                      </Link>
+                    </Button>
                   </div>
                 )}
-              </div>
-
-              {isOwner && offer.status === 'pending' && (
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    onClick={() => acceptOfferMutation.mutate(offer.id)}
-                    disabled={acceptOfferMutation.isPending}
-                    className="flex-1"
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    Aceptar oferta
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => rejectOfferMutation.mutate(offer.id)}
-                    disabled={rejectOfferMutation.isPending}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
+
+      <RejectOfferDialog
+        open={rejectDialogOpen}
+        onOpenChange={setRejectDialogOpen}
+        onConfirm={confirmRejectOffer}
+        isLoading={rejectOfferMutation.isPending}
+      />
     </div>
   );
 };

@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,10 +25,13 @@ const formSchema = z.object({
 
 const SendOffer = () => {
   const { id: buyRequestId } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const editOfferId = searchParams.get('edit');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [isCounterOffer, setIsCounterOffer] = useState(false);
 
   const { data: buyRequest, isLoading } = useBuyRequestDetail(buyRequestId || '');
 
@@ -43,6 +45,46 @@ const SendOffer = () => {
       delivery_time: '',
     }
   });
+
+  // Cargar datos de la oferta si es una contraoferta
+  useEffect(() => {
+    const loadOfferData = async () => {
+      if (!editOfferId || !user) return;
+
+      try {
+        const { data: offer, error } = await supabase
+          .from('offers')
+          .select('*')
+          .eq('id', editOfferId)
+          .eq('seller_id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error loading offer:', error);
+          return;
+        }
+
+        if (offer) {
+          setIsCounterOffer(true);
+          form.reset({
+            title: offer.title,
+            description: offer.description || '',
+            price: offer.price,
+            message: offer.message || '',
+            delivery_time: offer.delivery_time || '',
+          });
+          
+          if (offer.images) {
+            setImages(offer.images);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading offer data:', error);
+      }
+    };
+
+    loadOfferData();
+  }, [editOfferId, user, form]);
 
   const formatPrice = (value: string): string => {
     const numericValue = value.replace(/[^\d]/g, '');
@@ -116,36 +158,64 @@ const SendOffer = () => {
     try {
       console.log('Enviando oferta con datos:', values);
 
-      const { error } = await supabase
-        .from('offers')
-        .insert({
-          buy_request_id: buyRequestId,
-          seller_id: user.id,
-          title: values.title,
-          description: values.description || null,
-          price: values.price,
-          message: values.message,
-          delivery_time: values.delivery_time,
-          images: images.length > 0 ? images : null,
-          status: 'pending'
+      if (isCounterOffer && editOfferId) {
+        // Actualizar oferta existente para contraoferta
+        const { error } = await supabase
+          .from('offers')
+          .update({
+            title: values.title,
+            description: values.description || null,
+            price: values.price,
+            message: values.message,
+            delivery_time: values.delivery_time,
+            images: images.length > 0 ? images : null,
+            status: 'pending',
+            rejection_reason: null // Limpiar el motivo de rechazo
+          })
+          .eq('id', editOfferId);
+
+        if (error) {
+          console.error('Error actualizando oferta:', error);
+          throw error;
+        }
+
+        toast({
+          title: "¡Contraoferta enviada!",
+          description: "Tu contraoferta ha sido enviada exitosamente"
         });
+      } else {
+        // Crear nueva oferta
+        const { error } = await supabase
+          .from('offers')
+          .insert({
+            buy_request_id: buyRequestId,
+            seller_id: user.id,
+            title: values.title,
+            description: values.description || null,
+            price: values.price,
+            message: values.message,
+            delivery_time: values.delivery_time,
+            images: images.length > 0 ? images : null,
+            status: 'pending'
+          });
 
-      if (error) {
-        console.error('Error insertando oferta:', error);
-        throw error;
+        if (error) {
+          console.error('Error insertando oferta:', error);
+          throw error;
+        }
+
+        toast({
+          title: "¡Oferta enviada!",
+          description: "Tu oferta ha sido enviada exitosamente"
+        });
       }
-
-      toast({
-        title: "¡Oferta enviada!",
-        description: "Tu oferta ha sido enviada exitosamente"
-      });
 
       navigate(`/buy-request/${buyRequestId}`);
     } catch (error) {
-      console.error('Error creating offer:', error);
+      console.error('Error creating/updating offer:', error);
       toast({
         title: "Error",
-        description: "No se pudo enviar la oferta. Intenta de nuevo.",
+        description: `No se pudo ${isCounterOffer ? 'actualizar' : 'enviar'} la oferta. Intenta de nuevo.`,
         variant: "destructive"
       });
     }
@@ -223,11 +293,16 @@ const SendOffer = () => {
           </Button>
           
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Enviar Oferta
+            {isCounterOffer ? 'Enviar Contraoferta' : 'Enviar Oferta'}
           </h1>
           <p className="text-lg text-muted-foreground mb-2">
             Para: <span className="font-medium">{buyRequest.title}</span>
           </p>
+          {isCounterOffer && (
+            <p className="text-sm text-orange-600 bg-orange-50 p-2 rounded border">
+              Estás editando una oferta rechazada. Puedes modificar los datos y reenviarla.
+            </p>
+          )}
         </div>
 
         <div className="bg-card rounded-lg border border-border p-8">
@@ -376,7 +451,7 @@ const SendOffer = () => {
                   <Link to={`/buy-request/${buyRequestId}`}>Cancelar</Link>
                 </Button>
                 <Button type="submit" className="flex-1">
-                  Enviar oferta
+                  {isCounterOffer ? 'Enviar contraoferta' : 'Enviar oferta'}
                 </Button>
               </div>
             </form>
