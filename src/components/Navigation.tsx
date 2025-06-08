@@ -46,7 +46,7 @@ function MobileLink({
   return (
     <Link
       to={to}
-      className="text-sm font-medium hover:underline"
+      className="text-sm font-medium hover:underline text-sidebar-foreground hover:text-sidebar-accent-foreground"
       onClick={() => onOpenChange?.(false)}
       {...props}
     />
@@ -68,8 +68,18 @@ export default function Navigation() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <Package className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">ConectaMercado</span>
+            <img 
+              src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+              alt="LoCompro" 
+              className="h-8 w-8 object-contain"
+              onError={(e) => {
+                // Fallback to icon if image fails to load
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <Package className="h-6 w-6 text-primary hidden" />
+            <span className="hidden font-bold sm:inline-block">LoCompro</span>
           </Link>
           <NavigationMenu>
             <NavigationMenuList>
@@ -83,9 +93,18 @@ export default function Navigation() {
                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                           to="/"
                         >
-                          <Package className="h-6 w-6" />
+                          <img 
+                            src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                            alt="LoCompro" 
+                            className="h-6 w-6 object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                            }}
+                          />
+                          <Package className="h-6 w-6 hidden" />
                           <div className="mb-2 mt-4 text-lg font-medium">
-                            ConectaMercado
+                            LoCompro
                           </div>
                           <p className="text-sm leading-tight text-muted-foreground">
                             Conecta compradores y vendedores en tu zona
@@ -136,17 +155,22 @@ export default function Navigation() {
               <span className="sr-only">Alternar menú</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="pr-0">
-            <MobileLink
-              to="/"
-              className="flex items-center"
-              onOpenChange={setOpen}
-            >
-              <Package className="mr-2 h-4 w-4" />
-              <span className="font-bold">ConectaMercado</span>
-            </MobileLink>
+          <SheetContent side="left" className="pr-0 bg-sidebar border-sidebar-border">
+            <div className="flex items-center mb-6">
+              <img 
+                src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                alt="LoCompro" 
+                className="h-6 w-6 object-contain mr-2"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <Package className="mr-2 h-4 w-4 text-sidebar-primary hidden" />
+              <span className="font-bold text-sidebar-foreground">LoCompro</span>
+            </div>
             <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-4">
                 <MobileLink to="/marketplace" onOpenChange={setOpen}>
                   Marketplace
                 </MobileLink>
@@ -162,12 +186,14 @@ export default function Navigation() {
                       Mis Solicitudes
                     </MobileLink>
                     <MobileLink to="/my-offers" onOpenChange={setOpen}>
-                      Mis Ofertas
-                      {notificationCount > 0 && (
-                        <Badge variant="destructive" className="ml-2 text-xs">
-                          {notificationCount}
-                        </Badge>
-                      )}
+                      <span className="flex items-center">
+                        Mis Ofertas
+                        {notificationCount > 0 && (
+                          <Badge variant="destructive" className="ml-2 text-xs">
+                            {notificationCount}
+                          </Badge>
+                        )}
+                      </span>
                     </MobileLink>
                   </>
                 )}
