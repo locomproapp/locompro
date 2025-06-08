@@ -248,6 +248,22 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
     }
   };
 
+  const handleCounterOffer = (offerId: string, currentPrice: number) => {
+    setCounterOfferMode(offerId);
+    setNewPrice(currentPrice);
+  };
+
+  const submitCounterOffer = (offerId: string) => {
+    if (newPrice > 0) {
+      counterOfferMutation.mutate({ offerId, newPrice });
+    }
+  };
+
+  const cancelCounterOffer = () => {
+    setCounterOfferMode(null);
+    setNewPrice(0);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':

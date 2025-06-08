@@ -12,6 +12,7 @@ interface Offer {
   images: string[] | null;
   contact_info: any;
   status: string;
+  rejection_reason: string | null;
   created_at: string;
   updated_at: string;
   buyer_rating?: number | null;
