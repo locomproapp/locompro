@@ -1,0 +1,94 @@
+
+import React from 'react';
+import Navigation from '@/components/Navigation';
+import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
+import BuyRequestCard from '@/components/BuyRequestCard';
+import { useUserBuyRequests } from '@/hooks/useUserBuyRequests';
+import { useAuth } from '@/hooks/useAuth';
+import { Plus, Search } from 'lucide-react';
+
+const MyRequests = () => {
+  const { user } = useAuth();
+  const { buyRequests, loading, refetch } = useUserBuyRequests();
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+        <Navigation />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              Inicia sesión para ver tus solicitudes
+            </h1>
+            <p className="text-muted-foreground">
+              Necesitas estar logueado para acceder a esta sección.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      <Navigation />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                Mis Solicitudes de Compra
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Gestiona qué estás buscando y revisa las ofertas recibidas
+              </p>
+            </div>
+            <CreateBuyRequestDialog onRequestCreated={refetch} />
+          </div>
+        </div>
+
+        {/* Contenido */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="h-8 w-8 text-primary animate-pulse" />
+            </div>
+            <p className="text-muted-foreground">Cargando tus solicitudes...</p>
+          </div>
+        ) : buyRequests.length > 0 ? (
+          <>
+            <div className="mb-6">
+              <p className="text-muted-foreground">
+                {buyRequests.length} {buyRequests.length === 1 ? 'solicitud' : 'solicitudes'}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {buyRequests.map((request) => (
+                <BuyRequestCard key={request.id} buyRequest={request} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
+            <div className="max-w-md mx-auto">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Plus className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                Aún no tienes solicitudes
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Crea tu primera solicitud de compra y recibe ofertas de vendedores.
+              </p>
+              <CreateBuyRequestDialog onRequestCreated={refetch} />
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default MyRequests;

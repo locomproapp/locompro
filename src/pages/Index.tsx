@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import SearchBar from '@/components/SearchBar';
-import CreatePostDialog from '@/components/CreatePostDialog';
-import PostCard from '@/components/PostCard';
-import { usePosts } from '@/hooks/usePosts';
+import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
+import BuyRequestCard from '@/components/BuyRequestCard';
+import { useBuyRequests } from '@/hooks/useBuyRequests';
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const { posts, loading, refetch } = usePosts(searchQuery);
+  const { buyRequests, loading, refetch } = useBuyRequests(searchQuery);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -29,17 +29,17 @@ const Index = () => {
         {/* Hero section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
-            Encuentra lo que necesitas
+            Publicá qué buscás
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
-            LoCompro es tu marketplace de confianza. Compra y vende de forma segura y sencilla.
+            LoCompro es el marketplace inverso. Decí qué querés comprar y recibí ofertas de vendedores.
           </p>
-          <CreatePostDialog onPostCreated={refetch} />
+          <CreateBuyRequestDialog onRequestCreated={refetch} />
         </div>
         
         {/* Search section */}
         <div className="w-full max-w-4xl mb-16">
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} placeholder="Buscar solicitudes de compra..." />
         </div>
         
         {/* Quick categories */}
@@ -66,20 +66,20 @@ const Index = () => {
         </div>
 
         {/* Results section */}
-        {(searchQuery || posts.length > 0) && (
+        {(searchQuery || buyRequests.length > 0) && (
           <div className="w-full max-w-6xl">
             <h3 className="text-2xl font-bold text-foreground mb-6">
-              {searchQuery ? `Resultados para "${searchQuery}"` : 'Publicaciones recientes'}
+              {searchQuery ? `Resultados para "${searchQuery}"` : 'Solicitudes recientes'}
             </h3>
             
             {loading ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">Buscando...</p>
               </div>
-            ) : posts.length > 0 ? (
+            ) : buyRequests.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
+                {buyRequests.map((request) => (
+                  <BuyRequestCard key={request.id} buyRequest={request} showOfferButton={true} />
                 ))}
               </div>
             ) : searchQuery ? (

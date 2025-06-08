@@ -52,9 +52,9 @@ const Navigation = () => {
               <Button 
                 variant="ghost" 
                 className="text-foreground hover:text-primary"
-                onClick={() => navigate('/my-posts')}
+                onClick={() => navigate('/my-requests')}
               >
-                Mis Publicaciones
+                Mis Solicitudes
               </Button>
             )}
             
