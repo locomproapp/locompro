@@ -192,11 +192,10 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
                       type="number" 
                       step="0.01"
                       placeholder="Ingresa el precio" 
-                      {...field}
-                      value={field.value || ''}
+                      value={field.value ?? ''}
                       onChange={(e) => {
                         const value = e.target.value;
-                        field.onChange(value === '' ? undefined : Number(value));
+                        field.onChange(value === '' ? undefined : parseFloat(value));
                       }}
                     />
                   </FormControl>
