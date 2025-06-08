@@ -14,7 +14,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+      <div className="w-[500px] h-[500px] mx-auto bg-muted rounded-lg flex items-center justify-center">
         <div className="text-center">
           <ImageIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">Sin imágenes</p>
@@ -26,8 +26,8 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
   return (
     <>
       <div className="space-y-4">
-        {/* Imagen principal */}
-        <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+        {/* Imagen principal - 500x500 centrada */}
+        <div className="w-[500px] h-[500px] mx-auto bg-muted rounded-lg overflow-hidden">
           <img
             src={images[0]}
             alt="Imagen principal"
@@ -38,11 +38,11 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
         {/* Miniaturas */}
         {images.length > 1 && (
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2 max-w-[500px] mx-auto">
             {images.slice(1, 5).map((image, index) => (
               <div
                 key={index + 1}
-                className="aspect-square bg-muted rounded overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                className="aspect-square bg-muted rounded overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative"
                 onClick={() => setSelectedImage(index + 1)}
               >
                 <img
@@ -61,13 +61,15 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
         )}
 
         {images.length > 1 && (
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setSelectedImage(0)}
-          >
-            Ver todas las imágenes ({images.length})
-          </Button>
+          <div className="max-w-[500px] mx-auto">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setSelectedImage(0)}
+            >
+              Ver todas las imágenes ({images.length})
+            </Button>
+          </div>
         )}
       </div>
 
