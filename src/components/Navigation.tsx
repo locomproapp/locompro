@@ -48,6 +48,16 @@ const Navigation = () => {
               Mercado
             </Button>
             
+            {user && (
+              <Button 
+                variant="ghost" 
+                className="text-foreground hover:text-primary"
+                onClick={() => navigate('/my-posts')}
+              >
+                Mis Publicaciones
+              </Button>
+            )}
+            
             {user && <ProfileDialog />}
             
             <Button 

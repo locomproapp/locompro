@@ -25,7 +25,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     maxPrice: '',
     referenceLink: '',
     zone: '',
-    characteristics: '',
     contactInfo: '',
     images: [] as string[]
   });
@@ -53,7 +52,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
           reference_link: formData.referenceLink || null,
           zone: formData.zone,
-          characteristics: formData.characteristics ? JSON.parse(`{"description": "${formData.characteristics}"}`) : null,
+          characteristics: formData.description ? JSON.parse(`{"description": "${formData.description}"}`) : null,
           contact_info: formData.contactInfo ? JSON.parse(`{"info": "${formData.contactInfo}"}`) : null,
           images: formData.images.length > 0 ? formData.images : null
         });
@@ -72,7 +71,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         maxPrice: '',
         referenceLink: '',
         zone: '',
-        characteristics: '',
         contactInfo: '',
         images: []
       });
@@ -109,7 +107,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Título *</Label>
+            <Label htmlFor="title">Título del Producto *</Label>
             <Input
               id="title"
               value={formData.title}
@@ -120,13 +118,13 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           </div>
 
           <div>
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="description">Descripción y Características</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="Describe tu producto..."
-              rows={3}
+              placeholder="Describe tu producto: características, estado, marca, modelo, etc."
+              rows={4}
             />
           </div>
 
@@ -176,17 +174,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               onChange={(e) => handleInputChange('zone', e.target.value)}
               placeholder="Capital Federal, Zona Norte, etc."
               required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="characteristics">Características del Producto</Label>
-            <Textarea
-              id="characteristics"
-              value={formData.characteristics}
-              onChange={(e) => handleInputChange('characteristics', e.target.value)}
-              placeholder="Color, marca, modelo, estado, etc."
-              rows={2}
             />
           </div>
 

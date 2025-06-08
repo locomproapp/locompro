@@ -49,7 +49,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <div>
           <h3 className="font-semibold text-lg line-clamp-2">{post.title}</h3>
           {post.description && (
-            <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
+            <p className="text-muted-foreground text-sm line-clamp-3 mt-2">
               {post.description}
             </p>
           )}
@@ -65,6 +65,7 @@ const PostCard = ({ post }: PostCardProps) => {
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:text-primary/80"
+              title="Ver enlace de referencia"
             >
               <ExternalLink className="h-4 w-4" />
             </a>
@@ -75,17 +76,6 @@ const PostCard = ({ post }: PostCardProps) => {
           <MapPin className="h-4 w-4" />
           <span>{post.zone}</span>
         </div>
-
-        {post.characteristics && (
-          <div className="text-sm">
-            <span className="font-medium">Características: </span>
-            <span className="text-muted-foreground">
-              {typeof post.characteristics === 'object' 
-                ? post.characteristics.description || JSON.stringify(post.characteristics)
-                : post.characteristics}
-            </span>
-          </div>
-        )}
 
         <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
           <div className="flex items-center gap-1">
