@@ -1,11 +1,49 @@
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import BuyRequestCard from '@/components/BuyRequestCard';
+import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
 import { Button } from '@/components/ui/button';
 import { Search, Package, Handshake, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+
+interface BuyRequest {
+  id: string;
+  title: string;
+  description: string | null;
+  min_price: number | null;
+  max_price: number | null;
+  reference_image: string | null;
+  zone: string;
+  status: string;
+  created_at: string;
+  profiles?: {
+    full_name: string | null;
+  } | null;
+}
 
 const Index = () => {
+  const { data: buyRequests = [], refetch } = useQuery({
+    queryKey: ['recent-buy-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('buy_requests')
+        .select(`
+          *,
+          profiles (full_name)
+        `)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      return data as BuyRequest[];
+    }
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -27,14 +65,26 @@ const Index = () => {
                 Explorar Mercado
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6">
-              <Link to="/market">
-                <Package className="mr-2 h-5 w-5" />
-                Publicar Búsqueda
-              </Link>
-            </Button>
+            <CreateBuyRequestDialog onRequestCreated={refetch} />
           </div>
         </div>
+
+        {/* Recent Buy Requests */}
+        {buyRequests.length > 0 && (
+          <div className="mb-16">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold">Solicitudes recientes</h2>
+              <Button asChild variant="outline">
+                <Link to="/market">Ver todas</Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {buyRequests.map((request) => (
+                <BuyRequestCard key={request.id} buyRequest={request} showOfferButton={true} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* How it works */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">

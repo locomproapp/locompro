@@ -8,11 +8,9 @@ interface BuyRequest {
   description: string | null;
   min_price: number | null;
   max_price: number | null;
-  reference_link: string | null;
+  reference_image: string | null;
   zone: string;
-  contact_info: any;
-  characteristics: any;
-  images: string[] | null;
+  status: string;
   created_at: string;
   profiles: {
     full_name: string | null;
@@ -28,13 +26,14 @@ export const useBuyRequests = (searchQuery?: string) => {
     try {
       setLoading(true);
       let query = supabase
-        .from('posts')
+        .from('buy_requests')
         .select(`
           *,
           profiles (
             full_name
           )
         `)
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       if (searchQuery && searchQuery.trim()) {
