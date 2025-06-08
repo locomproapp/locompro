@@ -19,13 +19,12 @@ interface Offer {
   status: string;
   created_at: string;
   updated_at: string;
-  rejection_reason?: string | null;
   buyer_rating?: number | null;
   profiles?: {
     full_name: string | null;
     email: string | null;
   } | null;
-  buy_requests?: {
+  posts?: {
     title: string;
     zone: string;
   } | null;
@@ -55,15 +54,15 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-800';
       case 'accepted':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800';
       case 'rejected':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800';
       case 'withdrawn':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -86,10 +85,7 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
     try {
       const { error } = await supabase
         .from('offers')
-        .update({ 
-          status: newStatus,
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: newStatus })
         .eq('id', offer.id);
 
       if (error) throw error;
@@ -130,17 +126,15 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
     );
   };
 
-  const cardBorderColor = offer.status === 'rejected' ? 'border-red-200' : 'border-border';
-
   return (
-    <Card className={`p-4 ${cardBorderColor}`}>
+    <Card className="p-4">
       <div className="space-y-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-lg">{offer.title}</h3>
-            {offer.buy_requests && (
+            {offer.posts && (
               <p className="text-sm text-muted-foreground">
-                Para: {offer.buy_requests.title} ({offer.buy_requests.zone})
+                Para: {offer.posts.title} ({offer.posts.zone})
               </p>
             )}
             {showPublicInfo && offer.profiles?.full_name && (
@@ -162,15 +156,6 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
 
         {offer.description && (
           <p className="text-muted-foreground text-sm">{offer.description}</p>
-        )}
-
-        {offer.status === 'rejected' && offer.rejection_reason && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <p className="text-sm font-medium text-red-800 mb-1">
-              Motivo del rechazo:
-            </p>
-            <p className="text-sm text-red-700">{offer.rejection_reason}</p>
-          </div>
         )}
 
         {offer.contact_info && (showActions || showPublicInfo) && (
@@ -215,11 +200,6 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             <Calendar className="h-3 w-3" />
             <span>{formatDate(offer.created_at)}</span>
           </div>
-          {offer.status === 'rejected' && (
-            <span className="text-red-600 font-medium">
-              Rechazada {formatDate(offer.updated_at)}
-            </span>
-          )}
         </div>
 
         {showActions && offer.status === 'pending' && (

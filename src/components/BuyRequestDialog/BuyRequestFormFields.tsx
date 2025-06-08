@@ -3,11 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { BuyRequestFormData } from '@/hooks/useBuyRequestForm';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 
 interface BuyRequestFormFieldsProps {
   formData: BuyRequestFormData;
@@ -15,19 +11,6 @@ interface BuyRequestFormFieldsProps {
 }
 
 const BuyRequestFormFields = ({ formData, onInputChange }: BuyRequestFormFieldsProps) => {
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
   return (
     <>
       <div>
@@ -39,44 +22,6 @@ const BuyRequestFormFields = ({ formData, onInputChange }: BuyRequestFormFieldsP
           placeholder="Ej: iPhone 15 Pro Max, Bicicleta de montaña, Silla de oficina..."
           required
         />
-      </div>
-
-      <div>
-        <Label htmlFor="categoryId">Categoría *</Label>
-        <Select value={formData.categoryId} onValueChange={(value) => onInputChange('categoryId', value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona una categoría" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories?.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label>Condición del producto *</Label>
-        <RadioGroup
-          value={formData.condition}
-          onValueChange={(value) => onInputChange('condition', value)}
-          className="flex gap-6 mt-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="nuevo" id="nuevo" />
-            <Label htmlFor="nuevo">Nuevo</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="usado" id="usado" />
-            <Label htmlFor="usado">Usado</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cualquiera" id="cualquiera" />
-            <Label htmlFor="cualquiera">Cualquiera</Label>
-          </div>
-        </RadioGroup>
       </div>
 
       <div>

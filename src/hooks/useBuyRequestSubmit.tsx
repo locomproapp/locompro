@@ -28,24 +28,6 @@ export const useBuyRequestSubmit = () => {
       throw new Error("Imágenes requeridas");
     }
 
-    if (!formData.categoryId) {
-      toast({
-        title: "Error",
-        description: "Debes seleccionar una categoría",
-        variant: "destructive"
-      });
-      throw new Error("Categoría requerida");
-    }
-
-    if (!formData.condition) {
-      toast({
-        title: "Error",
-        description: "Debes seleccionar la condición del producto",
-        variant: "destructive"
-      });
-      throw new Error("Condición requerida");
-    }
-
     setLoading(true);
     try {
       const { error } = await supabase
@@ -54,7 +36,6 @@ export const useBuyRequestSubmit = () => {
           user_id: user.id,
           title: formData.title,
           description: formData.description || null,
-          category_id: formData.categoryId,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
           zone: formData.zone,
