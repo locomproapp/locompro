@@ -125,7 +125,7 @@ const CreateBuyRequest = () => {
     try {
       const uploadPromises = validFiles.map(async (file, index) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `buy-request-${Date.now()}-${index}.${fileExt}`;
+        const fileName = `${user?.id}/${Date.now()}-${index}.${fileExt}`;
         
         console.log('Subiendo archivo:', fileName, 'Tamaño:', file.size);
         
