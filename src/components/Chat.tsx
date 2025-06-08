@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageCircle } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { useChat } from '@/hooks/useChat';
-import ChatMessages from '@/components/Chat/ChatMessages';
-import MessageInput from '@/components/Chat/MessageInput';
+import ChatLoading from '@/components/Chat/ChatLoading';
+import ChatHeader from '@/components/Chat/ChatHeader';
+import ChatContainer from '@/components/Chat/ChatContainer';
 
 interface ChatProps {
   buyRequestId: string;
@@ -23,39 +23,18 @@ const Chat = ({ buyRequestId, sellerId, offerId }: ChatProps) => {
   } = useChat(buyRequestId, sellerId, offerId);
 
   if (chatLoading) {
-    return (
-      <Card>
-        <CardContent className="p-4">
-          <div className="text-center py-4">
-            <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">Iniciando chat...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <ChatLoading />;
   }
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          Chat con el vendedor
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="h-64 overflow-y-auto p-4">
-          <ChatMessages 
-            messages={messages}
-            isLoading={messagesLoading}
-          />
-        </div>
-
-        <MessageInput 
-          onSendMessage={sendMessage}
-          isSending={isSending}
-        />
-      </CardContent>
+      <ChatHeader />
+      <ChatContainer
+        messages={messages}
+        messagesLoading={messagesLoading}
+        sendMessage={sendMessage}
+        isSending={isSending}
+      />
     </Card>
   );
 };
