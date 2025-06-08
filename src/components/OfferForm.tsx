@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -43,6 +42,26 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
       delivery_time: ''
     }
   });
+
+  // Función para formatear el precio con separador de miles
+  const formatPrice = (value: string): string => {
+    // Remover todo lo que no sea número
+    const numericValue = value.replace(/[^\d]/g, '');
+    
+    if (numericValue === '') return '';
+    
+    // Convertir a número y formatear con separador de miles
+    const number = parseInt(numericValue);
+    const formatted = number.toLocaleString('es-ES');
+    
+    return `$ ${formatted}`;
+  };
+
+  // Función para extraer el valor numérico del formato
+  const parseFormattedPrice = (formattedValue: string): number | undefined => {
+    const numericValue = formattedValue.replace(/[^\d]/g, '');
+    return numericValue === '' ? undefined : parseInt(numericValue);
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
@@ -186,16 +205,16 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Precio ($)</FormLabel>
+                  <FormLabel>Precio</FormLabel>
                   <FormControl>
                     <Input 
-                      type="number" 
-                      step="0.01"
+                      type="text"
                       placeholder="Ingresa el precio" 
-                      value={field.value ?? ''}
+                      value={field.value ? formatPrice(field.value.toString()) : ''}
                       onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === '' ? undefined : parseFloat(value));
+                        const rawValue = e.target.value;
+                        const numericValue = parseFormattedPrice(rawValue);
+                        field.onChange(numericValue);
                       }}
                     />
                   </FormControl>
