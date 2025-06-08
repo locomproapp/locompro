@@ -1,16 +1,54 @@
+
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SearchBar from '@/components/SearchBar';
 import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
 import BuyRequestCard from '@/components/BuyRequestCard';
-import { useBuyRequests } from '@/hooks/useBuyRequests';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+interface BuyRequest {
+  id: string;
+  title: string;
+  description: string | null;
+  min_price: number | null;
+  max_price: number | null;
+  reference_image: string | null;
+  zone: string;
+  status: string;
+  created_at: string;
+  profiles?: {
+    full_name: string | null;
+  } | null;
+}
+
 const Market = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { buyRequests, loading, refetch } = useBuyRequests(searchQuery);
+
+  const { data: buyRequests = [], isLoading, refetch } = useQuery({
+    queryKey: ['buy-requests', searchQuery],
+    queryFn: async () => {
+      let query = supabase
+        .from('buy_requests')
+        .select(`
+          *,
+          profiles (full_name)
+        `)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (searchQuery && searchQuery.trim()) {
+        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as BuyRequest[];
+    }
+  });
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -98,7 +136,7 @@ const Market = () => {
             </span>
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-primary animate-pulse" />
