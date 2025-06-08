@@ -19,7 +19,7 @@ interface Offer {
     full_name: string | null;
     email: string | null;
   } | null;
-  posts?: {
+  buy_requests?: {
     title: string;
     zone: string;
   } | null;
@@ -41,7 +41,7 @@ export const useOffers = (buyRequestId?: string) => {
             full_name,
             email
           ),
-          posts (
+          buy_requests (
             title,
             zone
           )
@@ -59,7 +59,7 @@ export const useOffers = (buyRequestId?: string) => {
       const transformedData: Offer[] = (data || []).map(offer => ({
         ...offer,
         profiles: offer.profiles || null,
-        posts: offer.posts || null
+        buy_requests: offer.buy_requests || null
       }));
       
       setOffers(transformedData);

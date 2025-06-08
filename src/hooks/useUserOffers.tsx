@@ -15,7 +15,7 @@ interface UserOffer {
   status: string;
   created_at: string;
   updated_at: string;
-  posts: {
+  buy_requests: {
     title: string;
     zone: string;
   } | null;
@@ -40,7 +40,7 @@ export const useUserOffers = () => {
         .from('offers')
         .select(`
           *,
-          posts (
+          buy_requests (
             title,
             zone
           )
@@ -52,7 +52,7 @@ export const useUserOffers = () => {
       
       const transformedData: UserOffer[] = (data || []).map(offer => ({
         ...offer,
-        posts: offer.posts || null
+        buy_requests: offer.buy_requests || null
       }));
       
       setOffers(transformedData);
