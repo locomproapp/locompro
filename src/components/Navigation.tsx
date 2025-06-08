@@ -42,6 +42,7 @@ const Navigation = () => {
             <Button 
               variant="ghost" 
               className="text-foreground hover:text-primary"
+              onClick={() => navigate('/market')}
             >
               Mercado
             </Button>
