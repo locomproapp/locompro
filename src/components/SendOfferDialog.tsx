@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Send, Upload, X } from 'lucide-react';
+import { Send, X } from 'lucide-react';
 
 const offerSchema = z.object({
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
@@ -19,7 +19,7 @@ const offerSchema = z.object({
   price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
   video_link: z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
   contact_info: z.object({
-    email: z.string().email('Email inválido').optional(),
+    email: z.string().email('Email inválido').optional().or(z.literal('')),
     phone: z.string().optional(),
     whatsapp: z.string().optional(),
   }).optional(),
@@ -58,20 +58,31 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const newImages = [...selectedImages, ...files].slice(0, 5); // Máximo 5 imágenes
+    
+    // Validar que no exceda el límite de 5 imágenes
+    const remainingSlots = 5 - selectedImages.length;
+    const newImages = [...selectedImages, ...files.slice(0, remainingSlots)];
+    
     setSelectedImages(newImages);
 
-    // Crear URLs de previsualización
+    // Limpiar URLs anteriores para evitar memory leaks
+    imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
+    
+    // Crear nuevas URLs de previsualización
     const newPreviewUrls = newImages.map(file => URL.createObjectURL(file));
     setImagePreviewUrls(newPreviewUrls);
+
+    // Limpiar el input para permitir seleccionar el mismo archivo otra vez
+    event.target.value = '';
   };
 
   const removeImage = (index: number) => {
     const newImages = selectedImages.filter((_, i) => i !== index);
-    const newPreviewUrls = imagePreviewUrls.filter((_, i) => i !== index);
     
     // Limpiar URL del objeto para evitar memory leaks
     URL.revokeObjectURL(imagePreviewUrls[index]);
+    
+    const newPreviewUrls = imagePreviewUrls.filter((_, i) => i !== index);
     
     setSelectedImages(newImages);
     setImagePreviewUrls(newPreviewUrls);
@@ -116,6 +127,14 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
       // Subir imágenes primero
       const imageUrls = await uploadImages();
 
+      // Preparar la información de contacto
+      const contactInfo = {
+        email: data.contact_info?.email || null,
+        phone: data.contact_info?.phone || null,
+        whatsapp: data.contact_info?.whatsapp || null,
+        video_link: data.video_link || null,
+      };
+
       const { error } = await supabase.from('offers').insert({
         buy_request_id: buyRequestId,
         seller_id: user.id,
@@ -123,10 +142,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
         description: data.description || null,
         price: data.price,
         images: imageUrls.length > 0 ? imageUrls : null,
-        contact_info: {
-          ...data.contact_info,
-          video_link: data.video_link || null,
-        },
+        contact_info: contactInfo,
       });
 
       if (error) throw error;
@@ -139,7 +155,11 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
       // Limpiar formulario y estado
       form.reset();
       setSelectedImages([]);
+      
+      // Limpiar URLs de previsualización
+      imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
       setImagePreviewUrls([]);
+      
       setOpen(false);
       onOfferSent?.();
     } catch (err) {
@@ -153,6 +173,13 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
       setLoading(false);
     }
   };
+
+  // Limpiar URLs cuando el componente se desmonta
+  React.useEffect(() => {
+    return () => {
+      imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   if (!user) {
     return null;
@@ -241,6 +268,11 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
                   disabled={selectedImages.length >= 5}
                   className="cursor-pointer"
                 />
+                {selectedImages.length >= 5 && (
+                  <p className="text-sm text-muted-foreground">
+                    Has alcanzado el límite máximo de 5 imágenes
+                  </p>
+                )}
                 {imagePreviewUrls.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
                     {imagePreviewUrls.map((url, index) => (
@@ -271,10 +303,10 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
               name="video_link"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Link de video (opcional)</FormLabel>
+                  <FormLabel>Link de video referencial (opcional)</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="https://youtube.com/watch?v=..." 
+                      placeholder="https://youtube.com/watch?v=... o https://drive.google.com/..." 
                       type="url"
                       {...field} 
                     />
