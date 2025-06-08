@@ -14,9 +14,9 @@ interface Post {
   characteristics: any;
   images: string[] | null;
   created_at: string;
-  profiles?: {
+  profiles: {
     full_name: string | null;
-  };
+  } | null;
 }
 
 export const usePosts = (searchQuery?: string) => {
@@ -44,7 +44,14 @@ export const usePosts = (searchQuery?: string) => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setPosts(data || []);
+      
+      // Transform the data to ensure proper typing
+      const transformedData: Post[] = (data || []).map(post => ({
+        ...post,
+        profiles: post.profiles || null
+      }));
+      
+      setPosts(transformedData);
     } catch (err) {
       console.error('Error fetching posts:', err);
       setError(err instanceof Error ? err.message : 'Error desconocido');
