@@ -59,6 +59,24 @@ const BuyerInfo = ({ post }: BuyerInfoProps) => {
       .slice(0, 2);
   };
 
+  const formatContactInfo = (contactInfo: any) => {
+    if (!contactInfo) return null;
+    
+    // If it's a string, display it directly
+    if (typeof contactInfo === 'string') {
+      return contactInfo;
+    }
+    
+    // If it's an object, format it nicely
+    if (typeof contactInfo === 'object') {
+      return Object.entries(contactInfo)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ');
+    }
+    
+    return String(contactInfo);
+  };
+
   return (
     <div className="bg-card rounded-lg border border-border p-6">
       <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -128,14 +146,12 @@ const BuyerInfo = ({ post }: BuyerInfoProps) => {
           </a>
         </Button>
 
-        {/* Información de contacto existente */}
+        {/* Información de contacto formateada */}
         {post.contact_info && (
           <div className="mt-4 pt-4 border-t border-border">
             <h4 className="text-sm font-medium mb-2">Información de contacto:</h4>
-            <div className="bg-muted p-2 rounded text-xs">
-              <pre className="whitespace-pre-wrap">
-                {JSON.stringify(post.contact_info, null, 2)}
-              </pre>
+            <div className="text-sm text-muted-foreground">
+              {formatContactInfo(post.contact_info)}
             </div>
           </div>
         )}
