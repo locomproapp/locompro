@@ -6,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 interface RejectOfferDialogProps {
   open: boolean;
@@ -27,12 +29,29 @@ const RejectOfferDialog = ({ open, onOpenChange, onConfirm, isLoading }: RejectO
   const [selectedReason, setSelectedReason] = useState('');
   const [customReason, setCustomReason] = useState('');
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const reason = selectedReason === 'Otro motivo' ? customReason : selectedReason;
     if (reason.trim()) {
-      onConfirm(reason);
-      setSelectedReason('');
-      setCustomReason('');
+      try {
+        // Call the onConfirm function which should handle the database update
+        await onConfirm(reason);
+        
+        // Reset form state
+        setSelectedReason('');
+        setCustomReason('');
+        
+        // Close dialog
+        onOpenChange(false);
+        
+        console.log('Offer rejected with reason:', reason);
+      } catch (error) {
+        console.error('Error rejecting offer:', error);
+        toast({
+          title: "Error",
+          description: "No se pudo rechazar la oferta. Intenta de nuevo.",
+          variant: "destructive"
+        });
+      }
     }
   };
 

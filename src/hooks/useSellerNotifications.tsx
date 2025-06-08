@@ -16,7 +16,18 @@ export const useSellerNotifications = () => {
       
       const { data, error } = await supabase
         .from('offers')
-        .select('id, title, rejection_reason, updated_at')
+        .select(`
+          id, 
+          title, 
+          rejection_reason, 
+          updated_at, 
+          status,
+          price,
+          buy_requests (
+            title,
+            zone
+          )
+        `)
         .eq('seller_id', user.id)
         .eq('status', 'rejected')
         .not('rejection_reason', 'is', null)
@@ -61,7 +72,7 @@ export const useSellerNotifications = () => {
             });
           }
           
-          // Refetch notifications
+          // Refetch notifications immediately to reflect the new status
           refetch();
         }
       )

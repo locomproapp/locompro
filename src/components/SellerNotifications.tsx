@@ -14,7 +14,8 @@ interface RejectedOffer {
   title: string;
   price: number;
   rejection_reason: string;
-  created_at: string;
+  status: string;
+  updated_at: string;
   buy_requests: {
     title: string;
     zone: string;
@@ -36,7 +37,8 @@ const SellerNotifications = () => {
           title,
           price,
           rejection_reason,
-          created_at,
+          status,
+          updated_at,
           buy_requests (
             title,
             zone
@@ -51,8 +53,36 @@ const SellerNotifications = () => {
       if (error) throw error;
       return data as RejectedOffer[];
     },
-    enabled: !!user
+    enabled: !!user,
+    refetchInterval: 10000 // More frequent updates
   });
+
+  // Subscribe to real-time updates
+  React.useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('notifications-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Real-time offer update:', payload);
+          // Refetch notifications when an offer is updated
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, refetch]);
 
   const markAsRead = async (offerId: string) => {
     try {
@@ -87,6 +117,18 @@ const SellerNotifications = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getStatusBadge = (status: string) => {
+    if (status === 'rejected') {
+      return (
+        <Badge variant="destructive" className="text-xs">
+          <AlertTriangle className="h-3 w-3 mr-1" />
+          Rechazada
+        </Badge>
+      );
+    }
+    return <Badge variant="secondary" className="text-xs">{status}</Badge>;
   };
 
   if (isLoading) {
@@ -134,10 +176,7 @@ const SellerNotifications = () => {
           <div key={offer.id} className="border rounded-lg p-4 bg-red-50 border-red-200">
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-500" />
-                <Badge variant="destructive" className="text-xs">
-                  Oferta Rechazada
-                </Badge>
+                {getStatusBadge(offer.status)}
               </div>
               <Button
                 variant="ghost"
@@ -167,9 +206,15 @@ const SellerNotifications = () => {
                 <p className="text-sm text-red-700">{offer.rejection_reason}</p>
               </div>
               
-              <p className="text-xs text-muted-foreground">
-                {formatDate(offer.created_at)}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                  Rechazada el {formatDate(offer.updated_at)}
+                </p>
+                <div className="flex items-center gap-1 text-xs text-red-600">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  Estado: {offer.status}
+                </div>
+              </div>
             </div>
           </div>
         ))}
