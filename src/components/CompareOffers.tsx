@@ -49,6 +49,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
   const { data: offers, isLoading } = useQuery({
     queryKey: ['offers', buyRequestId],
     queryFn: async () => {
+      console.log('Cargando ofertas para buy request:', buyRequestId);
       const { data, error } = await supabase
         .from('offers')
         .select(`
@@ -61,20 +62,29 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         .eq('buy_request_id', buyRequestId)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error cargando ofertas:', error);
+        throw error;
+      }
+      console.log('Ofertas cargadas:', data);
       return data as Offer[];
     }
   });
 
   const acceptOfferMutation = useMutation({
     mutationFn: async (offerId: string) => {
+      console.log('Iniciando proceso de aceptar oferta:', offerId);
+      
       // Update the accepted offer status
       const { error: offerError } = await supabase
         .from('offers')
         .update({ status: 'accepted' })
         .eq('id', offerId);
 
-      if (offerError) throw offerError;
+      if (offerError) {
+        console.error('Error aceptando oferta:', offerError);
+        throw offerError;
+      }
 
       // Reject all other offers for this buy request
       const { error: rejectError } = await supabase
@@ -83,7 +93,10 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         .eq('buy_request_id', buyRequestId)
         .neq('id', offerId);
 
-      if (rejectError) throw rejectError;
+      if (rejectError) {
+        console.error('Error finalizando otras ofertas:', rejectError);
+        throw rejectError;
+      }
 
       // Close the buy request
       const { error: requestError } = await supabase
@@ -91,8 +104,12 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         .update({ status: 'closed' })
         .eq('id', buyRequestId);
 
-      if (requestError) throw requestError;
+      if (requestError) {
+        console.error('Error cerrando buy request:', requestError);
+        throw requestError;
+      }
 
+      console.log('Oferta aceptada exitosamente');
       return offerId;
     },
     onSuccess: (offerId) => {
@@ -105,10 +122,10 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       queryClient.invalidateQueries({ queryKey: ['buy-request', buyRequestId] });
     },
     onError: (error) => {
-      console.error('Error accepting offer:', error);
+      console.error('Error en mutación de aceptar oferta:', error);
       toast({
         title: "Error",
-        description: "No se pudo aceptar la oferta",
+        description: "No se pudo aceptar la oferta. Intenta de nuevo.",
         variant: "destructive"
       });
     }
@@ -116,6 +133,8 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
 
   const rejectOfferMutation = useMutation({
     mutationFn: async ({ offerId, reason }: { offerId: string; reason: string }) => {
+      console.log('Rechazando oferta:', offerId, 'con motivo:', reason);
+      
       const { error } = await supabase
         .from('offers')
         .update({ 
@@ -124,7 +143,11 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         })
         .eq('id', offerId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error rechazando oferta:', error);
+        throw error;
+      }
+      console.log('Oferta rechazada exitosamente');
     },
     onSuccess: () => {
       toast({
@@ -136,10 +159,10 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       setOfferToReject(null);
     },
     onError: (error) => {
-      console.error('Error rejecting offer:', error);
+      console.error('Error en mutación de rechazar oferta:', error);
       toast({
         title: "Error",
-        description: "No se pudo rechazar la oferta",
+        description: "No se pudo rechazar la oferta. Intenta de nuevo.",
         variant: "destructive"
       });
     }
@@ -147,12 +170,18 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
 
   const deleteOfferMutation = useMutation({
     mutationFn: async (offerId: string) => {
+      console.log('Eliminando oferta:', offerId);
+      
       const { error } = await supabase
         .from('offers')
         .delete()
         .eq('id', offerId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error eliminando oferta:', error);
+        throw error;
+      }
+      console.log('Oferta eliminada exitosamente');
     },
     onSuccess: () => {
       toast({
@@ -162,10 +191,10 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       queryClient.invalidateQueries({ queryKey: ['offers', buyRequestId] });
     },
     onError: (error) => {
-      console.error('Error deleting offer:', error);
+      console.error('Error en mutación de eliminar oferta:', error);
       toast({
         title: "Error",
-        description: "No se pudo eliminar la oferta",
+        description: "No se pudo eliminar la oferta. Intenta de nuevo.",
         variant: "destructive"
       });
     }
@@ -173,6 +202,8 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
 
   const counterOfferMutation = useMutation({
     mutationFn: async ({ offerId, newPrice }: { offerId: string; newPrice: number }) => {
+      console.log('Enviando contraoferta:', offerId, 'nuevo precio:', newPrice);
+      
       const { error } = await supabase
         .from('offers')
         .update({ 
@@ -182,7 +213,11 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         })
         .eq('id', offerId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error enviando contraoferta:', error);
+        throw error;
+      }
+      console.log('Contraoferta enviada exitosamente');
     },
     onSuccess: () => {
       toast({
@@ -194,10 +229,10 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
       setNewPrice(0);
     },
     onError: (error) => {
-      console.error('Error sending counter offer:', error);
+      console.error('Error en mutación de contraoferta:', error);
       toast({
         title: "Error",
-        description: "No se pudo enviar la contraoferta",
+        description: "No se pudo enviar la contraoferta. Intenta de nuevo.",
         variant: "destructive"
       });
     }
@@ -370,6 +405,10 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                         src={image}
                         alt={`Producto ${index + 1}`}
                         className="h-20 w-full object-cover rounded"
+                        onError={(e) => {
+                          console.error('Error cargando imagen:', image);
+                          e.currentTarget.src = '/placeholder.svg';
+                        }}
                       />
                     ))}
                     {offer.images.length > 3 && (
@@ -380,7 +419,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
                   </div>
                 )}
 
-                {!offer.images || offer.images.length === 0 && (
+                {(!offer.images || offer.images.length === 0) && (
                   <div className="h-20 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">
                     Sin imágenes
                   </div>

@@ -17,12 +17,12 @@ const CreateBuyRequest = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     minPrice: '',
     maxPrice: '',
-    referenceLink: '',
     zone: '',
     images: [] as string[]
   });
@@ -77,13 +77,48 @@ const CreateBuyRequest = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUrlAdd = () => {
-    const url = prompt('Ingresa la URL de la imagen:');
-    if (url && url.trim()) {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('buy-requests')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from('buy-requests')
+          .getPublicUrl(fileName);
+
+        return data.publicUrl;
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, url.trim()]
+        images: [...prev.images, ...uploadedUrls]
       }));
+      
+      toast({
+        title: "Imágenes subidas",
+        description: "Las imágenes se han subido correctamente"
+      });
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron subir las imágenes",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -185,15 +220,29 @@ const CreateBuyRequest = () => {
             <div>
               <Label>Fotos de Referencia (Opcional)</Label>
               <div className="space-y-3 mt-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleImageUrlAdd}
-                  className="w-full border-dashed"
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Agregar imagen por URL
-                </Button>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="hidden"
+                  id="images-upload"
+                />
+                <label htmlFor="images-upload">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    disabled={uploading}
+                    className="w-full border-dashed cursor-pointer"
+                    asChild
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      {uploading ? 'Subiendo imágenes...' : 'Subir imágenes desde dispositivo'}
+                    </span>
+                  </Button>
+                </label>
                 
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
@@ -222,7 +271,7 @@ const CreateBuyRequest = () => {
               <Button type="button" variant="outline" asChild className="flex-1">
                 <Link to="/">Cancelar</Link>
               </Button>
-              <Button type="submit" disabled={loading} className="flex-1">
+              <Button type="submit" disabled={loading || uploading} className="flex-1">
                 {loading ? 'Creando...' : 'Crear Solicitud'}
               </Button>
             </div>

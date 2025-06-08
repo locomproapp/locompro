@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Upload, Search, X } from 'lucide-react';
+import { Search, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
@@ -17,12 +18,12 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     minPrice: '',
     maxPrice: '',
-    referenceLink: '',
     zone: '',
     contactInfo: '',
     images: [] as string[]
@@ -42,18 +43,15 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
     setLoading(true);
     try {
       const { error } = await supabase
-        .from('posts')
+        .from('buy_requests')
         .insert({
           user_id: user.id,
           title: formData.title,
           description: formData.description || null,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
-          reference_link: formData.referenceLink || null,
           zone: formData.zone,
-          characteristics: formData.description ? JSON.parse(`{"description": "${formData.description}"}`) : null,
-          contact_info: formData.contactInfo ? JSON.parse(`{"info": "${formData.contactInfo}"}`) : null,
-          images: formData.images.length > 0 ? formData.images : null
+          reference_image: formData.images[0] || null
         });
 
       if (error) throw error;
@@ -68,7 +66,6 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
         description: '',
         minPrice: '',
         maxPrice: '',
-        referenceLink: '',
         zone: '',
         contactInfo: '',
         images: []
@@ -91,13 +88,48 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUrlAdd = () => {
-    const url = prompt('Ingresa la URL de la imagen:');
-    if (url && url.trim()) {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('buy-requests')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from('buy-requests')
+          .getPublicUrl(fileName);
+
+        return data.publicUrl;
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, url.trim()]
+        images: [...prev.images, ...uploadedUrls]
       }));
+      
+      toast({
+        title: "Imágenes subidas",
+        description: "Las imágenes se han subido correctamente"
+      });
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron subir las imágenes",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -172,17 +204,6 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
           </div>
 
           <div>
-            <Label htmlFor="referenceLink">Enlace de Referencia (Opcional)</Label>
-            <Input
-              id="referenceLink"
-              type="url"
-              value={formData.referenceLink}
-              onChange={(e) => handleInputChange('referenceLink', e.target.value)}
-              placeholder="https://mercadolibre.com.ar/... (para mostrar ejemplo de lo que buscás)"
-            />
-          </div>
-
-          <div>
             <Label htmlFor="zone">Zona de Entrega *</Label>
             <Input
               id="zone"
@@ -207,15 +228,29 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
           <div>
             <Label>Fotos de Referencia (Opcional)</Label>
             <div className="space-y-3">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handleImageUrlAdd}
-                className="w-full border-dashed"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Agregar imagen por URL
-              </Button>
+              <Input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="hidden"
+                id="images-upload"
+              />
+              <label htmlFor="images-upload">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  disabled={uploading}
+                  className="w-full border-dashed cursor-pointer"
+                  asChild
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    {uploading ? 'Subiendo imágenes...' : 'Subir imágenes desde dispositivo'}
+                  </span>
+                </Button>
+              </label>
               
               {formData.images.length > 0 && (
                 <div className="grid grid-cols-2 gap-2">
