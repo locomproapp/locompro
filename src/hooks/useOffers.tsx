@@ -14,9 +14,14 @@ interface Offer {
   status: string;
   created_at: string;
   updated_at: string;
+  buyer_rating?: number | null;
   profiles: {
     full_name: string | null;
     email: string | null;
+  } | null;
+  posts?: {
+    title: string;
+    zone: string;
   } | null;
 }
 
@@ -35,6 +40,10 @@ export const useOffers = (buyRequestId?: string) => {
           profiles (
             full_name,
             email
+          ),
+          posts (
+            title,
+            zone
           )
         `)
         .order('created_at', { ascending: false });
@@ -49,7 +58,8 @@ export const useOffers = (buyRequestId?: string) => {
       
       const transformedData: Offer[] = (data || []).map(offer => ({
         ...offer,
-        profiles: offer.profiles || null
+        profiles: offer.profiles || null,
+        posts: offer.posts || null
       }));
       
       setOffers(transformedData);
