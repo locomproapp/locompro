@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
-import SendOfferDialog from './SendOfferDialog';
+import OfferForm from './OfferForm';
 import BuyRequestActions from './BuyRequestActions';
 
 interface BuyRequest {
@@ -121,7 +121,7 @@ const BuyRequestCard = ({
 
         {showOfferButton && (
           <div className="pt-2">
-            <SendOfferDialog 
+            <OfferForm 
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
             />
