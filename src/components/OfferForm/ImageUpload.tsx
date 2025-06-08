@@ -12,9 +12,10 @@ interface ImageUploadProps {
   setImages: React.Dispatch<React.SetStateAction<string[]>>;
   uploading: boolean;
   setUploading: React.Dispatch<React.SetStateAction<boolean>>;
+  bucketName?: string;
 }
 
-const ImageUpload = ({ images, setImages, uploading, setUploading }: ImageUploadProps) => {
+const ImageUpload = ({ images, setImages, uploading, setUploading, bucketName = 'offers' }: ImageUploadProps) => {
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
@@ -48,17 +49,17 @@ const ImageUpload = ({ images, setImages, uploading, setUploading }: ImageUpload
     if (validFiles.length === 0) return;
 
     setUploading(true);
-    console.log('Iniciando subida de', validFiles.length, 'archivos');
+    console.log('Iniciando subida de', validFiles.length, 'archivos al bucket:', bucketName);
 
     try {
       const uploadPromises = validFiles.map(async (file, index) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `offer-${Date.now()}-${index}.${fileExt}`;
+        const fileName = `${Date.now()}-${index}.${fileExt}`;
         
-        console.log('Subiendo archivo:', fileName, 'Tamaño:', file.size);
+        console.log('Subiendo archivo:', fileName, 'Tamaño:', file.size, 'Bucket:', bucketName);
         
         const { data, error: uploadError } = await supabase.storage
-          .from('offers')
+          .from(bucketName)
           .upload(fileName, file, {
             cacheControl: '3600',
             upsert: false
@@ -72,7 +73,7 @@ const ImageUpload = ({ images, setImages, uploading, setUploading }: ImageUpload
         console.log('Archivo subido exitosamente:', data);
 
         const { data: urlData } = supabase.storage
-          .from('offers')
+          .from(bucketName)
           .getPublicUrl(fileName);
 
         return urlData.publicUrl;

@@ -102,6 +102,15 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "Debes iniciar sesión para subir imágenes",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // Validar archivos antes de subir
     const validFiles = files.filter(file => {
       const isValidType = file.type.startsWith('image/');
@@ -131,15 +140,16 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
     if (validFiles.length === 0) return;
 
     setUploading(true);
-    console.log('Iniciando subida de', validFiles.length, 'archivos');
+    console.log('Iniciando subida de', validFiles.length, 'archivos al bucket buy-requests');
 
     try {
       const uploadPromises = validFiles.map(async (file, index) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${user?.id}/${Date.now()}-${index}.${fileExt}`;
+        const fileName = `${user.id}/${Date.now()}-${index}.${fileExt}`;
         
         console.log('Subiendo archivo:', fileName, 'Tamaño:', file.size);
         
+        // Intentar subir al bucket buy-requests
         const { data, error: uploadError } = await supabase.storage
           .from('buy-requests')
           .upload(fileName, file, {
@@ -177,7 +187,7 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
       console.error('Error completo en upload:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "No se pudieron subir las imágenes",
+        description: error instanceof Error ? error.message : "No se pudieron subir las imágenes. Verifica tu conexión e inténtalo de nuevo.",
         variant: "destructive"
       });
     } finally {
@@ -287,7 +297,7 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
                 accept="image/*"
                 multiple
                 onChange={handleImageUpload}
-                disabled={uploading}
+                disabled={uploading || !user}
                 className="hidden"
                 id="images-upload"
               />
@@ -295,13 +305,13 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
                 <Button 
                   type="button" 
                   variant="outline" 
-                  disabled={uploading}
+                  disabled={uploading || !user}
                   className="w-full border-dashed cursor-pointer"
                   asChild
                 >
                   <span className="flex items-center justify-center gap-2">
                     <Upload className="h-4 w-4" />
-                    {uploading ? 'Subiendo imágenes...' : 'Subir imágenes desde dispositivo *'}
+                    {uploading ? 'Subiendo imágenes...' : !user ? 'Inicia sesión para subir imágenes' : 'Subir imágenes desde dispositivo *'}
                   </span>
                 </Button>
               </label>
@@ -345,7 +355,7 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
             </Button>
             <Button 
               type="submit" 
-              disabled={loading || uploading || formData.images.length === 0} 
+              disabled={loading || uploading || formData.images.length === 0 || !user} 
               className="flex-1"
             >
               {loading ? 'Creando...' : 'Crear Solicitud'}
