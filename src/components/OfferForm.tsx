@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -5,12 +6,12 @@ import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
+import { Form } from '@/components/ui/form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Send, Upload, X } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import FormFields from './OfferForm/FormFields';
+import ImageUpload from './OfferForm/ImageUpload';
 
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
@@ -42,26 +43,6 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
       delivery_time: ''
     }
   });
-
-  // Función para formatear el precio con separador de miles
-  const formatPrice = (value: string): string => {
-    // Remover todo lo que no sea número
-    const numericValue = value.replace(/[^\d]/g, '');
-    
-    if (numericValue === '') return '';
-    
-    // Convertir a número y formatear con separador de miles
-    const number = parseInt(numericValue);
-    const formatted = number.toLocaleString('es-ES');
-    
-    return `$ ${formatted}`;
-  };
-
-  // Función para extraer el valor numérico del formato
-  const parseFormattedPrice = (formattedValue: string): number | undefined => {
-    const numericValue = formattedValue.replace(/[^\d]/g, '');
-    return numericValue === '' ? undefined : parseInt(numericValue);
-  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
@@ -116,52 +97,6 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    if (files.length === 0) return;
-
-    setUploading(true);
-    try {
-      const uploadPromises = files.map(async (file) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('offers')
-          .upload(fileName, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data } = supabase.storage
-          .from('offers')
-          .getPublicUrl(fileName);
-
-        return data.publicUrl;
-      });
-
-      const uploadedUrls = await Promise.all(uploadPromises);
-      setImages(prev => [...prev, ...uploadedUrls]);
-      
-      toast({
-        title: "Imágenes subidas",
-        description: "Las imágenes se han subido correctamente"
-      });
-    } catch (error) {
-      console.error('Error uploading images:', error);
-      toast({
-        title: "Error",
-        description: "No se pudieron subir las imágenes",
-        variant: "destructive"
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   if (!user) {
     return (
       <Button disabled className="w-full flex items-center gap-2">
@@ -186,143 +121,14 @@ const OfferForm = ({ buyRequestId, buyRequestTitle, onOfferCreated }: OfferFormP
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Título de tu oferta</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: iPhone 14 Pro Max 256GB Azul" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <FormFields control={form.control} />
+            
+            <ImageUpload 
+              images={images}
+              setImages={setImages}
+              uploading={uploading}
+              setUploading={setUploading}
             />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Precio</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="text"
-                      placeholder="Ingresa el precio" 
-                      value={field.value ? formatPrice(field.value.toString()) : ''}
-                      onChange={(e) => {
-                        const rawValue = e.target.value;
-                        const numericValue = parseFormattedPrice(rawValue);
-                        field.onChange(numericValue);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="delivery_time"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tiempo de entrega</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: 2-3 días, Inmediato, 1 semana" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mensaje al comprador</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Describe tu producto, estado, incluye detalles que puedan interesar al comprador..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción adicional (opcional)</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Información adicional sobre el producto..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-2">
-              <FormLabel>Fotos del producto</FormLabel>
-              <div className="space-y-4">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                  className="hidden"
-                  id="images-upload"
-                />
-                <label htmlFor="images-upload">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={uploading}
-                    className="cursor-pointer"
-                    asChild
-                  >
-                    <span className="flex items-center gap-2">
-                      <Upload className="h-4 w-4" />
-                      {uploading ? 'Subiendo...' : 'Subir fotos'}
-                    </span>
-                  </Button>
-                </label>
-                
-                {images.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2">
-                    {images.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img 
-                          src={image} 
-                          alt={`Producto ${index + 1}`} 
-                          className="h-20 w-full object-cover rounded"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={() => removeImage(index)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
 
             <div className="flex gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
