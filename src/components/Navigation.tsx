@@ -49,13 +49,22 @@ const Navigation = () => {
             </Button>
             
             {user && (
-              <Button 
-                variant="ghost" 
-                className="text-foreground hover:text-primary"
-                onClick={() => navigate('/my-requests')}
-              >
-                Mis Solicitudes
-              </Button>
+              <>
+                <Button 
+                  variant="ghost" 
+                  className="text-foreground hover:text-primary"
+                  onClick={() => navigate('/my-requests')}
+                >
+                  Mis Solicitudes
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-foreground hover:text-primary"
+                  onClick={() => navigate('/my-offers')}
+                >
+                  Mis Ofertas
+                </Button>
+              </>
             )}
             
             {user && <ProfileDialog />}

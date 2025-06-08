@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      offers: {
+        Row: {
+          buy_request_id: string
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          price: number
+          seller_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          buy_request_id: string
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          price: number
+          seller_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          buy_request_id?: string
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          price?: number
+          seller_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_buy_request_id_fkey"
+            columns: ["buy_request_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           characteristics: Json | null

@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import SendOfferDialog from './SendOfferDialog';
 
 interface BuyRequest {
   id: string;
@@ -43,11 +42,6 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
       month: 'short',
       year: 'numeric'
     });
-  };
-
-  const handleSendOffer = () => {
-    // TODO: Implement offer sending functionality
-    console.log('Sending offer for buy request:', buyRequest.id);
   };
 
   return (
@@ -103,13 +97,10 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
 
         {showOfferButton && (
           <div className="pt-2">
-            <Button 
-              onClick={handleSendOffer}
-              className="w-full"
-              variant="default"
-            >
-              Enviar Oferta
-            </Button>
+            <SendOfferDialog 
+              buyRequestId={buyRequest.id}
+              buyRequestTitle={buyRequest.title}
+            />
           </div>
         )}
       </div>
