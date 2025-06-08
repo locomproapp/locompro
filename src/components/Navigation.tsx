@@ -33,12 +33,19 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 
-              className="text-2xl font-bold text-primary cursor-pointer" 
+            <div 
+              className="flex items-center gap-2 cursor-pointer" 
               onClick={() => handleNavigate('/')}
             >
-              LoCompro
-            </h1>
+              <img 
+                src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                alt="LoCompro" 
+                className="h-8 w-8"
+              />
+              <h1 className="text-2xl font-bold text-primary">
+                LoCompro
+              </h1>
+            </div>
           </div>
           
           {/* Desktop Navigation */}

@@ -9,7 +9,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Sobre LoCompro */}
           <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">LoCompro</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <img 
+                src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                alt="LoCompro" 
+                className="h-6 w-6"
+              />
+              <h3 className="text-lg font-semibold text-foreground">LoCompro</h3>
+            </div>
             <p className="text-muted-foreground text-sm mb-4">
               La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
             </p>
