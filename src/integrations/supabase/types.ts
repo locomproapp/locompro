@@ -12,12 +12,14 @@ export type Database = {
       offers: {
         Row: {
           buy_request_id: string
+          buyer_rating: number | null
           contact_info: Json | null
           created_at: string
           description: string | null
           id: string
           images: string[] | null
           price: number
+          public_visibility: boolean | null
           seller_id: string
           status: string
           title: string
@@ -25,12 +27,14 @@ export type Database = {
         }
         Insert: {
           buy_request_id: string
+          buyer_rating?: number | null
           contact_info?: Json | null
           created_at?: string
           description?: string | null
           id?: string
           images?: string[] | null
           price: number
+          public_visibility?: boolean | null
           seller_id: string
           status?: string
           title: string
@@ -38,12 +42,14 @@ export type Database = {
         }
         Update: {
           buy_request_id?: string
+          buyer_rating?: number | null
           contact_info?: Json | null
           created_at?: string
           description?: string | null
           id?: string
           images?: string[] | null
           price?: number
+          public_visibility?: boolean | null
           seller_id?: string
           status?: string
           title?: string

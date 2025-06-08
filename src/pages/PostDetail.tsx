@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
 import SendOfferDialog from '@/components/SendOfferDialog';
 import OffersForRequest from '@/components/OffersForRequest';
+import PublicOffersList from '@/components/PublicOffersList';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';
@@ -165,6 +166,9 @@ const PostDetail = () => {
                 </div>
               )}
             </div>
+
+            {/* Lista pública de ofertas */}
+            <PublicOffersList buyRequestId={post.id} />
           </div>
 
           {/* Columna lateral */}

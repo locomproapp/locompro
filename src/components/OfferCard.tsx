@@ -3,7 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MessageCircle, Calendar, Check, X } from 'lucide-react';
+import { Mail, Phone, MessageCircle, Calendar, Check, X, Star } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -19,6 +19,7 @@ interface Offer {
   status: string;
   created_at: string;
   updated_at: string;
+  buyer_rating?: number | null;
   profiles?: {
     full_name: string | null;
     email: string | null;
@@ -32,10 +33,11 @@ interface Offer {
 interface OfferCardProps {
   offer: Offer;
   showActions?: boolean;
+  showPublicInfo?: boolean;
   onStatusUpdate?: () => void;
 }
 
-const OfferCard = ({ offer, showActions = false, onStatusUpdate }: OfferCardProps) => {
+const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatusUpdate }: OfferCardProps) => {
   const { toast } = useToast();
 
   const formatDate = (dateString: string) => {
@@ -104,6 +106,26 @@ const OfferCard = ({ offer, showActions = false, onStatusUpdate }: OfferCardProp
     }
   };
 
+  const renderRating = (rating: number | null | undefined) => {
+    if (!rating) return null;
+    
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`h-3 w-3 ${
+              i < rating 
+                ? 'fill-yellow-400 text-yellow-400' 
+                : 'text-gray-300'
+            }`}
+          />
+        ))}
+        <span className="text-xs text-muted-foreground ml-1">({rating}/5)</span>
+      </div>
+    );
+  };
+
   return (
     <Card className="p-4">
       <div className="space-y-3">
@@ -115,10 +137,13 @@ const OfferCard = ({ offer, showActions = false, onStatusUpdate }: OfferCardProp
                 Para: {offer.posts.title} ({offer.posts.zone})
               </p>
             )}
-            {offer.profiles?.full_name && (
-              <p className="text-sm text-muted-foreground">
-                Por: {offer.profiles.full_name}
-              </p>
+            {showPublicInfo && offer.profiles?.full_name && (
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-sm text-muted-foreground">
+                  Por: {offer.profiles.full_name}
+                </p>
+                {offer.buyer_rating && renderRating(offer.buyer_rating)}
+              </div>
             )}
           </div>
           <div className="text-right">
@@ -133,7 +158,7 @@ const OfferCard = ({ offer, showActions = false, onStatusUpdate }: OfferCardProp
           <p className="text-muted-foreground text-sm">{offer.description}</p>
         )}
 
-        {offer.contact_info && (
+        {offer.contact_info && (showActions || showPublicInfo) && (
           <div className="space-y-2">
             <h4 className="font-medium text-sm">Contacto:</h4>
             <div className="flex flex-wrap gap-2">
