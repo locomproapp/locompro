@@ -12,12 +12,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 const CreateBuyRequest = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -25,6 +25,12 @@ const CreateBuyRequest = () => {
     maxPrice: '',
     zone: '',
     images: [] as string[]
+  });
+
+  const { uploadImages, uploading } = useImageUpload({ 
+    bucketName: 'buy-requests',
+    maxFileSize: 5 * 1024 * 1024,
+    allowMultiple: true
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,89 +94,18 @@ const CreateBuyRequest = () => {
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    if (files.length === 0) return;
-
-    // Validar archivos antes de subir
-    const validFiles = files.filter(file => {
-      const isValidType = file.type.startsWith('image/');
-      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB máximo
-      
-      if (!isValidType) {
-        toast({
-          title: "Error",
-          description: `${file.name} no es una imagen válida`,
-          variant: "destructive"
-        });
-        return false;
-      }
-      
-      if (!isValidSize) {
-        toast({
-          title: "Error",
-          description: `${file.name} es demasiado grande (máximo 5MB)`,
-          variant: "destructive"
-        });
-        return false;
-      }
-      
-      return true;
-    });
-
-    if (validFiles.length === 0) return;
-
-    setUploading(true);
-    console.log('Iniciando subida de', validFiles.length, 'archivos');
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
     try {
-      const uploadPromises = validFiles.map(async (file, index) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${user?.id}/${Date.now()}-${index}.${fileExt}`;
-        
-        console.log('Subiendo archivo:', fileName, 'Tamaño:', file.size);
-        
-        const { data, error: uploadError } = await supabase.storage
-          .from('buy-requests')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: false
-          });
-
-        if (uploadError) {
-          console.error('Error en upload:', uploadError);
-          throw new Error(`Error subiendo ${file.name}: ${uploadError.message}`);
-        }
-
-        console.log('Archivo subido exitosamente:', data);
-
-        const { data: urlData } = supabase.storage
-          .from('buy-requests')
-          .getPublicUrl(fileName);
-
-        return urlData.publicUrl;
-      });
-
-      const uploadedUrls = await Promise.all(uploadPromises);
-      console.log('URLs generadas:', uploadedUrls);
-      
+      const uploadedUrls = await uploadImages(files);
       setFormData(prev => ({
         ...prev,
         images: [...prev.images, ...uploadedUrls]
       }));
-      
-      toast({
-        title: "Imágenes subidas",
-        description: `${uploadedUrls.length} imagen(es) subida(s) correctamente`
-      });
     } catch (error) {
-      console.error('Error completo en upload:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "No se pudieron subir las imágenes",
-        variant: "destructive"
-      });
+      console.error('Error uploading images:', error);
     } finally {
-      setUploading(false);
       // Limpiar el input para permitir subir los mismos archivos otra vez
       event.target.value = '';
     }
