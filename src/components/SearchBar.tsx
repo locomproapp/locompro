@@ -4,13 +4,27 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-const SearchBar = () => {
+interface SearchBarProps {
+  onSearch?: (query: string) => void;
+  placeholder?: string;
+}
+
+const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?" }: SearchBarProps) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Searching for:', searchQuery);
-    // Search functionality will be implemented later
+    onSearch?.(searchQuery);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    // Búsqueda en tiempo real con debounce
+    setTimeout(() => {
+      onSearch?.(value);
+    }, 300);
   };
 
   return (
@@ -19,9 +33,9 @@ const SearchBar = () => {
         <div className="relative flex items-center">
           <Input
             type="text"
-            placeholder="¿Qué estás buscando?"
+            placeholder={placeholder}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleInputChange}
             className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full shadow-lg"
           />
           <Button

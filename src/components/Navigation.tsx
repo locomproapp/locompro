@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import ProfileDialog from './ProfileDialog';
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Navigation = () => {
           </div>
           
           {/* Navigation buttons */}
-          <div className="flex space-x-4">
+          <div className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
               className="text-foreground hover:text-primary"
@@ -46,6 +47,9 @@ const Navigation = () => {
             >
               Mercado
             </Button>
+            
+            {user && <ProfileDialog />}
+            
             <Button 
               variant="outline" 
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"

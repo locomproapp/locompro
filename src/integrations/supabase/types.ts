@@ -9,29 +9,86 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      posts: {
+        Row: {
+          characteristics: Json | null
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          max_price: number | null
+          min_price: number | null
+          reference_link: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          zone: string
+        }
+        Insert: {
+          characteristics?: Json | null
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          max_price?: number | null
+          min_price?: number | null
+          reference_link?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          zone: string
+        }
+        Update: {
+          characteristics?: Json | null
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          max_price?: number | null
+          min_price?: number | null
+          reference_link?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          zone?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           email: string | null
           full_name: string | null
           id: string
+          location: string | null
+          phone: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
           id: string
+          location?: string | null
+          phone?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
+          location?: string | null
+          phone?: string | null
           updated_at?: string
         }
         Relationships: []
