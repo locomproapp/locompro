@@ -13,6 +13,7 @@ interface UserOffer {
   images: string[] | null;
   contact_info: any;
   status: string;
+  rejection_reason: string | null;
   created_at: string;
   updated_at: string;
   buy_requests: {
@@ -46,9 +47,11 @@ export const useUserOffers = () => {
           )
         `)
         .eq('seller_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
+      
+      console.log('User offers fetched:', data);
       
       const transformedData: UserOffer[] = (data || []).map(offer => ({
         ...offer,
@@ -63,6 +66,33 @@ export const useUserOffers = () => {
       setLoading(false);
     }
   };
+
+  // Subscribe to real-time updates for offers
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('user-offers-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Offer status updated in real-time:', payload);
+          // Refetch offers when there's an update
+          fetchUserOffers();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   useEffect(() => {
     fetchUserOffers();
