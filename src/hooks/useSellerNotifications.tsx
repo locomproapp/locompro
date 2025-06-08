@@ -37,7 +37,7 @@ export const useSellerNotifications = () => {
       return data;
     },
     enabled: !!user,
-    refetchInterval: 30000 // Refetch every 30 seconds
+    refetchInterval: 10000 // Refetch every 10 seconds
   });
 
   useEffect(() => {
@@ -46,12 +46,14 @@ export const useSellerNotifications = () => {
     }
   }, [notifications]);
 
-  // Subscribe to real-time updates for offers
+  // Enhanced real-time subscription for seller notifications
   useEffect(() => {
     if (!user) return;
 
+    console.log('Setting up seller notifications real-time subscription for user:', user.id);
+
     const channel = supabase
-      .channel('seller-notifications')
+      .channel('seller-notifications-realtime')
       .on(
         'postgres_changes',
         {
@@ -61,10 +63,11 @@ export const useSellerNotifications = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Offer updated:', payload);
+          console.log('Seller notification - offer updated:', payload);
           
-          // If an offer was rejected with a reason, show toast notification
+          // Check if offer was rejected with a reason
           if (payload.new.status === 'rejected' && payload.new.rejection_reason) {
+            console.log('Offer rejected with reason, showing notification');
             toast({
               title: "Oferta rechazada",
               description: `Tu oferta "${payload.new.title}" fue rechazada. Ve a notificaciones para ver los detalles.`,
@@ -72,13 +75,16 @@ export const useSellerNotifications = () => {
             });
           }
           
-          // Refetch notifications immediately to reflect the new status
+          // Refetch notifications immediately
           refetch();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Seller notifications subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up seller notifications subscription');
       supabase.removeChannel(channel);
     };
   }, [user, refetch]);

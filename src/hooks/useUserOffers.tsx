@@ -74,12 +74,14 @@ export const useUserOffers = () => {
     }
   };
 
-  // Subscribe to real-time updates for offers - improved version
+  // Enhanced real-time subscription for better state updates
   useEffect(() => {
     if (!user) return;
 
+    console.log('Setting up real-time subscription for user offers:', user.id);
+
     const channel = supabase
-      .channel('user-offers-updates')
+      .channel('user-offers-realtime')
       .on(
         'postgres_changes',
         {
@@ -89,19 +91,26 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Real-time offer update for seller:', payload);
+          console.log('Real-time offer update received:', payload);
           
-          // Update the specific offer in state immediately for better UX
-          setOffers(currentOffers => 
-            currentOffers.map(offer => 
-              offer.id === payload.new.id 
-                ? { ...offer, ...payload.new }
-                : offer
-            )
-          );
-          
-          // Also refetch to ensure consistency
-          fetchUserOffers();
+          // Update the specific offer immediately for instant UI feedback
+          setOffers(currentOffers => {
+            const updatedOffers = currentOffers.map(offer => {
+              if (offer.id === payload.new.id) {
+                console.log('Updating offer in state:', offer.id, 'new status:', payload.new.status);
+                return { 
+                  ...offer, 
+                  ...payload.new,
+                  // Ensure updated_at is properly set
+                  updated_at: payload.new.updated_at || new Date().toISOString()
+                };
+              }
+              return offer;
+            });
+            
+            console.log('Updated offers state:', updatedOffers);
+            return updatedOffers;
+          });
         }
       )
       .on(
@@ -130,9 +139,12 @@ export const useUserOffers = () => {
           fetchUserOffers();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Real-time subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [user]);
