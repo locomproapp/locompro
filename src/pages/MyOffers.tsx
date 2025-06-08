@@ -1,6 +1,6 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 import OfferCard from '@/components/OfferCard';
 import { useUserOffers } from '@/hooks/useUserOffers';
 import { useAuth } from '@/hooks/useAuth';
@@ -24,6 +24,7 @@ const MyOffers = () => {
             </p>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -80,6 +81,8 @@ const MyOffers = () => {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };

@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Upload, Search } from 'lucide-react';
+import { Plus, Upload, Search, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
@@ -90,6 +89,23 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUrlAdd = () => {
+    const url = prompt('Ingresa la URL de la imagen:');
+    if (url && url.trim()) {
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, url.trim()]
+      }));
+    }
+  };
+
+  const handleImageRemove = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
   };
 
   return (
@@ -190,9 +206,37 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
 
           <div>
             <Label>Fotos de Referencia (Opcional)</Label>
-            <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
-              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Próximamente: Subir imágenes de referencia</p>
+            <div className="space-y-3">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleImageUrlAdd}
+                className="w-full border-dashed"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Agregar imagen por URL
+              </Button>
+              
+              {formData.images.length > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {formData.images.map((url, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={url}
+                        alt={`Imagen ${index + 1}`}
+                        className="w-full h-24 object-cover rounded border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleImageRemove(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

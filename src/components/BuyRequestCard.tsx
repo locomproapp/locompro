@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
@@ -45,8 +47,21 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
   };
 
   return (
-    <Card className="p-4 hover:shadow-md transition-shadow">
-      <div className="space-y-3">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      {/* Imagen principal */}
+      {buyRequest.images && buyRequest.images.length > 0 && (
+        <Link to={`/post/${buyRequest.id}`}>
+          <div className="aspect-video bg-muted overflow-hidden">
+            <img
+              src={buyRequest.images[0]}
+              alt={buyRequest.title}
+              className="w-full h-full object-cover hover:scale-105 transition-transform"
+            />
+          </div>
+        </Link>
+      )}
+      
+      <div className="p-4 space-y-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
@@ -55,9 +70,13 @@ const BuyRequestCard = ({ buyRequest, showOfferButton = false }: BuyRequestCardP
                 BUSCO
               </span>
             </div>
-            <h3 className="font-semibold text-lg line-clamp-2">{buyRequest.title}</h3>
+            <Link to={`/post/${buyRequest.id}`}>
+              <h3 className="font-semibold text-lg line-clamp-2 hover:text-primary transition-colors">
+                {buyRequest.title}
+              </h3>
+            </Link>
             {buyRequest.description && (
-              <p className="text-muted-foreground text-sm line-clamp-3 mt-2">
+              <p className="text-muted-foreground text-sm line-clamp-2 mt-2">
                 {buyRequest.description}
               </p>
             )}

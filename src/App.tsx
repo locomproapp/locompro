@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Market from "./pages/Market";
+import PostDetail from "./pages/PostDetail";
 import MyRequests from "./pages/MyRequests";
 import MyOffers from "./pages/MyOffers";
 import NotFound from "./pages/NotFound";
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/market" element={<Market />} />
+          <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/my-offers" element={<MyOffers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

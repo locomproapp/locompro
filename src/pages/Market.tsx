@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 import SearchBar from '@/components/SearchBar';
 import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
 import BuyRequestCard from '@/components/BuyRequestCard';
@@ -132,6 +132,8 @@ const Market = () => {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
