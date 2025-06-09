@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import OfferCard from '@/components/OfferCard';
@@ -18,46 +18,6 @@ const MyOffers = () => {
     console.log('Manual force refresh triggered from MyOffers');
     await refetch();
   };
-
-  // Auto-refresh when page becomes visible
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        console.log('MyOffers page became visible, refreshing offers');
-        refetch();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [refetch]);
-
-  // Enhanced global event listener for offer status changes
-  useEffect(() => {
-    console.log('MyOffers: Setting up enhanced global event listener for immediate refresh');
-
-    const handleOfferStatusChange = (event: CustomEvent) => {
-      const { offerId, newStatus } = event.detail;
-      console.log('MyOffers: Global offer status change detected, forcing immediate refresh:', { offerId, newStatus });
-      
-      // Force immediate refresh when any offer status changes
-      setTimeout(() => {
-        refetch();
-      }, 100);
-    };
-
-    window.addEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
-
-    return () => {
-      window.removeEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
-    };
-  }, [refetch]);
-
-  // Force refresh when component mounts
-  useEffect(() => {
-    console.log('MyOffers component mounted, forcing refresh');
-    refetch();
-  }, [refetch]);
 
   // Now handle the conditional rendering AFTER all hooks have been called
   if (!user) {
@@ -153,7 +113,7 @@ const MyOffers = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {offers.map((offer) => (
                     <OfferCard 
-                      key={`${offer.id}-${offer.status}-${offer.updated_at}-${Date.now()}`}
+                      key={`${offer.id}-${offer.status}-${offer.updated_at}`}
                       offer={offer} 
                       onStatusUpdate={refetch}
                       currentUserId={user.id}

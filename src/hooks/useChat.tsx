@@ -28,6 +28,8 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
     queryFn: async () => {
       if (!user) return null;
 
+      console.log('Creating/getting chat for:', { buyRequestId, sellerId, buyerId: user.id });
+
       // Try to get existing chat
       const { data: existingChat } = await supabase
         .from('chats')
@@ -37,9 +39,13 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
         .eq('seller_id', sellerId)
         .single();
 
-      if (existingChat) return existingChat;
+      if (existingChat) {
+        console.log('Found existing chat:', existingChat);
+        return existingChat;
+      }
 
       // Create new chat if it doesn't exist
+      console.log('Creating new chat');
       const { data: newChat, error } = await supabase
         .from('chats')
         .insert({
@@ -51,7 +57,12 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating chat:', error);
+        throw error;
+      }
+      
+      console.log('Created new chat:', newChat);
       return newChat;
     },
     enabled: !!user && !!buyRequestId && !!sellerId && !!offerId
@@ -63,13 +74,20 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
     queryFn: async () => {
       if (!chat?.id) return [];
 
+      console.log('Fetching messages for chat:', chat.id);
+
       const { data, error } = await supabase
         .from('chat_messages')
         .select('*')
         .eq('chat_id', chat.id)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching messages:', error);
+        throw error;
+      }
+      
+      console.log('Fetched messages:', data);
       return data as ChatMessage[];
     },
     enabled: !!chat?.id
@@ -79,8 +97,10 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
   useEffect(() => {
     if (!chat?.id) return;
 
+    console.log('Setting up real-time subscription for chat:', chat.id);
+
     const channel = supabase
-      .channel(`chat-${chat.id}`)
+      .channel(`chat-messages-${chat.id}`)
       .on(
         'postgres_changes',
         {
@@ -89,13 +109,17 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
           table: 'chat_messages',
           filter: `chat_id=eq.${chat.id}`
         },
-        () => {
+        (payload) => {
+          console.log('New message received via real-time:', payload);
           queryClient.invalidateQueries({ queryKey: ['chat-messages', chat.id] });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Chat real-time subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up chat real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [chat?.id, queryClient]);
@@ -103,19 +127,33 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (message: string) => {
-      if (!chat?.id || !user) throw new Error('Chat no disponible');
+      if (!chat?.id || !user) {
+        console.error('Cannot send message: missing chat or user');
+        throw new Error('Chat no disponible');
+      }
 
-      const { error } = await supabase
+      console.log('Sending message:', { chatId: chat.id, senderId: user.id, message });
+
+      const { data, error } = await supabase
         .from('chat_messages')
         .insert({
           chat_id: chat.id,
           sender_id: user.id,
           message: message.trim()
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error sending message:', error);
+        throw error;
+      }
+
+      console.log('Message sent successfully:', data);
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Message mutation successful, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['chat-messages', chat?.id] });
     },
     onError: (error) => {

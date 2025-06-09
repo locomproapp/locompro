@@ -3,9 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { UserOffer } from '@/types/userOffer';
-import { useOfferStatusEvents } from '@/hooks/useOfferStatusEvents';
-import { useOfferRealtime } from '@/hooks/useOfferRealtime';
-import { usePeriodicRefresh } from '@/hooks/usePeriodicRefresh';
+import { useOfferRefresh } from '@/hooks/useOfferRefresh';
 
 export const useUserOffers = () => {
   const { user } = useAuth();
@@ -63,10 +61,101 @@ export const useUserOffers = () => {
     }
   }, [user]);
 
-  // Use the extracted hooks
-  useOfferStatusEvents({ user, setOffers, fetchUserOffers });
-  useOfferRealtime({ user, setOffers, fetchUserOffers });
-  usePeriodicRefresh({ user, fetchUserOffers });
+  const { debouncedRefresh } = useOfferRefresh({ fetchUserOffers });
+
+  // Set up real-time subscription with debounced refresh
+  useEffect(() => {
+    if (!user) return;
+
+    console.log('Setting up real-time subscription for user offers:', user.id);
+
+    const channel = supabase
+      .channel('offers-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Real-time offer update received:', payload);
+          
+          // Update state immediately
+          setOffers(currentOffers => {
+            return currentOffers.map(offer => {
+              if (offer.id === payload.new.id) {
+                return { 
+                  ...offer, 
+                  ...payload.new,
+                  price_history: payload.new.price_history as Array<{
+                    price: number;
+                    timestamp: string;
+                    type: 'rejected' | 'initial';
+                  }> | null,
+                  status: payload.new.status,
+                  rejection_reason: payload.new.rejection_reason,
+                  updated_at: payload.new.updated_at || new Date().toISOString()
+                };
+              }
+              return offer;
+            });
+          });
+
+          // Debounced full refresh for consistency
+          debouncedRefresh();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        () => {
+          console.log('New offer created');
+          debouncedRefresh();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        () => {
+          console.log('Offer deleted');
+          debouncedRefresh();
+        }
+      )
+      .subscribe((status) => {
+        console.log('Real-time subscription status:', status);
+      });
+
+    return () => {
+      console.log('Cleaning up real-time subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [user, debouncedRefresh]);
+
+  // Set up global event listener with debounced refresh
+  useEffect(() => {
+    const handleOfferStatusChange = () => {
+      console.log('Global offer status change detected');
+      debouncedRefresh();
+    };
+
+    window.addEventListener('offerStatusChanged', handleOfferStatusChange);
+
+    return () => {
+      window.removeEventListener('offerStatusChanged', handleOfferStatusChange);
+    };
+  }, [debouncedRefresh]);
 
   // Initial fetch
   useEffect(() => {
@@ -77,6 +166,6 @@ export const useUserOffers = () => {
     offers,
     loading,
     error,
-    refetch: fetchUserOffers
+    refetch: debouncedRefresh
   };
 };
