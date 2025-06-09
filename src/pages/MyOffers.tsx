@@ -33,7 +33,7 @@ const MyOffers = () => {
   }
 
   const handleForceRefresh = async () => {
-    console.log('Manual force refresh triggered');
+    console.log('Manual force refresh triggered from MyOffers');
     await refetch();
   };
 
@@ -41,13 +41,40 @@ const MyOffers = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        console.log('Page became visible, refreshing offers');
+        console.log('MyOffers page became visible, refreshing offers');
         refetch();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [refetch]);
+
+  // Listen for global offer status changes and refresh immediately
+  useEffect(() => {
+    console.log('MyOffers: Setting up global event listener for immediate refresh');
+
+    const handleOfferStatusChange = (event: CustomEvent) => {
+      const { offerId, newStatus } = event.detail;
+      console.log('MyOffers: Global offer status change detected, forcing immediate refresh:', { offerId, newStatus });
+      
+      // Force immediate refresh when any offer status changes
+      setTimeout(() => {
+        refetch();
+      }, 100);
+    };
+
+    window.addEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
+
+    return () => {
+      window.removeEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
+    };
+  }, [refetch]);
+
+  // Force refresh when component mounts
+  useEffect(() => {
+    console.log('MyOffers component mounted, forcing refresh');
+    refetch();
   }, [refetch]);
 
   return (

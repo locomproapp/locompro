@@ -147,13 +147,33 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         throw error;
       }
       console.log('Oferta rechazada exitosamente');
+      return { offerId, reason };
     },
-    onSuccess: () => {
+    onSuccess: ({ offerId, reason }) => {
+      console.log('GLOBAL: Dispatching offer rejection event');
+      
+      // Dispatch global event for all components listening
+      window.dispatchEvent(new CustomEvent('offerStatusChanged', { 
+        detail: { 
+          offerId, 
+          newStatus: 'rejected', 
+          rejectionReason: reason,
+          timestamp: Date.now()
+        } 
+      }));
+
       toast({
         title: "Oferta rechazada",
         description: "La oferta ha sido rechazada y el vendedor será notificado"
       });
+
+      // Invalidate all related queries
       queryClient.invalidateQueries({ queryKey: ['offers', buyRequestId] });
+      queryClient.invalidateQueries({ queryKey: ['seller-notifications'] });
+      
+      // CRITICAL: Invalidate user offers queries for "Mis Ofertas" page
+      queryClient.invalidateQueries({ queryKey: ['user-offers'] });
+      
       setRejectDialogOpen(false);
       setOfferToReject(null);
     },

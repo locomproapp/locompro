@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -74,15 +73,60 @@ export const useUserOffers = () => {
     }
   };
 
-  // Enhanced real-time subscription with global channel
+  // Listen for global offer status change events
   useEffect(() => {
     if (!user) return;
 
-    console.log('Setting up GLOBAL real-time subscription for user offers:', user.id);
+    console.log('Setting up global event listener for offer status changes');
 
-    // Use a global channel name to catch all offer updates
+    const handleOfferStatusChange = (event: CustomEvent) => {
+      const { offerId, newStatus, rejectionReason, timestamp } = event.detail;
+      console.log('GLOBAL EVENT: Offer status changed detected:', { offerId, newStatus, rejectionReason });
+
+      // Update the specific offer immediately in local state
+      setOffers(currentOffers => {
+        const updatedOffers = currentOffers.map(offer => {
+          if (offer.id === offerId) {
+            console.log('GLOBAL EVENT: Updating offer status from', offer.status, 'to', newStatus);
+            return {
+              ...offer,
+              status: newStatus,
+              rejection_reason: rejectionReason || offer.rejection_reason,
+              updated_at: new Date().toISOString()
+            };
+          }
+          return offer;
+        });
+        
+        console.log('GLOBAL EVENT: Updated offers state:', updatedOffers);
+        return updatedOffers;
+      });
+
+      // Also trigger a complete refresh to ensure data consistency
+      setTimeout(() => {
+        console.log('GLOBAL EVENT: Triggering complete refresh after status change');
+        fetchUserOffers();
+      }, 500);
+    };
+
+    // Add event listener
+    window.addEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
+
+    return () => {
+      console.log('Cleaning up global event listener');
+      window.removeEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
+    };
+  }, [user]);
+
+  // Enhanced real-time subscription with unified channel
+  useEffect(() => {
+    if (!user) return;
+
+    console.log('Setting up unified real-time subscription for user offers:', user.id);
+
+    // Use a unified global channel name for all offer updates
     const channel = supabase
-      .channel('global-user-offers-updates')
+      .channel('global-offers-updates')
       .on(
         'postgres_changes',
         {
@@ -92,13 +136,13 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('GLOBAL: Real-time offer update received:', payload);
+          console.log('UNIFIED RT: Real-time offer update received:', payload);
           
           // Force immediate state update
           setOffers(currentOffers => {
             const updatedOffers = currentOffers.map(offer => {
               if (offer.id === payload.new.id) {
-                console.log('GLOBAL: Updating offer status from', offer.status, 'to', payload.new.status);
+                console.log('UNIFIED RT: Updating offer status from', offer.status, 'to', payload.new.status);
                 return { 
                   ...offer, 
                   ...payload.new,
@@ -110,15 +154,15 @@ export const useUserOffers = () => {
               return offer;
             });
             
-            console.log('GLOBAL: New offers state:', updatedOffers);
+            console.log('UNIFIED RT: New offers state:', updatedOffers);
             return updatedOffers;
           });
 
-          // Also trigger a complete refresh after a short delay
+          // Also trigger a complete refresh
           setTimeout(() => {
-            console.log('GLOBAL: Triggering complete refresh');
+            console.log('UNIFIED RT: Triggering complete refresh');
             fetchUserOffers();
-          }, 500);
+          }, 1000);
         }
       )
       .on(
@@ -130,47 +174,28 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('GLOBAL: New offer created:', payload);
+          console.log('UNIFIED RT: New offer created:', payload);
           fetchUserOffers();
         }
       )
       .subscribe((status) => {
-        console.log('GLOBAL: Real-time subscription status:', status);
+        console.log('UNIFIED RT: Real-time subscription status:', status);
       });
 
-    // Also set up a channel specifically for this user's offers
-    const userChannel = supabase
-      .channel(`user-${user.id}-offers`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'offers',
-          filter: `seller_id=eq.${user.id}`
-        },
-        (payload) => {
-          console.log('USER CHANNEL: Offer change detected:', payload);
-          fetchUserOffers();
-        }
-      )
-      .subscribe();
-
     return () => {
-      console.log('Cleaning up real-time subscriptions');
+      console.log('Cleaning up unified real-time subscription');
       supabase.removeChannel(channel);
-      supabase.removeChannel(userChannel);
     };
   }, [user]);
 
-  // More frequent refresh to ensure data consistency
+  // Aggressive refresh interval to ensure data consistency
   useEffect(() => {
     if (!user) return;
 
     const interval = setInterval(() => {
-      console.log('Periodic refresh of offers');
+      console.log('Periodic aggressive refresh of offers');
       fetchUserOffers();
-    }, 15000); // Refresh every 15 seconds
+    }, 10000); // Refresh every 10 seconds
 
     return () => clearInterval(interval);
   }, [user]);

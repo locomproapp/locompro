@@ -57,12 +57,12 @@ const OfferStatus = ({ status }: OfferStatusProps) => {
     }
   };
 
-  // Force re-render when status changes by adding key
-  console.log('Rendering OfferStatus with status:', status);
+  // Force re-render when status changes by adding timestamp
+  console.log('Rendering OfferStatus with status:', status, 'at:', Date.now());
 
   return (
     <Badge 
-      key={`status-${status}`}
+      key={`status-${status}-${Date.now()}`}
       className={`${getStatusColor(status)} flex items-center gap-1 mt-1`}
     >
       {getStatusIcon(status)}
