@@ -46,6 +46,11 @@ export const useUserOffers = () => {
       
       const transformedData: UserOffer[] = (data || []).map(offer => ({
         ...offer,
+        price_history: offer.price_history as Array<{
+          price: number;
+          timestamp: string;
+          type: 'rejected' | 'initial';
+        }> | null,
         buy_requests: offer.buy_requests || null
       }));
       

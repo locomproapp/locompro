@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Offer } from '@/types/offer';
 import { Button } from '@/components/ui/button';
@@ -295,7 +296,18 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         console.error('Error fetching offers:', error);
         setError(error.message);
       } else {
-        setOffers(data || []);
+        // Transform the data with proper type casting
+        const transformedOffers: Offer[] = (data || []).map(offer => ({
+          ...offer,
+          price_history: offer.price_history as Array<{
+            price: number;
+            timestamp: string;
+            type: 'rejected' | 'initial';
+          }> | null,
+          profiles: offer.profiles || null
+        }));
+        
+        setOffers(transformedOffers);
         setError(null);
       }
     } catch (err) {

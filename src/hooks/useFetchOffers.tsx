@@ -48,6 +48,11 @@ export const useFetchOffers = ({ buyRequestId, setOffers, setLoading, setError }
       
       const transformedData: Offer[] = (data || []).map(offer => ({
         ...offer,
+        price_history: offer.price_history as Array<{
+          price: number;
+          timestamp: string;
+          type: 'rejected' | 'initial';
+        }> | null,
         profiles: offer.profiles || null,
         buy_requests: offer.buy_requests || null
       }));

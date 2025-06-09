@@ -56,8 +56,14 @@ const RejectedOfferActions = ({ offerId, currentPrice, onStatusUpdate }: Rejecte
         throw fetchError;
       }
 
-      // Create price history array
-      const priceHistory = currentOffer.price_history || [];
+      // Create price history array with proper type handling
+      const existingHistory = currentOffer.price_history as Array<{
+        price: number;
+        timestamp: string;
+        type: 'rejected' | 'initial';
+      }> | null;
+      
+      const priceHistory = existingHistory || [];
       priceHistory.push({
         price: currentOffer.price,
         timestamp: new Date().toISOString(),
