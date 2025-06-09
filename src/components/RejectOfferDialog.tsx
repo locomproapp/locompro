@@ -6,13 +6,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
 interface RejectOfferDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -33,8 +32,12 @@ const RejectOfferDialog = ({ open, onOpenChange, onConfirm, isLoading }: RejectO
     const reason = selectedReason === 'Otro motivo' ? customReason : selectedReason;
     if (reason.trim()) {
       try {
+        console.log('ENHANCED REJECT DIALOG: Starting rejection with reason:', reason);
+        
         // Call the onConfirm function which should handle the database update
         await onConfirm(reason);
+        
+        console.log('ENHANCED REJECT DIALOG: Rejection completed successfully');
         
         // Reset form state
         setSelectedReason('');
@@ -43,15 +46,21 @@ const RejectOfferDialog = ({ open, onOpenChange, onConfirm, isLoading }: RejectO
         // Close dialog
         onOpenChange(false);
         
-        console.log('Offer rejected with reason:', reason);
       } catch (error) {
-        console.error('Error rejecting offer:', error);
+        console.error('ENHANCED REJECT DIALOG: Error during rejection:', error);
         toast({
           title: "Error",
           description: "No se pudo rechazar la oferta. Intenta de nuevo.",
           variant: "destructive"
         });
       }
+    } else {
+      console.warn('ENHANCED REJECT DIALOG: No reason provided');
+      toast({
+        title: "Error",
+        description: "Debes seleccionar un motivo para rechazar la oferta.",
+        variant: "destructive"
+      });
     }
   };
 
