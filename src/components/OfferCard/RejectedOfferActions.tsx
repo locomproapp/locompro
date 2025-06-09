@@ -56,14 +56,15 @@ const RejectedOfferActions = ({ offerId, currentPrice, onStatusUpdate }: Rejecte
         if (fetchError) {
           // If price_history column doesn't exist, we'll just update without it
           console.log('Price history column may not exist yet, proceeding without it');
-        } else if (currentOffer) {
-          // Create price history array if the column exists
-          priceHistory = currentOffer.price_history || [];
-          priceHistory.push({
-            price: currentOffer.price,
+        } else if (currentOffer && 'price' in currentOffer) {
+          // Create price history array if the column exists and we have valid data
+          const historyArray = (currentOffer as any).price_history || [];
+          historyArray.push({
+            price: (currentOffer as any).price,
             timestamp: new Date().toISOString(),
             type: 'rejected'
           });
+          priceHistory = historyArray;
         }
       } catch (err) {
         console.log('Error fetching price history, proceeding without it:', err);
