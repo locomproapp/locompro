@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import OfferStatus from './OfferStatus';
 
 interface OfferHeaderProps {
@@ -18,6 +19,7 @@ interface OfferHeaderProps {
   } | null;
   showPublicInfo?: boolean;
   buyerRating?: number | null;
+  offerId?: string;
 }
 
 const OfferHeader = ({ 
@@ -27,7 +29,8 @@ const OfferHeader = ({
   buyRequest, 
   profile, 
   showPublicInfo, 
-  buyerRating 
+  buyerRating,
+  offerId
 }: OfferHeaderProps) => {
   const renderRating = (rating: number | null | undefined) => {
     if (!rating) return null;
@@ -51,10 +54,21 @@ const OfferHeader = ({
 
   const isRequestClosed = buyRequest?.status === 'closed';
 
+  const TitleComponent = offerId ? (
+    <Link 
+      to={`/offer/${offerId}`}
+      className="text-primary hover:underline"
+    >
+      <h3 className="font-semibold text-lg">{title}</h3>
+    </Link>
+  ) : (
+    <h3 className="font-semibold text-lg">{title}</h3>
+  );
+
   return (
     <div className="flex items-start justify-between">
       <div className="flex-1">
-        <h3 className="font-semibold text-lg">{title}</h3>
+        {TitleComponent}
         {buyRequest && (
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">

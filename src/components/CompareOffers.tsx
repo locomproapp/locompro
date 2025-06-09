@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Offer } from '@/types/offer';
 import { Button } from '@/components/ui/button';
-import { Check, X, RotateCw, AlertTriangle } from 'lucide-react';
+import { Check, X, RotateCw, AlertTriangle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Table,
@@ -131,10 +131,112 @@ const OfferRow = ({ offer, isOwner, refetch }: { offer: Offer, isOwner: boolean,
   const isRejected = offer.status === 'rejected';
   const isAccepted = offer.status === 'accepted';
 
+  const renderActions = () => {
+    if (canAcceptOrReject) {
+      return (
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => acceptOffer(offer.id)}
+            disabled={isAccepting}
+          >
+            {isAccepting ? (
+              <>
+                <RotateCw className="mr-2 h-4 w-4 animate-spin" />
+                Aceptando...
+              </>
+            ) : (
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Aceptar
+              </>
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowRejectDialog(true)}
+            disabled={isAccepting}
+          >
+            <X className="mr-2 h-4 w-4" />
+            Rechazar
+          </Button>
+          <RejectOfferDialog
+            open={showRejectDialog}
+            onOpenChange={setShowRejectDialog}
+            onConfirm={(reason) => handleRejectOffer(offer.id, reason)}
+            isLoading={isAccepting}
+          />
+        </div>
+      );
+    }
+
+    if (!isOwner && offer.status === 'pending') {
+      return (
+        <span className="text-sm text-muted-foreground">
+          Solo el comprador puede aceptar/rechazar
+        </span>
+      );
+    }
+
+    // For finalized offers
+    if (isAccepted) {
+      return (
+        <span className="text-sm text-green-600 font-medium">
+          ✓ Oferta aceptada
+        </span>
+      );
+    }
+
+    if (isRejected) {
+      return (
+        <span className="text-sm text-red-600 font-medium">
+          ✗ Oferta rechazada
+        </span>
+      );
+    }
+
+    if (isWithdrawn) {
+      return (
+        <span className="text-sm text-gray-600 font-medium">
+          Oferta retirada
+        </span>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <TableRow key={offer.id}>
-      <TableCell className="font-medium">{offer.title}</TableCell>
+      {/* Imagen */}
+      <TableCell className="w-16">
+        {offer.images && offer.images.length > 0 ? (
+          <img
+            src={offer.images[0]}
+            alt="Preview"
+            className="w-12 h-12 object-cover rounded border"
+          />
+        ) : (
+          <div className="w-12 h-12 bg-muted rounded border flex items-center justify-center">
+            <ImageIcon className="h-6 w-6 text-muted-foreground" />
+          </div>
+        )}
+      </TableCell>
+
+      {/* Título clickeable */}
+      <TableCell className="font-medium">
+        <Link 
+          to={`/offer/${offer.id}`}
+          className="text-primary hover:underline"
+        >
+          {offer.title}
+        </Link>
+      </TableCell>
+
       <TableCell>${offer.price}</TableCell>
+
       <TableCell>
         {offer.profiles ? (
           <div className="flex items-center space-x-2">
@@ -148,6 +250,7 @@ const OfferRow = ({ offer, isOwner, refetch }: { offer: Offer, isOwner: boolean,
           'Usuario anónimo'
         )}
       </TableCell>
+
       <TableCell>
         {isAccepted ? (
           <Badge variant="success">Aceptada</Badge>
@@ -156,50 +259,12 @@ const OfferRow = ({ offer, isOwner, refetch }: { offer: Offer, isOwner: boolean,
         ) : isWithdrawn ? (
           <Badge variant="secondary">Retirada</Badge>
         ) : (
-          <Badge variant="default">{offer.status}</Badge>
+          <Badge variant="default">Pendiente</Badge>
         )}
       </TableCell>
+
       <TableCell>
-        {canAcceptOrReject && (
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => acceptOffer(offer.id)}
-              disabled={isAccepting}
-            >
-              {isAccepting ? (
-                <>
-                  <RotateCw className="mr-2 h-4 w-4 animate-spin" />
-                  Aceptando...
-                </>
-              ) : (
-                <>
-                  <Check className="mr-2 h-4 w-4" />
-                  Aceptar
-                </>
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowRejectDialog(true)}
-              disabled={isAccepting}
-            >
-              <X className="mr-2 h-4 w-4" />
-              Rechazar
-            </Button>
-            <RejectOfferDialog
-              open={showRejectDialog}
-              onOpenChange={setShowRejectDialog}
-              onConfirm={(reason) => handleRejectOffer(offer.id, reason)}
-              isLoading={isAccepting}
-            />
-          </div>
-        )}
-        {!isOwner && offer.status === 'pending' && (
-          <Badge variant="secondary">Pendiente</Badge>
-        )}
+        {renderActions()}
       </TableCell>
     </TableRow>
   );
@@ -296,14 +361,15 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
         </div>
       ) : (
         <Table>
-          <TableCaption>Lista de ofertas para esta solicitud.</TableCaption>
+          <TableCaption>Lista de ofertas para esta solicitud. Haz click en el título para ver detalles completos.</TableCaption>
           <TableHeader>
             <TableRow>
+              <TableHead>Imagen</TableHead>
               <TableHead>Título</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Vendedor</TableHead>
               <TableHead>Estado</TableHead>
-              <TableHead>Acciones</TableHead>
+              <TableHead>Mis acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

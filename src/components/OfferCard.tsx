@@ -72,6 +72,7 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             profile={offer.profiles}
             showPublicInfo={showPublicInfo}
             buyerRating={offer.buyer_rating}
+            offerId={showPublicInfo ? offer.id : undefined}
           />
 
           {offer.description && (

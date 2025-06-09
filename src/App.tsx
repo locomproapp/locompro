@@ -12,6 +12,7 @@ import MyRequests from "./pages/MyRequests";
 import MyOffers from "./pages/MyOffers";
 import Marketplace from "./pages/Marketplace";
 import BuyRequestDetail from "./pages/BuyRequestDetail";
+import OfferDetail from "./pages/OfferDetail";
 import CreateBuyRequest from "./pages/CreateBuyRequest";
 import SendOffer from "./pages/SendOffer";
 import NotFound from "./pages/NotFound";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/buy-request/:id" element={<BuyRequestDetail />} />
           <Route path="/buy-request/:id/send-offer" element={<SendOffer />} />
+          <Route path="/offer/:id" element={<OfferDetail />} />
           <Route path="/create-buy-request" element={<CreateBuyRequest />} />
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/my-offers" element={<MyOffers />} />
