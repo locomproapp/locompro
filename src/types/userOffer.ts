@@ -6,13 +6,19 @@ export interface UserOffer {
   title: string;
   description: string | null;
   price: number;
+  price_history?: Array<{
+    price: number;
+    timestamp: string;
+    type: 'rejected' | 'initial';
+  }> | null;
   images: string[] | null;
   contact_info: any;
   status: string;
   rejection_reason: string | null;
   created_at: string;
   updated_at: string;
-  buy_requests: {
+  buyer_rating?: number | null;
+  buy_requests?: {
     title: string;
     zone: string;
     status: string;

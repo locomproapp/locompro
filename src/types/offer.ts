@@ -6,6 +6,11 @@ export interface Offer {
   title: string;
   description: string | null;
   price: number;
+  price_history?: Array<{
+    price: number;
+    timestamp: string;
+    type: 'rejected' | 'initial';
+  }> | null;
   images: string[] | null;
   contact_info: any;
   status: string;
@@ -13,10 +18,9 @@ export interface Offer {
   created_at: string;
   updated_at: string;
   buyer_rating?: number | null;
-  profiles: {
+  profiles?: {
     full_name: string | null;
     email: string | null;
-    avatar_url: string | null;
   } | null;
   buy_requests?: {
     title: string;

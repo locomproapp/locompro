@@ -3,10 +3,16 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import OfferStatus from './OfferStatus';
+import PriceHistory from './PriceHistory';
 
 interface OfferHeaderProps {
   title: string;
   price: number;
+  priceHistory?: Array<{
+    price: number;
+    timestamp: string;
+    type: 'rejected' | 'initial';
+  }>;
   status: string;
   buyRequest?: {
     title: string;
@@ -25,6 +31,7 @@ interface OfferHeaderProps {
 const OfferHeader = ({ 
   title, 
   price, 
+  priceHistory,
   status, 
   buyRequest, 
   profile, 
@@ -91,7 +98,7 @@ const OfferHeader = ({
         )}
       </div>
       <div className="text-right">
-        <div className="text-xl font-bold text-primary">${price}</div>
+        <PriceHistory currentPrice={price} priceHistory={priceHistory} />
         <OfferStatus status={status} />
       </div>
     </div>

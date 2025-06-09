@@ -9,6 +9,7 @@ import RejectionReason from './OfferCard/RejectionReason';
 import ContactInfo from './OfferCard/ContactInfo';
 import OfferActions from './OfferCard/OfferActions';
 import SellerOfferActions from './OfferCard/SellerOfferActions';
+import RejectedOfferActions from './OfferCard/RejectedOfferActions';
 
 interface Offer {
   id: string;
@@ -17,6 +18,11 @@ interface Offer {
   title: string;
   description: string | null;
   price: number;
+  price_history?: Array<{
+    price: number;
+    timestamp: string;
+    type: 'rejected' | 'initial';
+  }> | null;
   images: string[] | null;
   contact_info: any;
   status: string;
@@ -67,6 +73,7 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
           <OfferHeader
             title={offer.title}
             price={offer.price}
+            priceHistory={offer.price_history}
             status={offer.status}
             buyRequest={offer.buy_requests}
             profile={offer.profiles}
@@ -114,11 +121,20 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             />
           )}
 
-          {/* Actions for sellers (withdraw) */}
-          {isSeller && (
+          {/* Actions for sellers (withdraw) - only for pending offers */}
+          {isSeller && offer.status === 'pending' && (
             <SellerOfferActions
               offerId={offer.id}
               status={offer.status}
+              onStatusUpdate={onStatusUpdate}
+            />
+          )}
+
+          {/* Actions for sellers (counteroffer/delete) - only for rejected offers */}
+          {isSeller && offer.status === 'rejected' && (
+            <RejectedOfferActions
+              offerId={offer.id}
+              currentPrice={offer.price}
               onStatusUpdate={onStatusUpdate}
             />
           )}
