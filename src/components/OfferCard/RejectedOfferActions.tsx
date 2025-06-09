@@ -44,33 +44,47 @@ const RejectedOfferActions = ({ offerId, currentPrice, onStatusUpdate }: Rejecte
       setIsUpdating(true);
       console.log('Creating counteroffer for offer:', offerId, 'New price:', newPrice);
 
-      // Get current offer data to preserve price history
-      const { data: currentOffer, error: fetchError } = await supabase
-        .from('offers')
-        .select('price, price_history')
-        .eq('id', offerId)
-        .single();
+      // Try to get current offer data to preserve price history if column exists
+      let priceHistory = null;
+      try {
+        const { data: currentOffer, error: fetchError } = await supabase
+          .from('offers')
+          .select('price, price_history')
+          .eq('id', offerId)
+          .single();
 
-      if (fetchError) throw fetchError;
-
-      // Create price history array
-      const priceHistory = currentOffer.price_history || [];
-      priceHistory.push({
-        price: currentOffer.price,
-        timestamp: new Date().toISOString(),
-        type: 'rejected'
-      });
+        if (fetchError) {
+          // If price_history column doesn't exist, we'll just update without it
+          console.log('Price history column may not exist yet, proceeding without it');
+        } else if (currentOffer) {
+          // Create price history array if the column exists
+          priceHistory = currentOffer.price_history || [];
+          priceHistory.push({
+            price: currentOffer.price,
+            timestamp: new Date().toISOString(),
+            type: 'rejected'
+          });
+        }
+      } catch (err) {
+        console.log('Error fetching price history, proceeding without it:', err);
+      }
 
       // Update offer with new price and status
+      const updateData: any = { 
+        price: Number(newPrice),
+        status: 'pending',
+        rejection_reason: null,
+        updated_at: new Date().toISOString()
+      };
+
+      // Only add price_history if we successfully got it
+      if (priceHistory !== null) {
+        updateData.price_history = priceHistory;
+      }
+
       const { error } = await supabase
         .from('offers')
-        .update({ 
-          price: Number(newPrice),
-          status: 'pending',
-          price_history: priceHistory,
-          rejection_reason: null,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', offerId);
 
       if (error) throw error;

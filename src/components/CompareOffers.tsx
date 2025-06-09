@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Offer } from '@/types/offer';
 import { Button } from '@/components/ui/button';
@@ -241,7 +240,7 @@ const OfferRow = ({ offer, isOwner, refetch }: { offer: Offer, isOwner: boolean,
         {offer.profiles ? (
           <div className="flex items-center space-x-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={offer.profiles.avatar_url || undefined} alt={offer.profiles.full_name || 'Seller'} />
+              <AvatarImage src={undefined} alt={offer.profiles.full_name || 'Seller'} />
               <AvatarFallback>{offer.profiles.full_name?.charAt(0) || 'U'}</AvatarFallback>
             </Avatar>
             <span>{offer.profiles.full_name || 'Usuario anónimo'}</span>
@@ -286,8 +285,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
           *,
           profiles (
             full_name,
-            email,
-            avatar_url
+            email
           )
         `)
         .eq('buy_request_id', buyRequestId)
