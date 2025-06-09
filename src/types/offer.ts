@@ -16,6 +16,7 @@ export interface Offer {
   profiles: {
     full_name: string | null;
     email: string | null;
+    avatar_url: string | null;
   } | null;
   buy_requests?: {
     title: string;

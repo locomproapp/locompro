@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Offer } from '@/types/offer';
 import { Button } from '@/components/ui/button';
@@ -220,6 +221,7 @@ const CompareOffers = ({ buyRequestId, isOwner }: CompareOffersProps) => {
           *,
           profiles (
             full_name,
+            email,
             avatar_url
           )
         `)
