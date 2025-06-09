@@ -14,25 +14,6 @@ const MyOffers = () => {
   const { user } = useAuth();
   const { offers, loading, refetch } = useUserOffers();
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-        <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">
-              Inicia sesión para ver tus ofertas
-            </h1>
-            <p className="text-muted-foreground">
-              Necesitas estar logueado para acceder a esta sección.
-            </p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   const handleForceRefresh = async () => {
     console.log('Manual force refresh triggered from MyOffers');
     await refetch();
@@ -77,6 +58,26 @@ const MyOffers = () => {
     console.log('MyOffers component mounted, forcing refresh');
     refetch();
   }, [refetch]);
+
+  // Now handle the conditional rendering AFTER all hooks have been called
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+        <Navigation />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              Inicia sesión para ver tus ofertas
+            </h1>
+            <p className="text-muted-foreground">
+              Necesitas estar logueado para acceder a esta sección.
+            </p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   // Count offers by status for better UX
   const pendingOffers = offers.filter(offer => offer.status === 'pending');
