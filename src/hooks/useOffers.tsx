@@ -1,154 +1,29 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-
-interface Offer {
-  id: string;
-  buy_request_id: string;
-  seller_id: string;
-  title: string;
-  description: string | null;
-  price: number;
-  images: string[] | null;
-  contact_info: any;
-  status: string;
-  rejection_reason: string | null;
-  created_at: string;
-  updated_at: string;
-  buyer_rating?: number | null;
-  profiles: {
-    full_name: string | null;
-    email: string | null;
-  } | null;
-  buy_requests?: {
-    title: string;
-    zone: string;
-    status: string;
-  } | null;
-}
+import { Offer } from '@/types/offer';
+import { useOffersRealtime } from '@/hooks/useOffersRealtime';
+import { useFetchOffers } from '@/hooks/useFetchOffers';
 
 export const useOffers = (buyRequestId?: string) => {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchOffers = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      let query = supabase
-        .from('offers')
-        .select(`
-          *,
-          profiles (
-            full_name,
-            email
-          ),
-          buy_requests (
-            title,
-            zone,
-            status
-          )
-        `)
-        .order('created_at', { ascending: false });
+  const { fetchOffers } = useFetchOffers({
+    buyRequestId,
+    setOffers,
+    setLoading,
+    setError
+  });
 
-      if (buyRequestId) {
-        query = query.eq('buy_request_id', buyRequestId);
-      }
-
-      console.log('Fetching offers for buy request:', buyRequestId);
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      
-      console.log('Offers fetched successfully:', data);
-      
-      const transformedData: Offer[] = (data || []).map(offer => ({
-        ...offer,
-        profiles: offer.profiles || null,
-        buy_requests: offer.buy_requests || null
-      }));
-      
-      setOffers(transformedData);
-    } catch (err) {
-      console.error('Error fetching offers:', err);
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Real-time subscription for offers
-  useEffect(() => {
-    if (!buyRequestId) return;
-
-    console.log('Setting up real-time subscription for offers on buy request:', buyRequestId);
-
-    const channel = supabase
-      .channel(`offers-${buyRequestId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'offers',
-          filter: `buy_request_id=eq.${buyRequestId}`
-        },
-        (payload) => {
-          console.log('Real-time offer update for buy request:', payload);
-          
-          // Update the specific offer immediately
-          setOffers(currentOffers => 
-            currentOffers.map(offer => 
-              offer.id === payload.new.id 
-                ? { ...offer, ...payload.new }
-                : offer
-            )
-          );
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'offers',
-          filter: `buy_request_id=eq.${buyRequestId}`
-        },
-        (payload) => {
-          console.log('New offer created for buy request:', payload);
-          fetchOffers();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'offers',
-          filter: `buy_request_id=eq.${buyRequestId}`
-        },
-        (payload) => {
-          console.log('Offer deleted for buy request:', payload);
-          fetchOffers();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [buyRequestId]);
+  // Use the extracted real-time hook
+  useOffersRealtime({ buyRequestId, setOffers, fetchOffers });
 
   useEffect(() => {
     if (buyRequestId) {
       fetchOffers();
     }
-  }, [buyRequestId]);
+  }, [buyRequestId, fetchOffers]);
 
   return {
     offers,
