@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Check, X, AlertTriangle } from 'lucide-react';
+import { Calendar, Check, X, AlertTriangle, Clock } from 'lucide-react';
 
 interface OfferStatusProps {
   status: string;
@@ -45,7 +45,7 @@ const OfferStatus = ({ status }: OfferStatusProps) => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Calendar className="h-3 w-3" />;
+        return <Clock className="h-3 w-3" />;
       case 'accepted':
         return <Check className="h-3 w-3" />;
       case 'rejected':
@@ -53,12 +53,18 @@ const OfferStatus = ({ status }: OfferStatusProps) => {
       case 'finalized':
         return <AlertTriangle className="h-3 w-3" />;
       default:
-        return null;
+        return <Calendar className="h-3 w-3" />;
     }
   };
 
+  // Force re-render when status changes by adding key
+  console.log('Rendering OfferStatus with status:', status);
+
   return (
-    <Badge className={`${getStatusColor(status)} flex items-center gap-1 mt-1`}>
+    <Badge 
+      key={`status-${status}`}
+      className={`${getStatusColor(status)} flex items-center gap-1 mt-1`}
+    >
       {getStatusIcon(status)}
       {getStatusText(status)}
     </Badge>

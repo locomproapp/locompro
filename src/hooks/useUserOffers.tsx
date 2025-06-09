@@ -74,7 +74,7 @@ export const useUserOffers = () => {
     }
   };
 
-  // Enhanced real-time subscription for better state updates
+  // Enhanced real-time subscription with more aggressive state management
   useEffect(() => {
     if (!user) return;
 
@@ -93,24 +93,35 @@ export const useUserOffers = () => {
         (payload) => {
           console.log('Real-time offer update received:', payload);
           
-          // Update the specific offer immediately for instant UI feedback
+          // Force immediate state update with comprehensive data merge
           setOffers(currentOffers => {
             const updatedOffers = currentOffers.map(offer => {
               if (offer.id === payload.new.id) {
-                console.log('Updating offer in state:', offer.id, 'new status:', payload.new.status);
-                return { 
+                console.log('Updating offer status from', offer.status, 'to', payload.new.status);
+                // Merge all updated fields from payload
+                const updatedOffer = { 
                   ...offer, 
                   ...payload.new,
-                  // Ensure updated_at is properly set
+                  // Ensure critical fields are properly updated
+                  status: payload.new.status,
+                  rejection_reason: payload.new.rejection_reason,
                   updated_at: payload.new.updated_at || new Date().toISOString()
                 };
+                console.log('Updated offer:', updatedOffer);
+                return updatedOffer;
               }
               return offer;
             });
             
-            console.log('Updated offers state:', updatedOffers);
+            console.log('New offers state after update:', updatedOffers);
             return updatedOffers;
           });
+
+          // Also trigger a fresh fetch to ensure data consistency
+          setTimeout(() => {
+            console.log('Triggering fresh fetch after real-time update');
+            fetchUserOffers();
+          }, 1000);
         }
       )
       .on(
@@ -141,12 +152,27 @@ export const useUserOffers = () => {
       )
       .subscribe((status) => {
         console.log('Real-time subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to real-time updates');
+        }
       });
 
     return () => {
       console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
+  }, [user]);
+
+  // Periodic refresh to ensure data consistency
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(() => {
+      console.log('Periodic refresh of offers');
+      fetchUserOffers();
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
   }, [user]);
 
   useEffect(() => {
