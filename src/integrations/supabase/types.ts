@@ -179,6 +179,7 @@ export type Database = {
           images: string[] | null
           message: string | null
           price: number
+          price_history: Json | null
           public_visibility: boolean | null
           rejection_reason: string | null
           seller_id: string
@@ -197,6 +198,7 @@ export type Database = {
           images?: string[] | null
           message?: string | null
           price: number
+          price_history?: Json | null
           public_visibility?: boolean | null
           rejection_reason?: string | null
           seller_id: string
@@ -215,6 +217,7 @@ export type Database = {
           images?: string[] | null
           message?: string | null
           price?: number
+          price_history?: Json | null
           public_visibility?: boolean | null
           rejection_reason?: string | null
           seller_id?: string
