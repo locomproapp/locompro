@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import OfferCard from '@/components/OfferCard';
 import SellerNotifications from '@/components/SellerNotifications';
 import { useUserOffers } from '@/hooks/useUserOffers';
 import { useAuth } from '@/hooks/useAuth';
-import { Package, Search } from 'lucide-react';
+import { Package, Search, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const MyOffers = () => {
@@ -32,10 +32,23 @@ const MyOffers = () => {
     );
   }
 
-  const handleForceRefresh = () => {
-    console.log('Force refreshing offers data');
-    refetch();
+  const handleForceRefresh = async () => {
+    console.log('Manual force refresh triggered');
+    await refetch();
   };
+
+  // Auto-refresh when page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Page became visible, refreshing offers');
+        refetch();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [refetch]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -57,9 +70,10 @@ const MyOffers = () => {
               onClick={handleForceRefresh}
               variant="outline"
               className="flex items-center gap-2"
+              disabled={loading}
             >
-              <Search className="h-4 w-4" />
-              Actualizar
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Actualizando...' : 'Actualizar'}
             </Button>
           </div>
         </div>
@@ -89,7 +103,7 @@ const MyOffers = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {offers.map((offer) => (
                     <OfferCard 
-                      key={`${offer.id}-${offer.status}-${offer.updated_at}`}
+                      key={`${offer.id}-${offer.status}-${offer.updated_at}-${Date.now()}`}
                       offer={offer} 
                       onStatusUpdate={refetch}
                       currentUserId={user.id}

@@ -51,14 +51,14 @@ export const useUserOffers = () => {
           )
         `)
         .eq('seller_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching offers:', error);
         throw error;
       }
       
-      console.log('Offers fetched:', data);
+      console.log('Fresh offers fetched:', data);
       
       const transformedData: UserOffer[] = (data || []).map(offer => ({
         ...offer,
@@ -74,14 +74,15 @@ export const useUserOffers = () => {
     }
   };
 
-  // Enhanced real-time subscription with more aggressive state management
+  // Enhanced real-time subscription with global channel
   useEffect(() => {
     if (!user) return;
 
-    console.log('Setting up real-time subscription for user offers:', user.id);
+    console.log('Setting up GLOBAL real-time subscription for user offers:', user.id);
 
+    // Use a global channel name to catch all offer updates
     const channel = supabase
-      .channel('user-offers-realtime')
+      .channel('global-user-offers-updates')
       .on(
         'postgres_changes',
         {
@@ -91,37 +92,33 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Real-time offer update received:', payload);
+          console.log('GLOBAL: Real-time offer update received:', payload);
           
-          // Force immediate state update with comprehensive data merge
+          // Force immediate state update
           setOffers(currentOffers => {
             const updatedOffers = currentOffers.map(offer => {
               if (offer.id === payload.new.id) {
-                console.log('Updating offer status from', offer.status, 'to', payload.new.status);
-                // Merge all updated fields from payload
-                const updatedOffer = { 
+                console.log('GLOBAL: Updating offer status from', offer.status, 'to', payload.new.status);
+                return { 
                   ...offer, 
                   ...payload.new,
-                  // Ensure critical fields are properly updated
                   status: payload.new.status,
                   rejection_reason: payload.new.rejection_reason,
                   updated_at: payload.new.updated_at || new Date().toISOString()
                 };
-                console.log('Updated offer:', updatedOffer);
-                return updatedOffer;
               }
               return offer;
             });
             
-            console.log('New offers state after update:', updatedOffers);
+            console.log('GLOBAL: New offers state:', updatedOffers);
             return updatedOffers;
           });
 
-          // Also trigger a fresh fetch to ensure data consistency
+          // Also trigger a complete refresh after a short delay
           setTimeout(() => {
-            console.log('Triggering fresh fetch after real-time update');
+            console.log('GLOBAL: Triggering complete refresh');
             fetchUserOffers();
-          }, 1000);
+          }, 500);
         }
       )
       .on(
@@ -133,48 +130,52 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('New offer created for seller:', payload);
+          console.log('GLOBAL: New offer created:', payload);
           fetchUserOffers();
         }
       )
+      .subscribe((status) => {
+        console.log('GLOBAL: Real-time subscription status:', status);
+      });
+
+    // Also set up a channel specifically for this user's offers
+    const userChannel = supabase
+      .channel(`user-${user.id}-offers`)
       .on(
         'postgres_changes',
         {
-          event: 'DELETE',
+          event: '*',
           schema: 'public',
           table: 'offers',
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Offer deleted for seller:', payload);
+          console.log('USER CHANNEL: Offer change detected:', payload);
           fetchUserOffers();
         }
       )
-      .subscribe((status) => {
-        console.log('Real-time subscription status:', status);
-        if (status === 'SUBSCRIBED') {
-          console.log('Successfully subscribed to real-time updates');
-        }
-      });
+      .subscribe();
 
     return () => {
-      console.log('Cleaning up real-time subscription');
+      console.log('Cleaning up real-time subscriptions');
       supabase.removeChannel(channel);
+      supabase.removeChannel(userChannel);
     };
   }, [user]);
 
-  // Periodic refresh to ensure data consistency
+  // More frequent refresh to ensure data consistency
   useEffect(() => {
     if (!user) return;
 
     const interval = setInterval(() => {
       console.log('Periodic refresh of offers');
       fetchUserOffers();
-    }, 30000); // Refresh every 30 seconds
+    }, 15000); // Refresh every 15 seconds
 
     return () => clearInterval(interval);
   }, [user]);
 
+  // Initial fetch
   useEffect(() => {
     fetchUserOffers();
   }, [user]);

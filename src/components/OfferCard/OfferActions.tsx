@@ -25,7 +25,10 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
       
       const { error } = await supabase
         .from('offers')
-        .update({ status: 'accepted' })
+        .update({ 
+          status: 'accepted',
+          updated_at: new Date().toISOString()
+        })
         .eq('id', offerId);
 
       if (error) throw error;
@@ -35,7 +38,10 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
         description: 'La oferta ha sido aceptada exitosamente',
       });
 
-      onStatusUpdate?.();
+      // Force immediate callback
+      if (onStatusUpdate) {
+        setTimeout(onStatusUpdate, 100);
+      }
     } catch (err) {
       console.error('Error accepting offer:', err);
       toast({
@@ -64,12 +70,25 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
 
       if (error) throw error;
 
+      console.log('Offer rejection successful, triggering updates');
+
       toast({
         title: 'Oferta rechazada',
         description: 'La oferta ha sido rechazada',
       });
 
-      onStatusUpdate?.();
+      // Force immediate callback with multiple attempts
+      if (onStatusUpdate) {
+        setTimeout(onStatusUpdate, 100);
+        setTimeout(onStatusUpdate, 500);
+        setTimeout(onStatusUpdate, 1000);
+      }
+
+      // Force a page-wide event to notify all components
+      window.dispatchEvent(new CustomEvent('offerStatusChanged', { 
+        detail: { offerId, newStatus: 'rejected', rejectionReason } 
+      }));
+
     } catch (err) {
       console.error('Error rejecting offer:', err);
       toast({
