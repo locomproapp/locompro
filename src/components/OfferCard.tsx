@@ -1,12 +1,14 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Calendar, MessageCircle } from 'lucide-react';
+import { Calendar, MessageCircle, Info } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import Chat from '@/components/Chat';
 import OfferHeader from './OfferCard/OfferHeader';
 import RejectionReason from './OfferCard/RejectionReason';
 import ContactInfo from './OfferCard/ContactInfo';
 import OfferActions from './OfferCard/OfferActions';
+import SellerOfferActions from './OfferCard/SellerOfferActions';
 
 interface Offer {
   id: string;
@@ -38,7 +40,7 @@ interface OfferCardProps {
   showActions?: boolean;
   showPublicInfo?: boolean;
   onStatusUpdate?: () => void;
-  currentUserId?: string; // Add current user ID to determine if user is buyer or seller
+  currentUserId?: string;
 }
 
 const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatusUpdate, currentUserId }: OfferCardProps) => {
@@ -53,9 +55,10 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
     });
   };
 
-  // Determine if current user should see chat
-  const shouldShowChat = offer.status === 'accepted' && currentUserId && offer.buy_requests;
+  // Determine user role
   const isSeller = currentUserId === offer.seller_id;
+  const isBuyer = showActions && !isSeller; // showActions is true for buyers in CompareOffers
+  const shouldShowChat = offer.status === 'accepted' && currentUserId && offer.buy_requests;
 
   return (
     <div className="space-y-4">
@@ -75,6 +78,16 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             <p className="text-muted-foreground text-sm">{offer.description}</p>
           )}
 
+          {/* Status explanation for sellers */}
+          {isSeller && offer.status === 'pending' && (
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                Tu oferta está pendiente. El comprador debe aceptarla o rechazarla.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {offer.status === 'rejected' && offer.rejection_reason && (
             <RejectionReason rejectionReason={offer.rejection_reason} />
           )}
@@ -90,12 +103,24 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             </div>
           </div>
 
-          <OfferActions
-            offerId={offer.id}
-            status={offer.status}
-            showActions={showActions}
-            onStatusUpdate={onStatusUpdate}
-          />
+          {/* Actions for buyers (accept/reject) */}
+          {isBuyer && (
+            <OfferActions
+              offerId={offer.id}
+              status={offer.status}
+              showActions={showActions}
+              onStatusUpdate={onStatusUpdate}
+            />
+          )}
+
+          {/* Actions for sellers (withdraw) */}
+          {isSeller && (
+            <SellerOfferActions
+              offerId={offer.id}
+              status={offer.status}
+              onStatusUpdate={onStatusUpdate}
+            />
+          )}
         </div>
       </Card>
 

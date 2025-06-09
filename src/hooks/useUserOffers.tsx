@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -73,21 +74,21 @@ export const useUserOffers = () => {
     }
   };
 
-  // Listen for global offer status change events
+  // Enhanced global event listener for immediate state updates
   useEffect(() => {
     if (!user) return;
 
-    console.log('Setting up global event listener for offer status changes');
+    console.log('Setting up enhanced global event listener for offer status changes');
 
     const handleOfferStatusChange = (event: CustomEvent) => {
       const { offerId, newStatus, rejectionReason, timestamp } = event.detail;
-      console.log('GLOBAL EVENT: Offer status changed detected:', { offerId, newStatus, rejectionReason });
+      console.log('ENHANCED GLOBAL EVENT: Offer status changed detected:', { offerId, newStatus, rejectionReason });
 
       // Update the specific offer immediately in local state
       setOffers(currentOffers => {
         const updatedOffers = currentOffers.map(offer => {
           if (offer.id === offerId) {
-            console.log('GLOBAL EVENT: Updating offer status from', offer.status, 'to', newStatus);
+            console.log('ENHANCED GLOBAL EVENT: Updating offer status from', offer.status, 'to', newStatus);
             return {
               ...offer,
               status: newStatus,
@@ -98,35 +99,34 @@ export const useUserOffers = () => {
           return offer;
         });
         
-        console.log('GLOBAL EVENT: Updated offers state:', updatedOffers);
+        console.log('ENHANCED GLOBAL EVENT: Updated offers state:', updatedOffers);
         return updatedOffers;
       });
 
       // Also trigger a complete refresh to ensure data consistency
       setTimeout(() => {
-        console.log('GLOBAL EVENT: Triggering complete refresh after status change');
+        console.log('ENHANCED GLOBAL EVENT: Triggering complete refresh after status change');
         fetchUserOffers();
-      }, 500);
+      }, 300);
     };
 
     // Add event listener
     window.addEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
 
     return () => {
-      console.log('Cleaning up global event listener');
+      console.log('Cleaning up enhanced global event listener');
       window.removeEventListener('offerStatusChanged', handleOfferStatusChange as EventListener);
     };
   }, [user]);
 
-  // Enhanced real-time subscription with unified channel
+  // Enhanced real-time subscription with better error handling
   useEffect(() => {
     if (!user) return;
 
-    console.log('Setting up unified real-time subscription for user offers:', user.id);
+    console.log('Setting up enhanced real-time subscription for user offers:', user.id);
 
-    // Use a unified global channel name for all offer updates
     const channel = supabase
-      .channel('global-offers-updates')
+      .channel('enhanced-offers-updates')
       .on(
         'postgres_changes',
         {
@@ -136,13 +136,13 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('UNIFIED RT: Real-time offer update received:', payload);
+          console.log('ENHANCED RT: Real-time offer update received:', payload);
           
           // Force immediate state update
           setOffers(currentOffers => {
             const updatedOffers = currentOffers.map(offer => {
               if (offer.id === payload.new.id) {
-                console.log('UNIFIED RT: Updating offer status from', offer.status, 'to', payload.new.status);
+                console.log('ENHANCED RT: Updating offer status from', offer.status, 'to', payload.new.status);
                 return { 
                   ...offer, 
                   ...payload.new,
@@ -154,15 +154,15 @@ export const useUserOffers = () => {
               return offer;
             });
             
-            console.log('UNIFIED RT: New offers state:', updatedOffers);
+            console.log('ENHANCED RT: New offers state:', updatedOffers);
             return updatedOffers;
           });
 
-          // Also trigger a complete refresh
+          // Also trigger a complete refresh for consistency
           setTimeout(() => {
-            console.log('UNIFIED RT: Triggering complete refresh');
+            console.log('ENHANCED RT: Triggering complete refresh');
             fetchUserOffers();
-          }, 1000);
+          }, 500);
         }
       )
       .on(
@@ -174,28 +174,36 @@ export const useUserOffers = () => {
           filter: `seller_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('UNIFIED RT: New offer created:', payload);
+          console.log('ENHANCED RT: New offer created:', payload);
           fetchUserOffers();
         }
       )
       .subscribe((status) => {
-        console.log('UNIFIED RT: Real-time subscription status:', status);
+        console.log('ENHANCED RT: Real-time subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('ENHANCED RT: Successfully subscribed to real-time updates');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('ENHANCED RT: Channel error, attempting to reconnect...');
+          setTimeout(() => {
+            fetchUserOffers();
+          }, 2000);
+        }
       });
 
     return () => {
-      console.log('Cleaning up unified real-time subscription');
+      console.log('Cleaning up enhanced real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [user]);
 
-  // Aggressive refresh interval to ensure data consistency
+  // More frequent refresh interval to ensure data consistency
   useEffect(() => {
     if (!user) return;
 
     const interval = setInterval(() => {
-      console.log('Periodic aggressive refresh of offers');
+      console.log('Periodic enhanced refresh of offers');
       fetchUserOffers();
-    }, 10000); // Refresh every 10 seconds
+    }, 8000); // Refresh every 8 seconds
 
     return () => clearInterval(interval);
   }, [user]);

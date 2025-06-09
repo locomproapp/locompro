@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Check, X, AlertTriangle, Clock } from 'lucide-react';
+import { Calendar, Check, X, AlertTriangle, Clock, ArrowLeft } from 'lucide-react';
 
 interface OfferStatusProps {
   status: string;
@@ -17,7 +17,7 @@ const OfferStatus = ({ status }: OfferStatusProps) => {
       case 'rejected':
         return 'bg-red-100 text-red-800 border-red-200';
       case 'withdrawn':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'finalized':
         return 'bg-gray-100 text-gray-600 border-gray-200';
       default:
@@ -50,6 +50,8 @@ const OfferStatus = ({ status }: OfferStatusProps) => {
         return <Check className="h-3 w-3" />;
       case 'rejected':
         return <X className="h-3 w-3" />;
+      case 'withdrawn':
+        return <ArrowLeft className="h-3 w-3" />;
       case 'finalized':
         return <AlertTriangle className="h-3 w-3" />;
       default:
@@ -57,7 +59,6 @@ const OfferStatus = ({ status }: OfferStatusProps) => {
     }
   };
 
-  // Force re-render when status changes by adding timestamp
   console.log('Rendering OfferStatus with status:', status, 'at:', Date.now());
 
   return (
