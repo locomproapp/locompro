@@ -22,7 +22,8 @@ export const useFetchOffers = ({ buyRequestId, setOffers, setLoading, setError }
           *,
           profiles (
             full_name,
-            email
+            email,
+            avatar_url
           ),
           buy_requests (
             title,
