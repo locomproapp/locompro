@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -8,6 +7,7 @@ import { Search, Package, Handshake, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import SearchBar from '@/components/SearchBar';
 
 interface BuyRequest {
   id: string;
@@ -53,10 +53,14 @@ const Index = () => {
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
             ¿Qué estás <span className="text-primary">buscando</span>?
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-4 max-w-3xl mx-auto">
             La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas. 
             Encontrá exactamente lo que necesitás al mejor precio.
           </p>
+          {/* SearchBar debajo del título y subtítulo */}
+          <div className="mb-8 flex justify-center">
+            <SearchBar />
+          </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/market">

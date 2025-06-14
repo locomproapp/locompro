@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -61,7 +60,6 @@ function MobileLink({
 export default function Navigation() {
   const { user, signOut } = useAuth();
   const { notificationCount } = useSellerNotifications();
-
   const [open, setOpen] = React.useState(false);
 
   const handleSignOut = async () => {
@@ -71,85 +69,30 @@ export default function Navigation() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link to="/" className="mr-6 flex items-center space-x-2">
+        {/* LOGO + Marketplace button */}
+        <div className="mr-4 hidden md:flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
               alt="LoCompro" 
               className="h-8 w-8 object-contain"
               onError={(e) => {
-                // Fallback to icon if image fails to load
                 e.currentTarget.style.display = 'none';
                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
               }}
             />
-            <Package className="h-6 w-6 text-primary hidden" />
-            <span className="hidden font-bold sm:inline-block">LoCompro</span>
+            <span className="font-bold text-xl tracking-tight">LoCompro</span>
           </Link>
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>Explorar</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <li className="row-span-3">
-                      <NavigationMenuLink asChild>
-                        <Link
-                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                          to="/"
-                        >
-                          <img 
-                            src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
-                            alt="LoCompro" 
-                            className="h-6 w-6 object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                              e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                            }}
-                          />
-                          <Package className="h-6 w-6 hidden" />
-                          <div className="mb-2 mt-4 text-lg font-medium">
-                            LoCompro
-                          </div>
-                          <p className="text-sm leading-tight text-muted-foreground">
-                            Conecta compradores y vendedores en tu zona
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          to="/marketplace"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Marketplace</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Explora productos disponibles
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          to="/market"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Solicitudes</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Ve qué buscan los compradores
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          <Button
+            asChild
+            variant="ghost"
+            className="ml-2"
+          >
+            <Link to="/marketplace">Marketplace</Link>
+          </Button>
         </div>
 
+        {/* Sheet menu para mobile */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button
@@ -273,11 +216,9 @@ export default function Navigation() {
           </SheetContent>
         </Sheet>
 
+        {/* Espaciador */}
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-            <SearchBar />
-          </div>
-          
+          {/* Ya NO hay search bar aquí, solo login/user */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
