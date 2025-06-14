@@ -70,8 +70,8 @@ export default function Navigation() {
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-14 items-center">
         {/* LOGO + Mercado button */}
-        <div className="mr-4 hidden md:flex items-center space-x-2">
-          <Link to="/" className="flex items-center space-x-2">
+        <div className="mr-4 hidden md:flex items-center" style={{gap: 0, height: '2.5rem'}}>
+          <Link to="/" className="flex items-center" style={{height: '2.5rem'}}>
             <img 
               src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
               alt="LoCompro" 
@@ -81,19 +81,41 @@ export default function Navigation() {
                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
               }}
             />
-            <span className="font-bold text-xl tracking-tight">LoCompro</span>
-          </Link>
-          {/* Mercado button aligned center with logo and wordmark */}
-          <div className="flex items-center h-8">
-            <Button
-              asChild
-              variant="ghost"
-              className="ml-2 h-8 px-4 py-0 flex items-center"
-              style={{ lineHeight: '2rem' }} // ensures full height alignment
+            <span
+              className="font-medium text-xl tracking-tight"
+              style={{
+                fontFamily: 'inherit',
+                color: 'inherit',
+                letterSpacing: 0,
+                fontWeight: 500,
+                lineHeight: '2.5rem',
+                display: 'inline-block',
+                marginLeft: '0.5rem',
+                verticalAlign: 'baseline',
+                paddingTop: 0,
+              }}
             >
-              <Link to="/marketplace">Mercado</Link>
-            </Button>
-          </div>
+              LoCompro
+            </span>
+          </Link>
+          {/* Mercado button aligned perfectly on baseline with LoCompro */}
+          <Button
+            asChild
+            variant="ghost"
+            className="ml-4 h-10 px-4 py-0 flex items-center"
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 500,
+              lineHeight: '2.5rem', // same as LoCompro text
+              boxSizing: 'border-box',
+              alignItems: 'baseline',
+              marginTop: 0, // ensure no upward offset
+              marginBottom: 0, // ensure no downward offset
+              verticalAlign: 'baseline',
+            }}
+          >
+            <Link to="/marketplace">Mercado</Link>
+          </Button>
         </div>
 
         {/* Sheet menu para mobile */}
