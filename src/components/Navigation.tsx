@@ -101,11 +101,16 @@ export default function Navigation() {
           {/* Mercado button now visually matches "Iniciar Sesión" */}
           <Button
             asChild
-            className="ml-4 h-10 px-4 text-base font-medium capitalize rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            variant="ghost"
+            className="ml-4 h-10 px-4 text-base font-medium capitalize rounded-md"
             style={{
               fontFamily: 'inherit',
               fontWeight: 500,
               letterSpacing: 0,
+              background: 'transparent',
+              border: 'none',
+              color: 'inherit',
+              boxShadow: 'none',
               lineHeight: '2.5rem',
             }}
           >
