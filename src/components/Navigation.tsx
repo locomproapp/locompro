@@ -98,21 +98,11 @@ export default function Navigation() {
               LoCompro
             </span>
           </Link>
-          {/* Mercado button now visually matches "Iniciar Sesión" */}
+          {/* Mercado button now matches "Iniciar Sesión" link exactly */}
           <Button
             asChild
             variant="ghost"
-            className="ml-4 h-10 px-4 text-base font-medium capitalize rounded-md"
-            style={{
-              fontFamily: 'inherit',
-              fontWeight: 500,
-              letterSpacing: 0,
-              background: 'transparent',
-              border: 'none',
-              color: 'inherit',
-              boxShadow: 'none',
-              lineHeight: '2.5rem',
-            }}
+            className="ml-4 capitalize"
           >
             <Link to="/marketplace">Mercado</Link>
           </Button>
@@ -303,7 +293,7 @@ export default function Navigation() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" asChild>
+              <Button variant="ghost" asChild className="capitalize">
                 <Link to="/auth">Iniciar Sesión</Link>
               </Button>
               <Button asChild>
