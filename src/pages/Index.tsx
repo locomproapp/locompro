@@ -1,54 +1,73 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-// Removed: import BuyRequestCard from '@/components/BuyRequestCard';
 import { Button } from '@/components/ui/button';
-import { Search, Package, Handshake, Shield } from 'lucide-react';
+import { Storefront, Plus, Search, Package, Handshake, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-// Removed: import { useQuery } from '@tanstack/react-query';
-// Removed: import { supabase } from '@/integrations/supabase/client';
 import SearchBar from '@/components/SearchBar';
 
-// Removed BuyRequest type and queries
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+
+type BuyRequest = {
+  id: string;
+  created_at: string;
+  title: string;
+  description: string;
+  budget_currency: string;
+  budget_amount: number;
+  location: string;
+  user_id: string;
+};
 
 const Index = () => {
-  // Removed: useQuery for buyRequests
+  const { data: buyRequests, isLoading, error } = useQuery<BuyRequest[]>({
+    queryKey: ['buyRequests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('buy_requests')
+        .select('*')
+        .limit(3);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data || [];
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-            ¿Qué estás <span className="text-primary">buscando</span>?
+            LoCompro
           </h1>
           <p className="text-xl text-muted-foreground mb-4 max-w-3xl mx-auto">
-            La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas. 
-            Encontrá exactamente lo que necesitás al mejor precio.
+            La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
           </p>
-          {/* SearchBar debajo del título y subtítulo */}
           <div className="mb-8 flex justify-center">
-            <SearchBar />
+            <SearchBar placeholder="Producto que quieras vender" />
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/market">
-                <Search className="mr-2 h-5 w-5" />
+                <Storefront className="mr-2 h-5 w-5" />
                 Explorar Mercado
               </Link>
             </Button>
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/create-buy-request">
-                <Search className="mr-2 h-5 w-5" />
-                ¿Qué Buscás?
+                <Plus className="mr-2 h-5 w-5" />
+                Crear Búsqueda
               </Link>
             </Button>
           </div>
         </div>
 
-        {/* How it works */}
+        {/* Three-step process section (How it works) */}
         <div className="grid md:grid-cols-3 gap-8 mb-0">
           <div className="text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
