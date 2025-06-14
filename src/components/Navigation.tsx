@@ -67,7 +67,7 @@ export default function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-14 items-center">
         {/* LOGO + Mercado button */}
         <div className="mr-4 hidden md:flex items-center space-x-2">
@@ -83,10 +83,15 @@ export default function Navigation() {
             />
             <span className="font-bold text-xl tracking-tight">LoCompro</span>
           </Link>
+          {/* 
+            Move 'Mercado' button up to align with top of logo.
+            We'll use relative positioning and a negative margin to push
+            it up so its text baseline is closer to the logo's top edge.
+           */}
           <Button
             asChild
             variant="ghost"
-            className="ml-2"
+            className="ml-2 relative -mt-1"
           >
             {/* Renamed to Mercado */}
             <Link to="/marketplace">Mercado</Link>
