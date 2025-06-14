@@ -16,7 +16,15 @@ const Index = () => {
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
+          <h1
+            className="text-4xl md:text-6xl font-medium tracking-tight text-foreground"
+            style={{
+              fontFamily: 'inherit', // explicitly matches Mercado's inheritance of the button font
+              letterSpacing: '0em',   // match as per Mercado text
+              fontWeight: 500,        // Mercado and header use font-medium
+              color: 'inherit',       // ensure same color as default header
+            }}
+          >
             LoCompro
           </h1>
           <p className="text-xl text-muted-foreground mb-4 max-w-3xl mx-auto">
