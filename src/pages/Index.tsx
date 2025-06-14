@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -49,27 +48,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* REMOVED: Recent Buy Requests section */}
-        {/* REMOVE:
-        {buyRequests.length > 0 && (
-          <div className="mb-16">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Solicitudes recientes</h2>
-              <Button asChild variant="outline">
-                <Link to="/market">Ver todas</Link>
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {buyRequests.map((request) => (
-                <BuyRequestCard key={request.id} buyRequest={request} showOfferButton={true} />
-              ))}
-            </div>
-          </div>
-        )}
-        */}
-
         {/* How it works */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-0">
           <div className="text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="h-8 w-8 text-primary" />
@@ -99,73 +79,6 @@ const Index = () => {
               Compará ofertas y elegí la que mejor se adapte a tus necesidades
             </p>
           </div>
-        </div>
-
-        {/* Features */}
-        <div className="bg-card rounded-lg border border-border p-8 mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">¿Por qué LoCompro?</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Compra segura</h3>
-                <p className="text-muted-foreground">
-                  Los vendedores compiten por tu atención con las mejores ofertas
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Search className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Encontrá cualquier cosa</h3>
-                <p className="text-muted-foreground">
-                  Desde productos específicos hasta servicios personalizados
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Package className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Ahorrá tiempo</h3>
-                <p className="text-muted-foreground">
-                  No busques más, que los vendedores vengan a vos
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Handshake className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Mejores precios</h3>
-                <p className="text-muted-foreground">
-                  La competencia entre vendedores resulta en mejores ofertas para vos
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Final */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">¿Listo para empezar?</h2>
-          <p className="text-xl text-muted-foreground mb-8">
-            Únete a miles de usuarios que ya encontraron lo que buscaban
-          </p>
-          <Button asChild size="lg" className="text-lg px-8 py-6">
-            <Link to="/market">
-              Empezar Ahora
-            </Link>
-          </Button>
         </div>
       </main>
 
