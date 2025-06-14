@@ -54,9 +54,9 @@ const Index = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">1. Publicá tu búsqueda</h3>
+            <h3 className="text-xl font-semibold mb-3">1. Publicá el producto que buscás</h3>
             <p className="text-muted-foreground">
-              Describí exactamente qué estás buscando, tu presupuesto y zona de entrega
+              Describí tu presupuesto, de dónde sos y qué características te interesan.
             </p>
           </div>
           
@@ -66,7 +66,7 @@ const Index = () => {
             </div>
             <h3 className="text-xl font-semibold mb-3">2. Recibí ofertas</h3>
             <p className="text-muted-foreground">
-              Los vendedores que tengan lo que buscás te enviarán ofertas personalizadas
+              La gente que tenga lo que buscás te lo va a ofrecer.
             </p>
           </div>
           
@@ -76,7 +76,7 @@ const Index = () => {
             </div>
             <h3 className="text-xl font-semibold mb-3">3. Elegí la mejor</h3>
             <p className="text-muted-foreground">
-              Compará ofertas y elegí la que mejor se adapte a tus necesidades
+              Compará las ofertas y quedate con la que más te sirva.
             </p>
           </div>
         </div>
