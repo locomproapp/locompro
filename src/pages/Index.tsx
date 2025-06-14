@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -15,7 +14,7 @@ const Index = () => {
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <h1
             className="text-4xl md:text-6xl font-medium tracking-tight text-foreground"
             style={{
@@ -27,13 +26,15 @@ const Index = () => {
           >
             LoCompro
           </h1>
-          <p className="text-xl text-muted-foreground mb-4 max-w-3xl mx-auto">
+          {/* Increased margin below h1 for more breathing room */}
+          <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto">
             La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
           </p>
-          <div className="mb-8 flex justify-center">
+          {/* Increased space below subtitle for balance */}
+          <div className="mb-10 flex justify-center">
             <SearchBar placeholder="Producto que quieras vender" />
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/market">
                 <ShoppingBag className="mr-2 h-5 w-5" />
@@ -49,7 +50,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-0">
+        <div className="grid md:grid-cols-3 gap-12 mb-0">
           <div className="text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="h-8 w-8 text-primary" />

@@ -98,20 +98,15 @@ export default function Navigation() {
               LoCompro
             </span>
           </Link>
-          {/* Mercado button aligned perfectly on baseline with LoCompro */}
+          {/* Mercado button now visually matches "Iniciar Sesión" */}
           <Button
             asChild
-            variant="ghost"
-            className="ml-4 h-10 px-4 py-0 flex items-center"
+            className="ml-4 h-10 px-4 text-base font-medium capitalize rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             style={{
-              fontSize: '1.25rem',
+              fontFamily: 'inherit',
               fontWeight: 500,
-              lineHeight: '2.5rem', // same as LoCompro text
-              boxSizing: 'border-box',
-              alignItems: 'baseline',
-              marginTop: 0, // ensure no upward offset
-              marginBottom: 0, // ensure no downward offset
-              verticalAlign: 'baseline',
+              letterSpacing: 0,
+              lineHeight: '2.5rem',
             }}
           >
             <Link to="/marketplace">Mercado</Link>
