@@ -21,7 +21,6 @@ const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?" }: Search
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-    // Búsqueda en tiempo real con debounce
     setTimeout(() => {
       onSearch?.(value);
     }, 300);
@@ -36,7 +35,7 @@ const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?" }: Search
             placeholder={placeholder}
             value={searchQuery}
             onChange={handleInputChange}
-            className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full shadow-lg"
+            className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full shadow-lg placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground"
           />
           <Button
             type="submit"

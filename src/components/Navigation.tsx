@@ -83,19 +83,17 @@ export default function Navigation() {
             />
             <span className="font-bold text-xl tracking-tight">LoCompro</span>
           </Link>
-          {/* 
-            Move 'Mercado' button up to align with top of logo.
-            We'll use relative positioning and a negative margin to push
-            it up so its text baseline is closer to the logo's top edge.
-           */}
-          <Button
-            asChild
-            variant="ghost"
-            className="ml-2 relative -mt-1"
-          >
-            {/* Renamed to Mercado */}
-            <Link to="/marketplace">Mercado</Link>
-          </Button>
+          {/* Mercado button aligned center with logo and wordmark */}
+          <div className="flex items-center h-8">
+            <Button
+              asChild
+              variant="ghost"
+              className="ml-2 h-8 px-4 py-0 flex items-center"
+              style={{ lineHeight: '2rem' }} // ensures full height alignment
+            >
+              <Link to="/marketplace">Mercado</Link>
+            </Button>
+          </div>
         </div>
 
         {/* Sheet menu para mobile */}
