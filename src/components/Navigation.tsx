@@ -69,7 +69,7 @@ export default function Navigation() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        {/* LOGO + Marketplace button */}
+        {/* LOGO + Mercado button */}
         <div className="mr-4 hidden md:flex items-center space-x-2">
           <Link to="/" className="flex items-center space-x-2">
             <img 
@@ -88,7 +88,8 @@ export default function Navigation() {
             variant="ghost"
             className="ml-2"
           >
-            <Link to="/marketplace">Marketplace</Link>
+            {/* Renamed to Mercado */}
+            <Link to="/marketplace">Mercado</Link>
           </Button>
         </div>
 

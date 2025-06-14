@@ -1,47 +1,19 @@
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import BuyRequestCard from '@/components/BuyRequestCard';
+// Removed: import BuyRequestCard from '@/components/BuyRequestCard';
 import { Button } from '@/components/ui/button';
 import { Search, Package, Handshake, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+// Removed: import { useQuery } from '@tanstack/react-query';
+// Removed: import { supabase } from '@/integrations/supabase/client';
 import SearchBar from '@/components/SearchBar';
 
-interface BuyRequest {
-  id: string;
-  title: string;
-  description: string | null;
-  min_price: number | null;
-  max_price: number | null;
-  reference_image: string | null;
-  zone: string;
-  status: string;
-  created_at: string;
-  profiles?: {
-    full_name: string | null;
-  } | null;
-}
+// Removed BuyRequest type and queries
 
 const Index = () => {
-  const { data: buyRequests = [], refetch } = useQuery({
-    queryKey: ['recent-buy-requests'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('buy_requests')
-        .select(`
-          *,
-          profiles (full_name)
-        `)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      if (error) throw error;
-      return data as BuyRequest[];
-    }
-  });
+  // Removed: useQuery for buyRequests
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -77,7 +49,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Recent Buy Requests */}
+        {/* REMOVED: Recent Buy Requests section */}
+        {/* REMOVE:
         {buyRequests.length > 0 && (
           <div className="mb-16">
             <div className="flex justify-between items-center mb-8">
@@ -93,6 +66,7 @@ const Index = () => {
             </div>
           </div>
         )}
+        */}
 
         {/* How it works */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
