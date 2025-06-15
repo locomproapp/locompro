@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -115,7 +114,7 @@ const PostDetail = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
-        <Button variant="ghost" asChild className="mb-4">
+        <Button variant="ghost" asChild className="mb-4 self-start">
           <Link to="/market" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Volver al mercado
@@ -125,41 +124,47 @@ const PostDetail = () => {
         {/* Redesigned header */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-4">
           {/* Left info (2/3 width on desktop) */}
-          <div className="md:col-span-2 flex flex-col gap-3">
+          <div className="md:col-span-2 flex flex-col gap-4">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
               {post.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              <span className="font-semibold text-base text-primary bg-primary/10 rounded px-3 py-1">
-                {formatPrice(post.min_price, post.max_price)}
-              </span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" /> {post.zone}
-              </span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" /> {formatDate(post.created_at)}
-              </span>
+            
+            <div className="font-semibold text-xl text-primary">
+              {formatPrice(post.min_price, post.max_price)}
             </div>
+
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>{post.zone}</span>
+            </div>
+
             {formattedCharacteristics && (
-              <div className="mt-2">
-                <span className="font-semibold text-foreground text-sm">Características: </span>
-                <span className="text-muted-foreground text-sm">{formattedCharacteristics}</span>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-foreground text-sm">Características:</h3>
+                <p className="text-muted-foreground text-sm">{formattedCharacteristics}</p>
               </div>
             )}
+
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>Publicado el {formatDate(post.created_at)}</span>
+            </div>
+            
             {post.profiles?.full_name && (
-              <div className="mt-2">
-                <span className="font-semibold text-foreground text-sm">Publicado por: </span>
-                <span className="text-muted-foreground text-sm">{post.profiles.full_name}</span>
+              <div className="text-sm">
+                <span className="font-semibold text-foreground">Publicado por: </span>
+                <span className="text-muted-foreground">{post.profiles.full_name}</span>
               </div>
             )}
+
             {post.reference_link && (
-              <div className="mt-2">
-                <span className="font-semibold text-foreground text-sm">Enlace de referencia: </span>
+              <div className="text-sm">
+                <span className="font-semibold text-foreground">Enlace de referencia: </span>
                 <a
                   href={post.reference_link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline ml-1 text-sm"
+                  className="inline-flex items-center gap-1 text-primary hover:underline"
                 >
                   <ExternalLink className="h-4 w-4" />
                   Ver ejemplo
@@ -195,4 +200,3 @@ const PostDetail = () => {
 };
 
 export default PostDetail;
-

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -81,9 +82,8 @@ const PostCard = ({ post }: PostCardProps) => {
             <Calendar className="h-3 w-3" />
             <span>{formatDate(post.created_at)}</span>
           </div>
-          {post.profiles?.full_name 
-            ? <span>Por: {post.profiles.full_name}</span>
-            : null
+          {post.profiles?.full_name &&
+            <span>Por: {post.profiles.full_name}</span>
           }
         </div>
       </div>
