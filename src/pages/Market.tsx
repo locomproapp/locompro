@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -9,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 interface BuyRequest {
   id: string;
@@ -71,7 +71,13 @@ const Market = () => {
           <p className="text-lg text-muted-foreground mb-6">
             Los compradores publican qué buscan, los vendedores envían ofertas
           </p>
-          <CreateBuyRequestDialog onRequestCreated={refetch} />
+          {/* Ajuste del botón para igualar el tamaño al input */}
+          <Button 
+            className="flex items-center gap-2 h-12 px-6 text-lg font-medium"
+          >
+            <Plus className="h-5 w-5" />
+            Crear publicación
+          </Button>
         </div>
 
         {/* Barra de búsqueda y filtros */}
