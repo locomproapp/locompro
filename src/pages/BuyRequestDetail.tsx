@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -58,6 +57,14 @@ const BuyRequestDetail = () => {
   const isOwner = user?.id === buyRequest.user_id;
   const isActive = buyRequest.status === 'active';
 
+  // Handler callbacks (puedes personalizarlos, acá solo mostramos un alert)
+  const handleEdit = (id: string) => {
+    alert('Editar compra (falta lógica): ' + id);
+  };
+  const handleDelete = (id: string) => {
+    alert('Eliminar compra (falta lógica): ' + id);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -77,8 +84,13 @@ const BuyRequestDetail = () => {
             <PublisherCard buyRequest={buyRequest} />
           </div>
           
-          {/* RIGHT COLUMN - IMAGE & REFERENCE LINK */}
-          <ImageAndActionsCard buyRequest={buyRequest} />
+          {/* RIGHT COLUMN - IMAGE & REFERENCE LINK (ahora recibe user y handlers) */}
+          <ImageAndActionsCard
+            buyRequest={buyRequest}
+            user={user}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </div>
 
         {/* OFFERS SECTION */}
