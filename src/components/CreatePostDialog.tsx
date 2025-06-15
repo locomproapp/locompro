@@ -10,6 +10,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
+// Función para validar el precio: > 0 o vacío
+const isValidPrice = (price: string) => {
+  if (price === '' || price === undefined) return false;
+  const num = parseFloat(price);
+  return !isNaN(num) && num >= 0;
+};
+
 interface CreatePostDialogProps {
   onPostCreated?: () => void;
 }
@@ -29,17 +36,23 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     images: [] as string[]
   });
 
+  // Estado para indicar si el usuario intentó enviar (mostrar errores solo después)
+  const [touched, setTouched] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    setTouched(true);
+
+    // Validación simple: campos requeridos (puedes mejorar si deseas)
+    if (!user || !formData.title || !formData.zone) {
       toast({
         title: "Error",
-        description: "Debes iniciar sesión para crear una publicación",
+        description: "Completa los campos obligatorios",
         variant: "destructive"
       });
       return;
     }
-
+    // No bloquea el envío por precios vacíos, solo se guardan como null
     setLoading(true);
     try {
       const { error } = await supabase
@@ -74,6 +87,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         contactInfo: '',
         images: []
       });
+      setTouched(false);
       setOpen(false);
       onPostCreated?.();
     } catch (error) {
@@ -93,7 +107,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(value) => { setOpen(value); if (!value) setTouched(false); }}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -133,24 +147,44 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
               <Label htmlFor="minPrice">Precio Mínimo</Label>
               <Input
                 id="minPrice"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={formData.minPrice}
-                onChange={(e) => handleInputChange('minPrice', e.target.value)}
+                onChange={(e) => {
+                  // Permite borrar todo el contenido
+                  handleInputChange('minPrice', e.target.value.replace(/[^\d.]/g, ''));
+                }}
                 placeholder="$ 0"
+                className={
+                  touched && formData.minPrice !== '' && !isValidPrice(formData.minPrice)
+                    ? 'border-destructive focus-visible:ring-destructive'
+                    : ''
+                }
                 min="0"
                 step="0.01"
+                autoComplete="off"
               />
             </div>
             <div>
               <Label htmlFor="maxPrice">Precio Máximo</Label>
               <Input
                 id="maxPrice"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={formData.maxPrice}
-                onChange={(e) => handleInputChange('maxPrice', e.target.value)}
+                onChange={(e) => {
+                  // Permite borrar todo el contenido
+                  handleInputChange('maxPrice', e.target.value.replace(/[^\d.]/g, ''));
+                }}
                 placeholder="$ 0"
+                className={
+                  touched && formData.maxPrice !== '' && !isValidPrice(formData.maxPrice)
+                    ? 'border-destructive focus-visible:ring-destructive'
+                    : ''
+                }
                 min="0"
                 step="0.01"
+                autoComplete="off"
               />
             </div>
           </div>
@@ -211,3 +245,4 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 };
 
 export default CreatePostDialog;
+
