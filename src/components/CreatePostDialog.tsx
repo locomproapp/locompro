@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
-// Validación para saber si un precio es un número positivo o vacío
+// Validación: ¿es número positivo o vacío?
 const isValidPrice = (price: string) => {
   if (price === '' || price === undefined) return false;
   const num = parseFloat(price);
@@ -38,14 +38,14 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 
   // Estado para mostrar errores luego de intentar enviar
   const [touched, setTouched] = useState(false);
-  // Estado para mostrar el error específico de precios solo si corresponde (al escribir o enviar)
+  // Estado de error específico de precios (por ejemplo, max <= min)
   const [showMaxPriceError, setShowMaxPriceError] = useState(false);
 
-  // Validar que max > min (solo si ambos existen y son números válidos)
+  // Validar que max > min (solo si ambos existen y son válidos)
   const isMaxPriceInvalid = () => {
     const min = Number(formData.minPrice);
     const max = Number(formData.maxPrice);
-    // Sólo mostrar si ambos existen y son válidos
+    // Solo mostrar si ambos son números válidos, y máximo no es vacío
     return (
       formData.minPrice !== '' &&
       formData.maxPrice !== '' &&
@@ -55,11 +55,31 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     );
   };
 
+  // On blur de maxPrice: mostrar error
+  const handleMaxBlur = () => {
+    setShowMaxPriceError(isMaxPriceInvalid());
+  };
+  // También en minPrice, por si el usuario lo edita y el valor queda inválido
+  const handleMinBlur = () => {
+    setShowMaxPriceError(isMaxPriceInvalid());
+  };
+
+  // Permitir edición completamente libre
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Ocultar error hasta que haya blur o submit
+    if (field === 'maxPrice' || field === 'minPrice') {
+      setShowMaxPriceError(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
+
+    // Sólamente mostrar error visual, no impedir envío salvo que campos requeridos estén vacíos
     setShowMaxPriceError(isMaxPriceInvalid());
-    
+
     // Validación simple de campos requeridos
     if (!user || !formData.title || !formData.zone) {
       toast({
@@ -69,8 +89,9 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       });
       return;
     }
-    // Si hay un error de maxPrice, no enviar
+    // Si hay error lógica en los precios, no enviar
     if (isMaxPriceInvalid()) {
+      // El usuario sigue pudiendo editar, pero no se envía hasta arreglarlo.
       return;
     }
 
@@ -124,27 +145,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Si el usuario edita maxPrice, validar en el momento sólo ese campo
-    if (field === 'maxPrice') {
-      setShowMaxPriceError(false); // Oculta el error mientras escribe
-    }
-    if (field === 'minPrice') {
-      setShowMaxPriceError(false); // Oculta el error mientras edita también minPrice
-    }
-  };
-
-  // Cuando el usuario sale del campo de maxPrice, mostramos el error si corresponde
-  const handleMaxBlur = () => {
-    setShowMaxPriceError(isMaxPriceInvalid());
-  };
-
-  // Cuando el usuario sale del campo de minPrice (actualiza el error si corresponde)
-  const handleMinBlur = () => {
-    setShowMaxPriceError(isMaxPriceInvalid());
-  };
-
   return (
     <Dialog open={open} onOpenChange={(value) => { setOpen(value); if (!value) { setTouched(false); setShowMaxPriceError(false); } }}>
       <DialogTrigger asChild>
@@ -190,6 +190,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 inputMode="numeric"
                 value={formData.minPrice}
                 onChange={(e) => {
+                  // Permite escribir lo que quiera, solo números y punto
                   handleInputChange('minPrice', e.target.value.replace(/[^\d.]/g, ''));
                 }}
                 placeholder="$ 0"
@@ -206,10 +207,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             </div>
             <div>
               <Label htmlFor="maxPrice">Precio Máximo</Label>
-              {/* Mostrar mensaje de error solo si corresponde arriba del input */}
+              {/* Mostrar mensaje de error arriba solo cuando corresponde */}
               {showMaxPriceError && (
                 <div className="text-destructive text-sm mb-1 font-medium">
-                  Introducí un máximo mayor al mínimo
+                  El máximo debe ser mayor al mínimo
                 </div>
               )}
               <Input
@@ -218,6 +219,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 inputMode="numeric"
                 value={formData.maxPrice}
                 onChange={(e) => {
+                  // Permite escribir lo que quiera, solo números y punto
                   handleInputChange('maxPrice', e.target.value.replace(/[^\d.]/g, ''));
                 }}
                 placeholder="$ 0"
@@ -293,3 +295,4 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 };
 
 export default CreatePostDialog;
+
