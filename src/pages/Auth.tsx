@@ -11,7 +11,6 @@ const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Leer el query param para mostrar sign up directo si corresponde
   const searchParams = new URLSearchParams(location.search);
   const signupParam = searchParams.get('signup');
   const initialIsSignUp = signupParam === 'true';
@@ -23,7 +22,6 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Si cambia el query param (ej: el usuario navega entre /auth y /auth?signup=true)
     setIsSignUp(signupParam === 'true');
   }, [signupParam]);
 
@@ -44,11 +42,11 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        // Desactivar emailRedirectTo y hacer login automático tras registro
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
             data: {
               full_name: fullName,
             }
@@ -69,11 +67,32 @@ const Auth = () => {
               variant: "destructive"
             });
           }
-        } else {
+        } else if (data.user && data.session) {
+          // Registro exitoso y sesión iniciada automáticamente
           toast({
-            title: "¡Registro exitoso!",
-            description: "Revisa tu email para confirmar tu cuenta.",
+            title: "¡Bienvenido!",
+            description: "Has iniciado sesión correctamente.",
           });
+          navigate('/');
+        } else {
+          // Si por algún motivo no hay sesión, intentar iniciar sesión explícitamente
+          const { error: loginError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (loginError) {
+            toast({
+              title: "Error al iniciar sesión",
+              description: loginError.message,
+              variant: "destructive"
+            });
+          } else {
+            toast({
+              title: "¡Bienvenido!",
+              description: "Has iniciado sesión correctamente.",
+            });
+            navigate('/');
+          }
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -177,7 +196,6 @@ const Auth = () => {
               variant="link"
               onClick={() => {
                 setIsSignUp(!isSignUp); 
-                // También actualizamos la URL al toggle
                 if (!isSignUp) {
                   navigate("/auth?signup=true", { replace: true });
                 } else {
