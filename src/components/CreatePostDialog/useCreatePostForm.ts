@@ -71,8 +71,8 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
           reference_link: formData.referenceLink || null,
           zone: formData.zone,
-          characteristics: formData.description ? JSON.parse(`{"description": "${formData.description}"}`) : null,
-          contact_info: formData.contactInfo ? JSON.parse(`{"info": "${formData.contactInfo}"}`) : null,
+          characteristics: formData.contactInfo ? { contact_info: formData.contactInfo } : null,
+          contact_info: formData.contactInfo ? { info: formData.contactInfo } : null,
           images: formData.images.length > 0 ? formData.images : null
         });
 
