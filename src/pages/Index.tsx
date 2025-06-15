@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -44,14 +43,10 @@ const Index = () => {
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="text-lg px-8 py-6">
-              <a
-                href="https://lovable.dev/projects/36ecd180-7b81-44e9-989d-a0c23d56bc27"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="/marketplace">
                 <ShoppingBag className="mr-2 h-5 w-5" />
                 Explorar Mercado
-              </a>
+              </Link>
             </Button>
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link 
