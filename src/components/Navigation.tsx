@@ -69,7 +69,7 @@ export default function Navigation() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-14 items-center">
-        {/* LOGO + Mercado button */}
+        {/* LOGO + Inicio + Mercado button */}
         <div className="mr-4 hidden md:flex items-center" style={{gap: 0, height: '2.5rem'}}>
           <Link to="/" className="flex items-center" style={{height: '2.5rem'}}>
             <img 
@@ -98,11 +98,19 @@ export default function Navigation() {
               LoCompro
             </span>
           </Link>
-          {/* Mercado button now matches "Iniciar Sesión" link exactly */}
+          {/* New: Inicio link */}
           <Button
             asChild
             variant="ghost"
             className="ml-4 capitalize"
+          >
+            <Link to="/">Inicio</Link>
+          </Button>
+          {/* Mercado button remains as before, now to the right of Inicio */}
+          <Button
+            asChild
+            variant="ghost"
+            className="ml-2 capitalize"
           >
             <Link to="/marketplace">Mercado</Link>
           </Button>

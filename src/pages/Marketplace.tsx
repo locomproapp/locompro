@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -14,13 +13,8 @@ const Marketplace = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Pass in new props to Navigation below */}
-      <Navigation 
-        extraLinks={[
-          { label: 'Inicio', to: '/', isActive: false }
-        ]}
-        activePage="Mercado"
-      />
+      {/* Remove extraLinks, only pass activePage */}
+      <Navigation activePage="Mercado" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Marketplace Heading & Main search bar */}
