@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -28,15 +27,6 @@ export const useBuyRequestSubmit = () => {
       throw new Error("Imágenes requeridas");
     }
 
-    if (!formData.categoryId) {
-      toast({
-        title: "Error",
-        description: "Debes seleccionar una categoría",
-        variant: "destructive"
-      });
-      throw new Error("Categoría requerida");
-    }
-
     if (!formData.condition) {
       toast({
         title: "Error",
@@ -54,7 +44,6 @@ export const useBuyRequestSubmit = () => {
           user_id: user.id,
           title: formData.title,
           description: formData.description || null,
-          category_id: formData.categoryId,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
           zone: formData.zone,
