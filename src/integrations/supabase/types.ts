@@ -12,12 +12,15 @@ export type Database = {
       buy_requests: {
         Row: {
           category_id: string | null
+          condition: string | null
           created_at: string
           description: string | null
           id: string
+          images: string[] | null
           max_price: number | null
           min_price: number | null
           reference_image: string | null
+          reference_url: string | null
           status: string
           title: string
           updated_at: string
@@ -26,12 +29,15 @@ export type Database = {
         }
         Insert: {
           category_id?: string | null
+          condition?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          images?: string[] | null
           max_price?: number | null
           min_price?: number | null
           reference_image?: string | null
+          reference_url?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -40,12 +46,15 @@ export type Database = {
         }
         Update: {
           category_id?: string | null
+          condition?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          images?: string[] | null
           max_price?: number | null
           min_price?: number | null
           reference_image?: string | null
+          reference_url?: string | null
           status?: string
           title?: string
           updated_at?: string
