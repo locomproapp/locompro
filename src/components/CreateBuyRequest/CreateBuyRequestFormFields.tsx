@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -102,7 +101,6 @@ const CreateBuyRequestFormFields = ({
               id="minPrice"
               type="text"
               inputMode="numeric"
-              pattern="[0-9]*"
               value={minPrice === 0 ? "$" : formatCurrency(minPrice)}
               onChange={handleMinInput}
               placeholder="$"
@@ -115,7 +113,6 @@ const CreateBuyRequestFormFields = ({
               id="maxPrice"
               type="text"
               inputMode="numeric"
-              pattern="[0-9]*"
               value={maxPrice === 0 ? "$" : formatCurrency(maxPrice)}
               onChange={handleMaxInput}
               placeholder="$"
