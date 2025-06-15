@@ -57,18 +57,22 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
     }
   };
 
-  // Small back link config:
+  // Spanish back link config:
   const backLinkHref = from === "/marketplace" ? "/marketplace" : "/";
-  const backLinkText = from === "/marketplace" ? "← Back to Market" : "← Back to Home";
+  const backLinkText =
+    from === "/marketplace"
+      ? "← Volver al mercado"
+      : "← Volver al inicio";
 
-  // Cancel should go to previous (using navigate) or fallback based on "from"
+  // Cancel should go to previous page based on "from" and reset scroll
   const handleCancel = () => {
     navigate(backLinkHref, { replace: true });
+    window.scrollTo(0, 0); // Reset scroll position to top
   };
 
   return (
     <div className="bg-card rounded-lg border border-border p-8">
-      {/* Top small back link */}
+      {/* Top small back link in Spanish */}
       <div className="mb-4">
         <Link to={backLinkHref} className="text-sm text-muted-foreground hover:text-primary transition-colors">
           {backLinkText}
@@ -134,3 +138,4 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
 };
 
 export default BuyRequestForm;
+
