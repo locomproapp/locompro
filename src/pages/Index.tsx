@@ -1,23 +1,21 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Plus, Search, Package, Handshake } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
-import SearchBuyRequests from '@/components/SearchBuyRequests';
-
-// Removed useQuery and BuyRequest since data is not displayed on homepage.
+// Eliminamos SearchBuyRequests y toda la lógica/estado de búsqueda
 
 const Index = () => {
-  // Lift query state to trigger search only on submit/click
-  const [searchQuery, setSearchQuery] = useState('');
-  const [lastSubmittedQuery, setLastSubmittedQuery] = useState('');
+  const navigate = useNavigate();
 
-  // This handler will be passed to SearchBar
+  // Nuevo handler: redirecciona a /marketplace con query param al buscar
   const handleSearch = (query: string) => {
-    setLastSubmittedQuery(query); // Only update when submitted
+    if (query && query.trim()) {
+      navigate(`/marketplace?search=${encodeURIComponent(query.trim())}`);
+    }
   };
 
   return (
@@ -29,19 +27,17 @@ const Index = () => {
           <h1
             className="text-4xl md:text-6xl font-medium tracking-tight text-foreground"
             style={{
-              fontFamily: 'inherit', // explicitly matches Mercado's inheritance of the button font
-              letterSpacing: '0em',   // match as per Mercado text
-              fontWeight: 500,        // Mercado and header use font-medium
-              color: 'inherit',       // ensure same color as default header
+              fontFamily: 'inherit',
+              letterSpacing: '0em',
+              fontWeight: 500,
+              color: 'inherit',
             }}
           >
             LoCompro
           </h1>
-          {/* Increased margin below h1 for more breathing room */}
           <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto">
             La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
           </p>
-          {/* Increased space below subtitle for balance */}
           <div className="mb-10 flex justify-center">
             <SearchBar 
               placeholder="Producto que quieras vender"
@@ -49,12 +45,7 @@ const Index = () => {
             />
           </div>
 
-          {/* Show filtered publications only if a search was made */}
-          {lastSubmittedQuery && (
-            <div className="mb-12 w-full max-w-3xl mx-auto">
-              <SearchBuyRequests searchQuery={lastSubmittedQuery} />
-            </div>
-          )}
+          {/* Ya no mostramos resultados ni estado relacionados al término de búsqueda */}
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="text-lg px-8 py-6">
@@ -111,4 +102,3 @@ const Index = () => {
 };
 
 export default Index;
-

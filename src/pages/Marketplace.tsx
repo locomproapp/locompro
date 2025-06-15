@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SearchBuyRequests from '@/components/SearchBuyRequests';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 
 const Marketplace = () => {
-  // We'll lift state for search query up so we can pass it as prop
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Tomar el search param de la URL en el montaje
+  const location = useLocation();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchFromURL = urlParams.get('search') || '';
+    setSearchQuery(searchFromURL);
+  }, [location.search]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -31,6 +39,8 @@ const Marketplace = () => {
               <SearchBar
                 placeholder="¿Qué estás buscando?"
                 onSearch={setSearchQuery}
+                // Pasar valor para que la barra refleje búsqueda inicial
+                value={searchQuery}
               />
             </div>
             <Button asChild size="lg" className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap">

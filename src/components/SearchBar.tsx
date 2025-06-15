@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -7,10 +6,14 @@ import { Button } from '@/components/ui/button';
 interface SearchBarProps {
   onSearch?: (query: string) => void;
   placeholder?: string;
+  value?: string;
 }
 
-const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?" }: SearchBarProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?", value }: SearchBarProps) => {
+  // Si se pasa value, controlado desde afuera; si no, local state interno
+  const [localSearch, setLocalSearch] = useState('');
+  const isControlled = typeof value === 'string';
+  const searchQuery = isControlled ? value! : localSearch;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +22,13 @@ const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?" }: Search
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    setTimeout(() => {
-      onSearch?.(value);
-    }, 300);
+    const val = e.target.value;
+    if (isControlled) {
+      onSearch?.(val);
+    } else {
+      setLocalSearch(val);
+    }
+    // Ya no buscamos al tipear (solo onSearch si es controlada la barra)
   };
 
   return (
