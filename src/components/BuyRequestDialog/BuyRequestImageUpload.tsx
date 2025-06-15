@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, X, ZoomIn } from 'lucide-react';
+import { Upload, X, ZoomIn, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useAuth } from '@/hooks/useAuth';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -37,6 +38,17 @@ const BuyRequestImageUpload = ({ images, setImages }: BuyRequestImageUploadProps
 
   const handleImageRemove = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  const handleMoveImage = (index: number, direction: 'left' | 'right') => {
+    const newImages = [...images];
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+
+    if (targetIndex < 0 || targetIndex >= newImages.length) return;
+
+    // Swap elements
+    [newImages[index], newImages[targetIndex]] = [newImages[targetIndex], newImages[index]];
+    setImages(newImages);
   };
 
   return (
@@ -91,36 +103,31 @@ const BuyRequestImageUpload = ({ images, setImages }: BuyRequestImageUploadProps
                 </div>
                 
                 {/* Botones de acción */}
-                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="secondary"
-                        className="h-7 w-7 p-0"
-                      >
+                      <Button type="button" size="sm" variant="secondary" className="h-7 w-7 p-0">
                         <ZoomIn className="h-3 w-3" />
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-3xl">
-                      <img
-                        src={url}
-                        alt={`Referencia ${index + 1}`}
-                        className="w-full h-auto max-h-[80vh] object-contain"
-                      />
+                      <img src={url} alt={`Referencia ${index + 1}`} className="w-full h-auto max-h-[80vh] object-contain" />
                     </DialogContent>
                   </Dialog>
                   
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleImageRemove(index)}
-                    className="h-7 w-7 p-0"
-                  >
+                  <Button type="button" size="sm" variant="destructive" onClick={() => handleImageRemove(index)} className="h-7 w-7 p-0">
                     <X className="h-3 w-3" />
                   </Button>
+                </div>
+                
+                {/* Botones de reordenar */}
+                <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <Button type="button" size="sm" variant="secondary" onClick={() => handleMoveImage(index, 'left')} disabled={index === 0} className="h-7 w-7 p-0">
+                     <ArrowLeft className="h-3 w-3" />
+                   </Button>
+                   <Button type="button" size="sm" variant="secondary" onClick={() => handleMoveImage(index, 'right')} disabled={index === images.length - 1} className="h-7 w-7 p-0">
+                     <ArrowRight className="h-3 w-3" />
+                   </Button>
                 </div>
 
                 {/* Indicador de imagen principal */}

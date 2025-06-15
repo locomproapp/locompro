@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ImageGallery from '@/components/ImageGallery';
 import { Edit, Trash2 } from 'lucide-react';
@@ -118,7 +117,7 @@ const ImageAndActionsCard = ({
       {buyRequest.reference_url && (
         <Button asChild className="w-full">
           <a href={buyRequest.reference_url} target="_blank" rel="noopener noreferrer">
-            Ver enlace de referencia
+            Ver producto de referencia
           </a>
         </Button>
       )}

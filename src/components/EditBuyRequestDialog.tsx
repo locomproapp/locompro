@@ -8,13 +8,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import BuyRequestImageUpload from './BuyRequestDialog/BuyRequestImageUpload';
 
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
   description: z.string().optional(),
   min_price: z.number().min(0, 'El precio mínimo debe ser mayor o igual a 0').nullable(),
   max_price: z.number().min(0, 'El precio máximo debe ser mayor o igual a 0').nullable(),
-  zone: z.string().min(1, 'La zona es requerida')
+  zone: z.string().min(1, 'La zona es requerida'),
+  condition: z.string().min(1, 'La condición es requerida'),
+  reference_url: z.string().url({ message: "Debe ser una URL válida" }).optional().or(z.literal('')),
+  images: z.array(z.string()).min(1, 'Debes subir al menos una imagen.'),
 });
 
 interface EditBuyRequestDialogProps {
@@ -54,7 +59,10 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
       description: '',
       min_price: null,
       max_price: null,
-      zone: ''
+      zone: '',
+      condition: 'cualquiera',
+      reference_url: '',
+      images: [],
     }
   });
 
@@ -99,13 +107,18 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
         .single();
 
       if (error) throw error;
+      
+      const allImages = data.images?.length ? data.images : (data.reference_image ? [data.reference_image] : []);
 
       form.reset({
         title: data.title,
         description: data.description || '',
         min_price: data.min_price || null,
         max_price: data.max_price || null,
-        zone: data.zone
+        zone: data.zone,
+        condition: data.condition || 'cualquiera',
+        reference_url: data.reference_url || '',
+        images: allImages,
       });
       setMinPriceInput(formatCurrency(data.min_price));
       setMaxPriceInput(formatCurrency(data.max_price));
@@ -138,6 +151,10 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
           min_price: values.min_price,
           max_price: values.max_price,
           zone: values.zone,
+          condition: values.condition,
+          reference_url: values.reference_url || null,
+          images: values.images,
+          reference_image: values.images[0] || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', buyRequestId);
@@ -155,13 +172,13 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar solicitud de compra</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="title"
@@ -240,6 +257,76 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
                   <FormLabel>Zona</FormLabel>
                   <FormControl>
                     <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condición del producto</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex gap-6 mt-2"
+                    >
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="nuevo" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Nuevo</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="usado" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Usado</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="cualquiera" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Cualquiera</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="reference_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://ejemplo.com/producto" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fotos de Referencia</FormLabel>
+                  <FormControl>
+                    <BuyRequestImageUpload
+                      images={field.value ?? []}
+                      setImages={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
