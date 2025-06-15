@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,7 +48,9 @@ const CreateBuyRequestFormFields = ({
   // Only show currency for non-zero
   const handleMinInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = parseCurrencyInput(e.target.value);
-    val = Math.max(MIN, Math.min(val, maxPrice));
+    // When maxPrice is 0 (not set), it shouldn't constrain minPrice.
+    const upperBoundary = maxPrice > 0 ? maxPrice : Infinity;
+    val = Math.max(MIN, Math.min(val, upperBoundary));
     onMinPriceChange(val);
   };
   const handleMaxInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +68,7 @@ const CreateBuyRequestFormFields = ({
           id="title"
           value={formData.title}
           onChange={(e) => onInputChange("title", e.target.value)}
-          placeholder="Ej: Pelota de fútbol, licuadora, auriculares…"
+          placeholder="Ej: Pelota de fútbol, licuadora, auriculares, etc"
           autoComplete="off"
         />
       </div>
@@ -156,4 +157,3 @@ const CreateBuyRequestFormFields = ({
 };
 
 export default CreateBuyRequestFormFields;
-

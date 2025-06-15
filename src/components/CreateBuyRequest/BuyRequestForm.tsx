@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ const BuyRequestForm = () => {
 
   // Price slider managed as numbers, synced to/from string fields
   const parsedMin = Number(formData.minPrice) || 0;
-  const parsedMax = Number(formData.maxPrice) || 100000;
+  const parsedMax = Number(formData.maxPrice) || 0;
 
   const [minPrice, setMinPrice] = useState(parsedMin);
   const [maxPrice, setMaxPrice] = useState(parsedMax);
@@ -38,7 +39,7 @@ const BuyRequestForm = () => {
 
   React.useEffect(() => {
     setMinPrice(parsedMin);
-    setMaxPrice(parsedMax || Math.max(parsedMin, 100000));
+    setMaxPrice(parsedMax);
     // eslint-disable-next-line
   }, []); // on mount, only from formData
 
@@ -69,6 +70,7 @@ const BuyRequestForm = () => {
 
         {/* Imagenes (no extra label, just upload) */}
         <div>
+          <Label>Fotos de Referencia</Label>
           <BuyRequestImageUpload images={formData.images} setImages={setImages} />
         </div>
 
