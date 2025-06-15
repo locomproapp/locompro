@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -28,6 +27,7 @@ interface BuyRequestCardProps {
   showActions?: boolean;
   onDelete?: (id: string) => Promise<{ success: boolean; error?: string }>;
   onUpdate?: () => void;
+  hideBuscoTag?: boolean;
 }
 
 const BuyRequestCard = ({ 
@@ -35,7 +35,8 @@ const BuyRequestCard = ({
   showOfferButton = false, 
   showActions = false,
   onDelete,
-  onUpdate
+  onUpdate,
+  hideBuscoTag = false,
 }: BuyRequestCardProps) => {
   const formatPrice = (min: number | null, max: number | null) => {
     if (!min && !max) return 'Presupuesto abierto';
@@ -72,12 +73,14 @@ const BuyRequestCard = ({
       <div className="p-4 space-y-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <Search className="h-4 w-4 text-primary" />
-              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                BUSCO
-              </span>
-            </div>
+            {!hideBuscoTag && (
+              <div className="flex items-center gap-2 mb-2">
+                <Search className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+                  BUSCO
+                </span>
+              </div>
+            )}
             <Link to={`/buy-request/${buyRequest.id}`}>
               <h3 className="font-semibold text-lg line-clamp-2 hover:text-primary transition-colors">
                 {buyRequest.title}

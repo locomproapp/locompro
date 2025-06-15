@@ -71,7 +71,8 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
     try {
       await submitBuyRequest(formData);
       resetForm();
-      navigate("/my-requests");
+      navigate(backLinkHref, { replace: true });
+      window.scrollTo(0, 0);
     } catch (error) {
       // Error handling is done in the hook
     }

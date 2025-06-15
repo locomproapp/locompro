@@ -39,10 +39,10 @@ const MyRequests = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Mis Solicitudes de Compra
+                Mis publicaciones
               </h1>
               <p className="text-lg text-muted-foreground">
-                Gestiona qué estás buscando y revisa las ofertas recibidas
+                Acá podés ver las publicaciones que creaste.
               </p>
             </div>
             <CreateBuyRequestDialog onRequestCreated={refetch} />
@@ -61,7 +61,7 @@ const MyRequests = () => {
           <>
             <div className="mb-6">
               <p className="text-muted-foreground">
-                {buyRequests.length} {buyRequests.length === 1 ? 'solicitud' : 'solicitudes'}
+                {buyRequests.length} {buyRequests.length === 1 ? 'publicación' : 'publicaciones'}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -72,6 +72,7 @@ const MyRequests = () => {
                   showActions={true}
                   onDelete={deleteBuyRequest}
                   onUpdate={refetch}
+                  hideBuscoTag={true}
                 />
               ))}
             </div>
