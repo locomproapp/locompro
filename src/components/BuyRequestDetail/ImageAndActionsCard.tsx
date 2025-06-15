@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import ImageGallery from '@/components/ImageGallery';
 import { Edit, Trash2 } from 'lucide-react';
@@ -58,10 +59,10 @@ const ImageAndActionsCard = ({
 
   return (
     <div className="flex flex-col gap-4 sticky top-24">
-      <div className="relative bg-card rounded-lg border border-border p-4 shadow-sm">
+      <div className="bg-card rounded-lg border border-border p-4 shadow-sm flex flex-col gap-4">
         {/* Icons only if isOwner */}
         {isOwner && (
-          <div className="absolute top-4 right-4 z-20 flex gap-2">
+          <div className="flex gap-2 justify-end">
             {/* EDIT ICON */}
             <button
               aria-label="Editar"

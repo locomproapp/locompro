@@ -55,8 +55,8 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-transparent border-none shadow-none p-0 max-w-screen max-h-screen w-full h-full flex items-center justify-center">
-        <div className="relative w-full h-full max-w-7xl max-h-[90vh] flex items-center justify-center">
+      <DialogContent className="bg-transparent border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]">
+        <div className="relative w-full h-full flex items-center justify-center">
           {/* Close Button */}
           <Button
             variant="ghost"
@@ -101,6 +101,13 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
             >
               <ArrowRight className="h-6 w-6" />
             </Button>
+          )}
+          
+          {/* Image Counter */}
+          {images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full select-none">
+              {currentIndex + 1} / {images.length}
+            </div>
           )}
         </div>
       </DialogContent>
