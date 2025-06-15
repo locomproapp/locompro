@@ -88,11 +88,11 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       {/* Results */}
       {isLoading ? (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">Cargando solicitudes...</p>
+          <p className="text-muted-foreground">Cargando publicaciones</p>
         </div>
       ) : !buyRequests || buyRequests.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">No se encontraron solicitudes de compra</p>
+          <p className="text-muted-foreground">No se encontraron publicaciones</p>
         </div>
       ) : (
         <>
