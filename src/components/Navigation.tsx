@@ -305,7 +305,7 @@ export default function Navigation() {
                 <Link to="/auth">Iniciar Sesión</Link>
               </Button>
               <Button asChild>
-                <Link to="/auth">Registrarse</Link>
+                <Link to="/auth?signup=true">Registrarse</Link>
               </Button>
             </div>
           )}

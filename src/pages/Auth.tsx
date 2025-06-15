@@ -4,16 +4,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 
 const Auth = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Leer el query param para mostrar sign up directo si corresponde
+  const searchParams = new URLSearchParams(location.search);
+  const signupParam = searchParams.get('signup');
+  const initialIsSignUp = signupParam === 'true';
+
+  const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Si cambia el query param (ej: el usuario navega entre /auth y /auth?signup=true)
+    setIsSignUp(signupParam === 'true');
+  }, [signupParam]);
 
   useEffect(() => {
     // Verificar si el usuario ya está autenticado
@@ -163,7 +175,15 @@ const Auth = () => {
             </p>
             <Button
               variant="link"
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={() => {
+                setIsSignUp(!isSignUp); 
+                // También actualizamos la URL al toggle
+                if (!isSignUp) {
+                  navigate("/auth?signup=true", { replace: true });
+                } else {
+                  navigate("/auth", { replace: true });
+                }
+              }}
               className="mt-1"
             >
               {isSignUp ? 'Iniciar sesión' : 'Registrarse'}
