@@ -10,7 +10,11 @@ import BuyRequestImageUpload from "@/components/BuyRequestDialog/BuyRequestImage
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const BuyRequestForm = () => {
+interface BuyRequestFormProps {
+  from?: "/" | "/marketplace";
+}
+
+const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
   const navigate = useNavigate();
   const {
     formData,
@@ -28,7 +32,6 @@ const BuyRequestForm = () => {
   const [minPrice, setMinPrice] = useState(parsedMin);
   const [maxPrice, setMaxPrice] = useState(parsedMax);
 
-  // Keep formData and slider in sync
   React.useEffect(() => {
     setFormData((prev) => ({
       ...prev,
@@ -40,7 +43,6 @@ const BuyRequestForm = () => {
   React.useEffect(() => {
     setMinPrice(parsedMin);
     setMaxPrice(parsedMax);
-    // eslint-disable-next-line
   }, []); // on mount, only from formData
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,8 +57,23 @@ const BuyRequestForm = () => {
     }
   };
 
+  // Small back link config:
+  const backLinkHref = from === "/marketplace" ? "/marketplace" : "/";
+  const backLinkText = from === "/marketplace" ? "← Back to Market" : "← Back to Home";
+
+  // Cancel should go to previous (using navigate) or fallback based on "from"
+  const handleCancel = () => {
+    navigate(backLinkHref, { replace: true });
+  };
+
   return (
     <div className="bg-card rounded-lg border border-border p-8">
+      {/* Top small back link */}
+      <div className="mb-4">
+        <Link to={backLinkHref} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+          {backLinkText}
+        </Link>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Campos principales */}
         <CreateBuyRequestFormFields
@@ -95,8 +112,13 @@ const BuyRequestForm = () => {
 
         {/* Botones */}
         <div className="flex gap-4 pt-6">
-          <Button type="button" variant="outline" asChild className="flex-1">
-            <Link to="/">Cancelar</Link>
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={handleCancel}
+          >
+            Cancelar
           </Button>
           <Button
             type="submit"

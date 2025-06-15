@@ -40,12 +40,14 @@ const Marketplace = () => {
               <SearchBar
                 placeholder="¿Qué estás buscando?"
                 onSearch={setSearchQuery}
-                // Pasar valor para que la barra refleje búsqueda inicial
                 value={searchQuery}
               />
             </div>
             <Button asChild size="lg" className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap">
-              <Link to="/create-buy-request">
+              <Link 
+                to="/create-buy-request" 
+                state={{ from: "/marketplace" }}
+              >
                 <Plus className="h-4 w-4" />
                 Crear publicación
               </Link>
@@ -65,4 +67,3 @@ const Marketplace = () => {
 };
 
 export default Marketplace;
-

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -55,7 +54,10 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild size="lg" className="text-lg px-8 py-6">
-              <Link to="/create-buy-request">
+              <Link 
+                to="/create-buy-request" 
+                state={{ from: "/" }}
+              >
                 <Plus className="mr-2 h-5 w-5" />
                 Crear Búsqueda
               </Link>
