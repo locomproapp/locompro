@@ -95,7 +95,7 @@ const CreateBuyRequestFormFields = ({
       {/* Presupuesto estimado inputs (only two, both empty by default) */}
       <div>
         <Label>Presupuesto estimado</Label>
-        <div className="grid grid-cols-2 gap-4 items-center mt-4">
+        <div className="grid grid-cols-2 gap-4 items-start mt-2">
           <div>
             <Label htmlFor="minPrice">Mínimo</Label>
             <Input
@@ -111,11 +111,6 @@ const CreateBuyRequestFormFields = ({
           </div>
           <div>
             <Label htmlFor="maxPrice">Máximo</Label>
-            {priceError && (
-              <p className="text-destructive text-sm font-medium mt-1">
-                El máximo debe ser mayor al mínimo
-              </p>
-            )}
             <Input
               id="maxPrice"
               type="text"
@@ -129,6 +124,11 @@ const CreateBuyRequestFormFields = ({
                 priceError && "border-destructive focus-visible:ring-destructive"
               )}
             />
+            {priceError && (
+              <p className="text-destructive text-sm font-medium mt-1">
+                El máximo debe ser mayor al mínimo
+              </p>
+            )}
           </div>
         </div>
       </div>
