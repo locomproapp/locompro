@@ -1,15 +1,29 @@
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Slider } from "@/components/ui/slider";
 import { BuyRequestFormData } from "@/hooks/useBuyRequestForm";
 
-// Helper for formatting amounts as "$1.000"
 function formatCurrency(value: number) {
-  if (Number.isNaN(value)) return "";
-  return "$" + value.toLocaleString("es-AR");
+  if (Number.isNaN(value) || !isFinite(value) || value === 0) return "";
+  // Format as $20.000 style
+  return (
+    "$" +
+    value
+      .toLocaleString("es-AR", {
+        maximumFractionDigits: 0,
+        useGrouping: true,
+      })
+      .replace(/\./g, ".")
+  );
+}
+
+// Parse a formatted string and ensure integer
+function parseCurrencyInput(input: string) {
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned ? parseInt(cleaned, 10) : 0;
 }
 
 interface CreateBuyRequestFormFieldsProps {
@@ -23,10 +37,6 @@ interface CreateBuyRequestFormFieldsProps {
 
 const MIN = 0;
 const MAX = 1000000;
-const STEP = 1000;
-
-const clamp = (val: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, val));
 
 const CreateBuyRequestFormFields = ({
   formData,
@@ -36,16 +46,16 @@ const CreateBuyRequestFormFields = ({
   onMinPriceChange,
   onMaxPriceChange,
 }: CreateBuyRequestFormFieldsProps) => {
-  // Keep slider and input in sync (enforce whole numbers)
+  // Make sure changing the input updates only integers
   const handleMinInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = Number(e.target.value.replace(/\D/g, ""));
-    val = Math.floor(val);
-    onMinPriceChange(clamp(val, MIN, maxPrice));
+    let val = parseCurrencyInput(e.target.value);
+    val = Math.max(MIN, Math.min(val, maxPrice));
+    onMinPriceChange(val);
   };
   const handleMaxInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = Number(e.target.value.replace(/\D/g, ""));
-    val = Math.floor(val);
-    onMaxPriceChange(clamp(val, minPrice, MAX));
+    let val = parseCurrencyInput(e.target.value);
+    val = Math.max(minPrice, Math.min(val, MAX));
+    onMaxPriceChange(val);
   };
 
   return (
@@ -85,25 +95,10 @@ const CreateBuyRequestFormFields = ({
         </RadioGroup>
       </div>
 
-      {/* Presupuesto estimado (slider + min/max formatted input) */}
+      {/* Presupuesto estimado (Min/Max input, no slider) */}
       <div>
         <Label>Presupuesto estimado</Label>
-        <Slider
-          min={MIN}
-          max={MAX}
-          step={STEP}
-          value={[
-            clamp(minPrice, MIN, maxPrice),
-            clamp(maxPrice, minPrice, MAX),
-          ]}
-          minStepsBetweenThumbs={1}
-          onValueChange={([minV, maxV]) => {
-            onMinPriceChange(minV);
-            onMaxPriceChange(maxV);
-          }}
-          className="my-4"
-        />
-        <div className="grid grid-cols-2 gap-4 items-center">
+        <div className="grid grid-cols-2 gap-4 items-center mt-4">
           <div>
             <Label htmlFor="minPrice">Mínimo</Label>
             <Input
@@ -161,3 +156,4 @@ const CreateBuyRequestFormFields = ({
 };
 
 export default CreateBuyRequestFormFields;
+
