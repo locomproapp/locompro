@@ -18,10 +18,10 @@ const Marketplace = () => {
         {/* Header del marketplace */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Marketplace LoCompro
+            Mercado de publicaciones
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
-            Los compradores publican qué buscan, los vendedores envían ofertas
+            Acá se encuentran las publicaciones de los compradores de qué productos están buscando comprar
           </p>
         </div>
 
