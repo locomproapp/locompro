@@ -1,14 +1,25 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Plus, Search, Package, Handshake } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
+import SearchBuyRequests from '@/components/SearchBuyRequests';
 
 // Removed useQuery and BuyRequest since data is not displayed on homepage.
 
 const Index = () => {
+  // Lift query state to trigger search only on submit/click
+  const [searchQuery, setSearchQuery] = useState('');
+  const [lastSubmittedQuery, setLastSubmittedQuery] = useState('');
+
+  // This handler will be passed to SearchBar
+  const handleSearch = (query: string) => {
+    setLastSubmittedQuery(query); // Only update when submitted
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -32,8 +43,19 @@ const Index = () => {
           </p>
           {/* Increased space below subtitle for balance */}
           <div className="mb-10 flex justify-center">
-            <SearchBar placeholder="Producto que quieras vender" />
+            <SearchBar 
+              placeholder="Producto que quieras vender"
+              onSearch={handleSearch}
+            />
           </div>
+
+          {/* Show filtered publications only if a search was made */}
+          {lastSubmittedQuery && (
+            <div className="mb-12 w-full max-w-3xl mx-auto">
+              <SearchBuyRequests searchQuery={lastSubmittedQuery} />
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/market">
@@ -89,3 +111,4 @@ const Index = () => {
 };
 
 export default Index;
+
