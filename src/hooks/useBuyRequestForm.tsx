@@ -1,57 +1,61 @@
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export interface BuyRequestFormData {
   title: string;
   description: string;
-  categoryId: string;
   condition: string;
   minPrice: string;
   maxPrice: string;
   zone: string;
-  contactInfo: string;
   images: string[];
+  productFeatures?: string;
+  referenceLink?: string;
 }
 
 export const useBuyRequestForm = () => {
   const [formData, setFormData] = useState<BuyRequestFormData>({
-    title: '',
-    description: '',
-    categoryId: '',
-    condition: '',
-    minPrice: '',
-    maxPrice: '',
-    zone: '',
-    contactInfo: '',
-    images: []
+    title: "",
+    description: "",
+    condition: "",
+    minPrice: "",
+    maxPrice: "",
+    zone: "",
+    images: [],
+    productFeatures: "",
+    referenceLink: "",
   });
 
-  const handleInputChange = (field: keyof BuyRequestFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof BuyRequestFormData,
+    value: string
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      description: '',
-      categoryId: '',
-      condition: '',
-      minPrice: '',
-      maxPrice: '',
-      zone: '',
-      contactInfo: '',
-      images: []
+      title: "",
+      description: "",
+      condition: "",
+      minPrice: "",
+      maxPrice: "",
+      zone: "",
+      images: [],
+      productFeatures: "",
+      referenceLink: "",
     });
   };
 
   const setImages = (images: string[]) => {
-    setFormData(prev => ({ ...prev, images }));
+    setFormData((prev) => ({ ...prev, images }));
   };
 
   return {
     formData,
     handleInputChange,
     resetForm,
-    setImages
+    setImages,
+    setFormData, // to allow setting price via slider
   };
 };

@@ -1,8 +1,8 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PageHeader = () => {
   return (
@@ -13,12 +13,12 @@ const PageHeader = () => {
           Volver al inicio
         </Link>
       </Button>
-      
+
       <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-        Crear Solicitud de Compra
+        Publicá qué querés comprar
       </h1>
       <p className="text-lg text-muted-foreground">
-        Describí exactamente qué estás buscando y recibí ofertas personalizadas de vendedores
+        Describí qué estás buscando y recibí ofertas de vendedores
       </p>
     </div>
   );
