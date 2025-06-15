@@ -14,8 +14,8 @@ import { useToast } from '@/hooks/use-toast';
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
   description: z.string().optional(),
-  min_price: z.number().min(0, 'El precio mínimo debe ser mayor o igual a 0').optional(),
-  max_price: z.number().min(0, 'El precio máximo debe ser mayor o igual a 0').optional(),
+  min_price: z.number().min(0, 'El precio mínimo debe ser mayor o igual a 0').nullable(),
+  max_price: z.number().min(0, 'El precio máximo debe ser mayor o igual a 0').nullable(),
   zone: z.string().min(1, 'La zona es requerida')
 });
 
@@ -24,6 +24,26 @@ interface EditBuyRequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdate: () => void;
+}
+
+// Funciones utilitarias para formateo y parseo
+function formatCurrency(value: number | null | undefined) {
+  if (typeof value !== "number" || isNaN(value) || value === 0) return "";
+  return (
+    "$" +
+    value
+      .toLocaleString("es-AR", {
+        maximumFractionDigits: 0,
+        useGrouping: true,
+      })
+      .replace(/\./g, ".")
+  );
+}
+
+function parseCurrencyInput(input: string) {
+  if (!input) return null;
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned ? parseInt(cleaned, 10) : null;
 }
 
 const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: EditBuyRequestDialogProps) => {
@@ -35,18 +55,43 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
     defaultValues: {
       title: '',
       description: '',
-      min_price: undefined,
-      max_price: undefined,
+      min_price: null,
+      max_price: null,
       zone: ''
     }
   });
+
+  // Estados locales para mostrar el input formateado
+  const [minPriceInput, setMinPriceInput] = useState('');
+  const [maxPriceInput, setMaxPriceInput] = useState('');
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   // Cargar datos existentes cuando se abre el diálogo
   useEffect(() => {
     if (open && buyRequestId) {
       fetchBuyRequest();
     }
+    // eslint-disable-next-line
   }, [open, buyRequestId]);
+
+  // Cuando se cargan datos, refrescar inputs
+  useEffect(() => {
+    const { min_price, max_price } = form.getValues();
+    setMinPriceInput(formatCurrency(min_price));
+    setMaxPriceInput(formatCurrency(max_price));
+  // eslint-disable-next-line
+  }, [form.watch('min_price'), form.watch('max_price')]);
+
+  // Validar precios al cambiar
+  useEffect(() => {
+    const min = parseCurrencyInput(minPriceInput);
+    const max = parseCurrencyInput(maxPriceInput);
+    if (min !== null && max !== null && max < min) {
+      setPriceError('El máximo debe ser mayor al mínimo');
+    } else {
+      setPriceError(null);
+    }
+  }, [minPriceInput, maxPriceInput]);
 
   const fetchBuyRequest = async () => {
     try {
@@ -61,10 +106,12 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
       form.reset({
         title: data.title,
         description: data.description || '',
-        min_price: data.min_price || undefined,
-        max_price: data.max_price || undefined,
+        min_price: data.min_price || null,
+        max_price: data.max_price || null,
         zone: data.zone
       });
+      setMinPriceInput(formatCurrency(data.min_price));
+      setMaxPriceInput(formatCurrency(data.max_price));
     } catch (error) {
       console.error('Error fetching buy request:', error);
       toast({
@@ -75,7 +122,21 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
     }
   };
 
+  // Manejar cambio de inputs y parsear a número en el form
+  const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMinPriceInput(val);
+    form.setValue("min_price", parseCurrencyInput(val));
+  };
+  const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMaxPriceInput(val);
+    form.setValue("max_price", parseCurrencyInput(val));
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Validar precios antes de guardar
+    if (priceError) return;
     setLoading(true);
     try {
       const { error } = await supabase
@@ -83,8 +144,8 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
         .update({
           title: values.title,
           description: values.description || null,
-          min_price: values.min_price || null,
-          max_price: values.max_price || null,
+          min_price: values.min_price,
+          max_price: values.max_price,
           zone: values.zone,
           updated_at: new Date().toISOString()
         })
@@ -152,43 +213,42 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="min_price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Precio mínimo</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number"
-                        placeholder="0"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              {/* Precio mínimo */}
+              <FormItem>
+                <FormLabel>Precio mínimo</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={minPriceInput === "" ? "" : minPriceInput}
+                    placeholder="$"
+                    autoComplete="off"
+                    onChange={handleMinPriceInput}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+              {/* Precio máximo */}
+              <FormItem>
+                <FormLabel>Precio máximo</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={maxPriceInput === "" ? "" : maxPriceInput}
+                    placeholder="$"
+                    autoComplete="off"
+                    onChange={handleMaxPriceInput}
+                  />
+                </FormControl>
+                {/* Mostrar error solo si corresponde */}
+                {priceError && (
+                  <p className="text-destructive text-sm font-medium mt-1">
+                    {priceError}
+                  </p>
                 )}
-              />
-
-              <FormField
-                control={form.control}
-                name="max_price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Precio máximo</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number"
-                        placeholder="0"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormMessage />
+              </FormItem>
             </div>
 
             <FormField
@@ -213,7 +273,7 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading || !!priceError}>
                 {loading ? 'Guardando...' : 'Guardar cambios'}
               </Button>
             </div>
@@ -225,3 +285,4 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
 };
 
 export default EditBuyRequestDialog;
+
