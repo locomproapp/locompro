@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -41,33 +40,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   // Estado de error específico de precios (por ejemplo, max <= min)
   const [showMaxPriceError, setShowMaxPriceError] = useState(false);
 
-  // Validar que max > min (solo si ambos existen y son válidos)
-  const isMaxPriceInvalid = () => {
-    const min = Number(formData.minPrice);
-    const max = Number(formData.maxPrice);
-    // Solo mostrar si ambos son números válidos, y máximo no es vacío
-    return (
-      formData.minPrice !== '' &&
-      formData.maxPrice !== '' &&
-      !isNaN(min) &&
-      !isNaN(max) &&
-      max <= min
-    );
-  };
-
-  // On blur de maxPrice: mostrar error
-  const handleMaxBlur = () => {
-    setShowMaxPriceError(isMaxPriceInvalid());
-  };
-  // También en minPrice, por si el usuario lo edita y el valor queda inválido
-  const handleMinBlur = () => {
-    setShowMaxPriceError(isMaxPriceInvalid());
-  };
-
   // Permitir edición completamente libre
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Ocultar error hasta que haya blur o submit
+    // Elimino cualquier seteo sobre maxPrice/minPrice: solo se marca el error visual, no se cambia ningún valor automáticamente.
     if (field === 'maxPrice' || field === 'minPrice') {
       setShowMaxPriceError(false);
     }
@@ -190,7 +166,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 inputMode="numeric"
                 value={formData.minPrice}
                 onChange={(e) => {
-                  // Permite escribir lo que quiera, solo números y punto
                   handleInputChange('minPrice', e.target.value.replace(/[^\d.]/g, ''));
                 }}
                 placeholder="$ 0"
@@ -207,7 +182,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
             </div>
             <div>
               <Label htmlFor="maxPrice">Precio Máximo</Label>
-              {/* Mostrar mensaje de error arriba solo cuando corresponde */}
               {showMaxPriceError && (
                 <div className="text-destructive text-sm mb-1 font-medium">
                   El máximo debe ser mayor al mínimo
@@ -219,7 +193,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 inputMode="numeric"
                 value={formData.maxPrice}
                 onChange={(e) => {
-                  // Permite escribir lo que quiera, solo números y punto
                   handleInputChange('maxPrice', e.target.value.replace(/[^\d.]/g, ''));
                 }}
                 placeholder="$ 0"
@@ -295,4 +268,3 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
 };
 
 export default CreatePostDialog;
-
