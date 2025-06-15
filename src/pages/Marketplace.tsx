@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -21,8 +22,8 @@ const Marketplace = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Remove extraLinks, only pass activePage */}
-      <Navigation activePage="Mercado" />
+      {/* Quitamos activePage porque Navigation no lo acepta */}
+      <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Marketplace Heading & Main search bar */}
@@ -64,3 +65,4 @@ const Marketplace = () => {
 };
 
 export default Marketplace;
+
