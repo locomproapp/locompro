@@ -33,14 +33,20 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
   const [priceError, setPriceError] = useState(false);
 
   const handleMinPriceChange = (value: number) => {
-    if (priceError) setPriceError(false);
     setMinPrice(value);
   };
 
   const handleMaxPriceChange = (value: number) => {
-    if (priceError) setPriceError(false);
     setMaxPrice(value);
   };
+
+  React.useEffect(() => {
+    if (maxPrice > 0 && maxPrice <= minPrice) {
+      setPriceError(true);
+    } else {
+      setPriceError(false);
+    }
+  }, [minPrice, maxPrice]);
 
   React.useEffect(() => {
     setFormData((prev) => ({
@@ -58,11 +64,9 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (maxPrice > 0 && maxPrice <= minPrice) {
-      setPriceError(true);
+    if (priceError) {
       return;
     }
-    setPriceError(false);
 
     try {
       await submitBuyRequest(formData);
@@ -143,7 +147,7 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
           </Button>
           <Button
             type="submit"
-            disabled={loading || formData.images.length === 0}
+            disabled={loading || formData.images.length === 0 || priceError}
             className="flex-1"
           >
             {loading ? "Creando..." : "Crear Publicación"}
