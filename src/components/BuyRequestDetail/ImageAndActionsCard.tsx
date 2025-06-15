@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ImageGallery from '@/components/ImageGallery';
 import { Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ const ImageAndActionsCard = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const handleDeleteRequest = async () => {
     setDeleting(true);
@@ -45,7 +47,8 @@ const ImageAndActionsCard = ({
         description: 'La publicación fue borrada exitosamente.'
       });
       setDeleteDialogOpen(false);
-      if (onUpdate) onUpdate();
+      // Redirect to marketplace after successful deletion
+      navigate('/marketplace');
     } catch (error) {
       toast({
         title: 'Error',
