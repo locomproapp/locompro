@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -9,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Tag, User } from 'lucide-react';
+import { ArrowLeft, Tag } from 'lucide-react';
 
 const BuyRequestDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,44 +86,53 @@ const BuyRequestDetail = () => {
           </Link>
         </Button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
           {/* LEFT COLUMN - DETAILS */}
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant={isActive ? "default" : "secondary"}>
-                {isActive ? 'ACTIVA' : 'CERRADA'}
-              </Badge>
-              {buyRequest.categories && (
-                <Badge variant="outline" className="flex items-center gap-1">
-                  <Tag className="h-3 w-3" />
-                  {buyRequest.categories.name}
+          <div className="md:col-span-2 flex flex-col gap-8">
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge variant={isActive ? "default" : "secondary"}>
+                  {isActive ? 'ACTIVA' : 'CERRADA'}
                 </Badge>
-              )}
+                {buyRequest.categories && (
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <Tag className="h-3 w-3" />
+                    {buyRequest.categories.name}
+                  </Badge>
+                )}
+              </div>
+
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                {buyRequest.title}
+              </h1>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
+                  <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
+                  <p className="text-base text-foreground">{buyRequest.zone}</p>
+                </div>
+
+                {buyRequest.description && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
+                    <p className="text-base text-foreground whitespace-pre-wrap">
+                      {buyRequest.description}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              {buyRequest.title}
-            </h1>
-
-            <div className="space-y-5">
+            <div className="bg-card rounded-lg border border-border p-6 space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
-                <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha de publicación</h3>
+                <p className="text-base text-foreground">{formatDate(buyRequest.created_at)}</p>
               </div>
-
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
-                <p className="text-base text-foreground">{buyRequest.zone}</p>
-              </div>
-
-              {buyRequest.description && (
-                <div>
-                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
-                  <p className="text-base text-foreground whitespace-pre-wrap">
-                    {buyRequest.description}
-                  </p>
-                </div>
-              )}
               
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
@@ -147,11 +157,6 @@ const BuyRequestDetail = () => {
                     )}
                   </div>
                 </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha de publicación</h3>
-                <p className="text-base text-foreground">{formatDate(buyRequest.created_at)}</p>
               </div>
             </div>
 
