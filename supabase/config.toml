@@ -1,1 +1,11 @@
+
 project_id = "mucadegwpdrpnagmmirj"
+
+[auth]
+# Habilita la protección contra contraseñas filtradas (HaveIBeenPwned)
+password_hibp_enabled = true
+
+[auth.email]
+# Establece el tiempo de expiración de los enlaces de un solo uso (OTP) a 15 minutos
+gotrue_verification_expiry = 900
+
