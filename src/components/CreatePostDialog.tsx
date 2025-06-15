@@ -40,6 +40,19 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   // Estado de error específico de precios (por ejemplo, max <= min)
   const [showMaxPriceError, setShowMaxPriceError] = useState(false);
 
+  // Helper: return true if both fields have numbers and max <= min
+  const isMaxPriceInvalid = () => {
+    const min = parseFloat(formData.minPrice);
+    const max = parseFloat(formData.maxPrice);
+    return (
+      formData.minPrice !== '' &&
+      formData.maxPrice !== '' &&
+      !isNaN(min) &&
+      !isNaN(max) &&
+      max <= min
+    );
+  };
+
   // Permitir edición completamente libre
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -119,6 +132,14 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMinBlur = () => {
+    setShowMaxPriceError(isMaxPriceInvalid());
+  };
+
+  const handleMaxBlur = () => {
+    setShowMaxPriceError(isMaxPriceInvalid());
   };
 
   return (
