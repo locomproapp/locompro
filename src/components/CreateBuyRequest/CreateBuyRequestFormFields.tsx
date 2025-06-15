@@ -1,9 +1,11 @@
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BuyRequestFormData } from "@/hooks/useBuyRequestForm";
+import { cn } from "@/lib/utils";
 
 function formatCurrency(value: number) {
   if (Number.isNaN(value) || !isFinite(value) || value === 0) return "";
@@ -32,10 +34,8 @@ interface CreateBuyRequestFormFieldsProps {
   maxPrice: number;
   onMinPriceChange: (value: number) => void;
   onMaxPriceChange: (value: number) => void;
+  priceError: boolean;
 }
-
-const MIN = 0;
-const MAX = 1000000;
 
 const CreateBuyRequestFormFields = ({
   formData,
@@ -44,18 +44,14 @@ const CreateBuyRequestFormFields = ({
   maxPrice,
   onMinPriceChange,
   onMaxPriceChange,
+  priceError,
 }: CreateBuyRequestFormFieldsProps) => {
-  // Only show currency for non-zero
   const handleMinInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = parseCurrencyInput(e.target.value);
-    // When maxPrice is 0 (not set), it shouldn't constrain minPrice.
-    const upperBoundary = maxPrice > 0 ? maxPrice : Infinity;
-    val = Math.max(MIN, Math.min(val, upperBoundary));
+    const val = parseCurrencyInput(e.target.value);
     onMinPriceChange(val);
   };
   const handleMaxInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = parseCurrencyInput(e.target.value);
-    val = Math.max(minPrice, Math.min(val, MAX));
+    const val = parseCurrencyInput(e.target.value);
     onMaxPriceChange(val);
   };
 
@@ -115,6 +111,11 @@ const CreateBuyRequestFormFields = ({
           </div>
           <div>
             <Label htmlFor="maxPrice">Máximo</Label>
+            {priceError && (
+              <p className="text-destructive text-sm font-medium mt-1">
+                El máximo debe ser mayor al mínimo
+              </p>
+            )}
             <Input
               id="maxPrice"
               type="text"
@@ -124,6 +125,9 @@ const CreateBuyRequestFormFields = ({
               onChange={handleMaxInput}
               placeholder="$"
               autoComplete="off"
+              className={cn(
+                priceError && "border-destructive focus-visible:ring-destructive"
+              )}
             />
           </div>
         </div>

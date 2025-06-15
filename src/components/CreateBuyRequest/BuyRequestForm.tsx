@@ -25,12 +25,22 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
   } = useBuyRequestForm();
   const { submitBuyRequest, loading } = useBuyRequestSubmit();
 
-  // Price slider managed as numbers, synced to/from string fields
   const parsedMin = Number(formData.minPrice) || 0;
   const parsedMax = Number(formData.maxPrice) || 0;
 
   const [minPrice, setMinPrice] = useState(parsedMin);
   const [maxPrice, setMaxPrice] = useState(parsedMax);
+  const [priceError, setPriceError] = useState(false);
+
+  const handleMinPriceChange = (value: number) => {
+    if (priceError) setPriceError(false);
+    setMinPrice(value);
+  };
+
+  const handleMaxPriceChange = (value: number) => {
+    if (priceError) setPriceError(false);
+    setMaxPrice(value);
+  };
 
   React.useEffect(() => {
     setFormData((prev) => ({
@@ -47,6 +57,12 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (maxPrice > 0 && maxPrice <= minPrice) {
+      setPriceError(true);
+      return;
+    }
+    setPriceError(false);
 
     try {
       await submitBuyRequest(formData);
@@ -85,8 +101,9 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
           onInputChange={handleInputChange}
           minPrice={minPrice}
           maxPrice={maxPrice}
-          onMinPriceChange={setMinPrice}
-          onMaxPriceChange={setMaxPrice}
+          onMinPriceChange={handleMinPriceChange}
+          onMaxPriceChange={handleMaxPriceChange}
+          priceError={priceError}
         />
 
         {/* Imagenes (no extra label, just upload) */}
@@ -138,4 +155,3 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
 };
 
 export default BuyRequestForm;
-
