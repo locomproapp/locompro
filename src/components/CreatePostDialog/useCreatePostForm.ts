@@ -76,7 +76,10 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
           images: formData.images.length > 0 ? formData.images : null
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating post:', error);
+        throw error;
+      }
 
       toast({
         title: "¡Éxito!",
