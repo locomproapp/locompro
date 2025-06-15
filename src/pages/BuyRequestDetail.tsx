@@ -16,7 +16,7 @@ const BuyRequestDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
 
-  const { data: buyRequest, isLoading, error } = useBuyRequestDetail(id || '');
+  const { data: buyRequest, isLoading, error, refetch } = useBuyRequestDetail(id || '');
 
   if (isLoading) {
     return (
@@ -57,14 +57,6 @@ const BuyRequestDetail = () => {
   const isOwner = user?.id === buyRequest.user_id;
   const isActive = buyRequest.status === 'active';
 
-  // Handler callbacks (puedes personalizarlos, acá solo mostramos un alert)
-  const handleEdit = (id: string) => {
-    alert('Editar compra (falta lógica): ' + id);
-  };
-  const handleDelete = (id: string) => {
-    alert('Eliminar compra (falta lógica): ' + id);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -84,12 +76,11 @@ const BuyRequestDetail = () => {
             <PublisherCard buyRequest={buyRequest} />
           </div>
           
-          {/* RIGHT COLUMN - IMAGE & REFERENCE LINK (ahora recibe user y handlers) */}
+          {/* RIGHT COLUMN - IMAGE & REFERENCE LINK, con onUpdate para recargar */}
           <ImageAndActionsCard
             buyRequest={buyRequest}
             user={user}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+            onUpdate={() => refetch()}
           />
         </div>
 
