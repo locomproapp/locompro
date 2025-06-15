@@ -4,15 +4,11 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import ProductInfo from '@/components/ProductInfo';
-import PriceAndLocation from '@/components/PriceAndLocation';
-import BuyerInfo from '@/components/BuyerInfo';
-import OffersForRequest from '@/components/OffersForRequest';
 import PublicOffersList from '@/components/PublicOffersList';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, ExternalLink } from 'lucide-react';
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +35,24 @@ const PostDetail = () => {
     enabled: !!id
   });
 
+  const formatPrice = (min: number | null, max: number | null) => {
+    if (!min && !max) return 'Precio a consultar';
+    if (min && max && min !== max) return `$${min} - $${max}`;
+    if (min) return `$${min}`;
+    if (max) return `$${max}`;
+    return 'Precio a consultar';
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-AR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  // Render loading/error
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -46,7 +60,11 @@ const PostDetail = () => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-primary animate-pulse" />
+              {/* Loading icon */}
+              <svg className="h-8 w-8 text-primary animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" />
+              </svg>
             </div>
             <p className="text-muted-foreground">Cargando publicación...</p>
           </div>
@@ -78,46 +96,103 @@ const PostDetail = () => {
     );
   }
 
-  const isOwner = user?.id === post.user_id;
+  // Main image: show first if images available
+  const mainImage = post.images && post.images.length ? post.images[0] : null;
+
+  // Parse and format characteristics if exist
+  let formattedCharacteristics = null;
+  if (post.characteristics) {
+    if (typeof post.characteristics === 'string') {
+      formattedCharacteristics = post.characteristics;
+    } else if (typeof post.characteristics === 'object') {
+      formattedCharacteristics = Object.entries(post.characteristics)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ');
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link to="/market" className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Volver al mercado
-            </Link>
-          </Button>
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+        <Button variant="ghost" asChild className="mb-4">
+          <Link to="/market" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Volver al mercado
+          </Link>
+        </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Columna principal */}
-          <div className="lg:col-span-2 space-y-6">
-            <ProductInfo post={post} />
-            <PublicOffersList buyRequestId={post.id} />
+        {/* Redesigned header */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-4">
+          {/* Left info (2/3 width on desktop) */}
+          <div className="md:col-span-2 flex flex-col gap-3">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+              {post.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-3 mt-2">
+              <span className="font-semibold text-base text-primary bg-primary/10 rounded px-3 py-1">
+                {formatPrice(post.min_price, post.max_price)}
+              </span>
+              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4" /> {post.zone}
+              </span>
+              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4" /> {formatDate(post.created_at)}
+              </span>
+            </div>
+            {formattedCharacteristics && (
+              <div className="mt-2">
+                <span className="font-semibold text-foreground text-sm">Características: </span>
+                <span className="text-muted-foreground text-sm">{formattedCharacteristics}</span>
+              </div>
+            )}
+            {post.profiles?.full_name && (
+              <div className="mt-2">
+                <span className="font-semibold text-foreground text-sm">Publicado por: </span>
+                <span className="text-muted-foreground text-sm">{post.profiles.full_name}</span>
+              </div>
+            )}
+            {post.reference_link && (
+              <div className="mt-2">
+                <span className="font-semibold text-foreground text-sm">Enlace de referencia: </span>
+                <a
+                  href={post.reference_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:underline ml-1 text-sm"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Ver ejemplo
+                </a>
+              </div>
+            )}
           </div>
-
-          {/* Columna lateral */}
-          <div className="space-y-6">
-            <PriceAndLocation post={post} isOwner={isOwner} />
-            <BuyerInfo post={post} />
-            {isOwner && (
-              <div className="bg-card rounded-lg border border-border p-6">
-                <OffersForRequest buyRequestId={post.id} />
+          {/* Right image (1/3 width on desktop) */}
+          <div className="md:col-span-1 w-full flex items-center justify-center">
+            {mainImage ? (
+              <img
+                src={mainImage}
+                alt="Imagen principal"
+                className="rounded-lg max-w-xs w-full h-64 object-cover border border-border shadow"
+                style={{ background: '#f8fafc' }}
+              />
+            ) : (
+              <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center text-muted-foreground border border-border">
+                Sin imagen
               </div>
             )}
           </div>
         </div>
-      </main>
 
+        {/* Offers section */}
+        <div>
+          <PublicOffersList buyRequestId={post.id} />
+        </div>
+      </main>
       <Footer />
     </div>
   );
 };
 
 export default PostDetail;
+
