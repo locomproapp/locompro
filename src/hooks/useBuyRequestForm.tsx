@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export interface BuyRequestFormData {
   title: string;
-  description: string;
+  description?: string;
   condition: string;
   minPrice: string;
   maxPrice: string;
@@ -16,7 +16,6 @@ export interface BuyRequestFormData {
 export const useBuyRequestForm = () => {
   const [formData, setFormData] = useState<BuyRequestFormData>({
     title: "",
-    description: "",
     condition: "",
     minPrice: "",
     maxPrice: "",
@@ -36,7 +35,6 @@ export const useBuyRequestForm = () => {
   const resetForm = () => {
     setFormData({
       title: "",
-      description: "",
       condition: "",
       minPrice: "",
       maxPrice: "",
@@ -56,6 +54,6 @@ export const useBuyRequestForm = () => {
     handleInputChange,
     resetForm,
     setImages,
-    setFormData, // to allow setting price via slider
+    setFormData,
   };
 };

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { BuyRequestFormData } from "@/hooks/useBuyRequestForm";
+
+// Helper for formatting amounts as "$1.000"
+function formatCurrency(value: number) {
+  if (Number.isNaN(value)) return "";
+  return "$" + value.toLocaleString("es-AR");
+}
 
 interface CreateBuyRequestFormFieldsProps {
   formData: BuyRequestFormData;
@@ -31,21 +36,35 @@ const CreateBuyRequestFormFields = ({
   onMinPriceChange,
   onMaxPriceChange,
 }: CreateBuyRequestFormFieldsProps) => {
+  // Keep slider and input in sync (enforce whole numbers)
+  const handleMinInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = Number(e.target.value.replace(/\D/g, ""));
+    val = Math.floor(val);
+    onMinPriceChange(clamp(val, MIN, maxPrice));
+  };
+  const handleMaxInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = Number(e.target.value.replace(/\D/g, ""));
+    val = Math.floor(val);
+    onMaxPriceChange(clamp(val, minPrice, MAX));
+  };
+
   return (
     <>
+      {/* ¿Qué estás buscando? */}
       <div>
-        <Label htmlFor="title">¿Qué estás buscando? *</Label>
+        <Label htmlFor="title">¿Qué estás buscando?</Label>
         <Input
           id="title"
           value={formData.title}
           onChange={(e) => onInputChange("title", e.target.value)}
-          placeholder="Ej: iPhone 15 Pro Max, Bicicleta de montaña, Silla de oficina..."
-          required
+          placeholder="Ej: Pelota de fútbol, licuadora, auriculares…"
+          autoComplete="off"
         />
       </div>
 
+      {/* Condición del producto */}
       <div>
-        <Label>Condición del producto *</Label>
+        <Label>Condición del producto</Label>
         <RadioGroup
           value={formData.condition}
           onValueChange={(value) => onInputChange("condition", value)}
@@ -66,76 +85,75 @@ const CreateBuyRequestFormFields = ({
         </RadioGroup>
       </div>
 
+      {/* Presupuesto estimado (slider + min/max formatted input) */}
       <div>
         <Label>Presupuesto estimado</Label>
         <Slider
           min={MIN}
           max={MAX}
           step={STEP}
-          value={[minPrice, maxPrice]}
+          value={[
+            clamp(minPrice, MIN, maxPrice),
+            clamp(maxPrice, minPrice, MAX),
+          ]}
+          minStepsBetweenThumbs={1}
           onValueChange={([minV, maxV]) => {
             onMinPriceChange(minV);
             onMaxPriceChange(maxV);
           }}
           className="my-4"
         />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 items-center">
           <div>
             <Label htmlFor="minPrice">Mínimo</Label>
             <Input
               id="minPrice"
-              type="number"
-              min={MIN}
-              max={maxPrice}
-              step="1"
-              value={minPrice}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                onMinPriceChange(clamp(val, MIN, maxPrice));
-              }}
-              placeholder="$ 0"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={minPrice === 0 ? "" : formatCurrency(minPrice)}
+              onChange={handleMinInput}
+              placeholder="$"
+              autoComplete="off"
             />
           </div>
           <div>
             <Label htmlFor="maxPrice">Máximo</Label>
             <Input
               id="maxPrice"
-              type="number"
-              min={minPrice}
-              max={MAX}
-              step="1"
-              value={maxPrice}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                onMaxPriceChange(clamp(val, minPrice, MAX));
-              }}
-              placeholder="$ 0"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={maxPrice === 0 ? "" : formatCurrency(maxPrice)}
+              onChange={handleMaxInput}
+              placeholder="$"
+              autoComplete="off"
             />
           </div>
         </div>
       </div>
 
+      {/* Características */}
       <div>
-        <Label htmlFor="productFeatures">Características del producto</Label>
+        <Label htmlFor="productFeatures">Características</Label>
         <Textarea
           id="productFeatures"
           value={formData.productFeatures || ""}
-          onChange={(e) =>
-            onInputChange("productFeatures", e.target.value)
-          }
+          onChange={(e) => onInputChange("productFeatures", e.target.value)}
           placeholder="Describí qué estás buscando, con detalles como marca, modelo, color, etc."
           rows={3}
         />
       </div>
 
+      {/* ¿De dónde sos? */}
       <div>
-        <Label htmlFor="zone">¿De dónde sos? *</Label>
+        <Label htmlFor="zone">¿De dónde sos?</Label>
         <Input
           id="zone"
           value={formData.zone}
           onChange={(e) => onInputChange("zone", e.target.value)}
           placeholder="Capital Federal, Zona Norte, etc."
-          required
+          autoComplete="off"
         />
       </div>
     </>

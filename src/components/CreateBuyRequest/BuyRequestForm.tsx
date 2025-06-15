@@ -57,6 +57,7 @@ const BuyRequestForm = () => {
   return (
     <div className="bg-card rounded-lg border border-border p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Campos principales */}
         <CreateBuyRequestFormFields
           formData={formData}
           onInputChange={handleInputChange}
@@ -66,14 +67,16 @@ const BuyRequestForm = () => {
           onMaxPriceChange={setMaxPrice}
         />
 
-        {/* Características del producto textarea handled above */}
-        {/* Fotos de Referencia (Image upload) */}
-        <BuyRequestImageUpload images={formData.images} setImages={setImages} />
+        {/* Características arriba, aquí sección imágenes */}
+        <div>
+          <Label>Fotos de Referencia</Label>
+          <BuyRequestImageUpload images={formData.images} setImages={setImages} />
+        </div>
 
-        {/* Enlace de referencia */}
+        {/* Enlace de Referencia OPCIONAL */}
         <div>
           <Label htmlFor="referenceLink">
-            Enlace de referencia
+            Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
             <span className="block text-xs text-muted-foreground font-normal mt-0.5">
               Pegá un link de cualquier página que muestre lo que estás buscando
             </span>
@@ -84,11 +87,12 @@ const BuyRequestForm = () => {
             onChange={(e) =>
               handleInputChange("referenceLink", e.target.value)
             }
-            placeholder="https://ejemplo.com/producto"
+            placeholder="ejemplo.com/producto"
             autoComplete="off"
           />
         </div>
 
+        {/* Botones */}
         <div className="flex gap-4 pt-6">
           <Button type="button" variant="outline" asChild className="flex-1">
             <Link to="/">Cancelar</Link>
@@ -98,7 +102,7 @@ const BuyRequestForm = () => {
             disabled={loading || formData.images.length === 0}
             className="flex-1"
           >
-            {loading ? "Creando..." : "Crear Solicitud"}
+            {loading ? "Creando..." : "Crear Publicación"}
           </Button>
         </div>
       </form>
