@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -56,7 +57,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   // Permitir edición completamente libre
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Elimino cualquier seteo sobre maxPrice/minPrice: solo se marca el error visual, no se cambia ningún valor automáticamente.
+    // Si el usuario edita los precios, ocultamos el error hasta el próximo intento de submit.
     if (field === 'maxPrice' || field === 'minPrice') {
       setShowMaxPriceError(false);
     }
@@ -66,8 +67,10 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     e.preventDefault();
     setTouched(true);
 
-    // Sólamente mostrar error visual, no impedir envío salvo que campos requeridos estén vacíos
-    setShowMaxPriceError(isMaxPriceInvalid());
+    const priceIsInvalid = isMaxPriceInvalid();
+    if (priceIsInvalid) {
+      setShowMaxPriceError(true);
+    }
 
     // Validación simple de campos requeridos
     if (!user || !formData.title || !formData.zone) {
@@ -78,9 +81,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       });
       return;
     }
-    // Si hay error lógica en los precios, no enviar
-    if (isMaxPriceInvalid()) {
-      // El usuario sigue pudiendo editar, pero no se envía hasta arreglarlo.
+    // Si hay error lógico en los precios, no enviar
+    if (priceIsInvalid) {
       return;
     }
 
@@ -132,14 +134,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleMinBlur = () => {
-    setShowMaxPriceError(isMaxPriceInvalid());
-  };
-
-  const handleMaxBlur = () => {
-    setShowMaxPriceError(isMaxPriceInvalid());
   };
 
   return (
@@ -198,7 +192,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 min="0"
                 step="0.01"
                 autoComplete="off"
-                onBlur={handleMinBlur}
               />
             </div>
             <div>
@@ -228,7 +221,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
                 min="0"
                 step="0.01"
                 autoComplete="off"
-                onBlur={handleMaxBlur}
               />
             </div>
           </div>
