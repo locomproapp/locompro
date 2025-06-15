@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { Plus, Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 // Validación: ¿es número positivo o vacío?
 const isValidPrice = (price: string) => {
@@ -23,6 +23,7 @@ interface CreatePostDialogProps {
 
 const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -124,6 +125,9 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       setShowMaxPriceError(false);
       setOpen(false);
       onPostCreated?.();
+      
+      // Redirigir al marketplace después de crear la publicación
+      navigate('/marketplace');
     } catch (error) {
       console.error('Error creating post:', error);
       toast({
