@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBuyRequestForm } from '@/hooks/useBuyRequestForm';
 import { useBuyRequestSubmit } from '@/hooks/useBuyRequestSubmit';
@@ -36,8 +36,8 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
-          <Search className="h-4 w-4" />
-          ¿Qué Buscás?
+          <Plus className="h-4 w-4" />
+          Crear publicación
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -75,3 +75,4 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
 };
 
 export default CreateBuyRequestDialog;
+
