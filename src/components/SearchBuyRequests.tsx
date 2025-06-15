@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -99,7 +98,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         <>
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              {buyRequests.length} solicitud{buyRequests.length !== 1 ? 'es' : ''} encontrada{buyRequests.length !== 1 ? 's' : ''}
+              {buyRequests.length} {buyRequests.length === 1 ? 'publicación' : 'publicaciones'}
             </p>
           </div>
           
@@ -111,13 +110,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
                     <CardTitle className="text-lg line-clamp-2">
                       {request.title}
                     </CardTitle>
-                    {request.categories && (
-                      <Badge variant="secondary" className="ml-2 flex-shrink-0">
-                        {request.categories.name}
-                      </Badge>
-                    )}
                   </div>
-                  
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="font-bold">
                       {formatPrice(request.min_price, request.max_price)}
@@ -129,7 +122,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-3">
+                <CardContent className="flex flex-col gap-3">
                   {request.reference_image && (
                     <img
                       src={request.reference_image}
@@ -137,21 +130,13 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
                       className="w-full h-32 object-cover rounded"
                     />
                   )}
-                  
-                  {request.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {request.description}
-                    </p>
-                  )}
-
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <MapPin className="h-3 w-3" />
                     {request.zone}
                   </div>
-
                   <div className="flex items-center justify-between pt-2">
                     <p className="text-xs text-muted-foreground">
-                      Por: {request.profiles?.full_name || 'Usuario anónimo'}
+                      Por: Usuario anónimo
                     </p>
                     <Button asChild size="sm">
                       <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
