@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -86,49 +85,65 @@ const BuyRequestDetail = () => {
           </Link>
         </Button>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
-          {/* LEFT COLUMN - DETAILS */}
-          <div className="md:col-span-2 flex flex-col gap-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant={isActive ? "default" : "secondary"}>
-                  {isActive ? 'ACTIVA' : 'CERRADA'}
-                </Badge>
-                {buyRequest.categories && (
-                  <Badge variant="outline" className="flex items-center gap-1">
-                    <Tag className="h-3 w-3" />
-                    {buyRequest.categories.name}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* LEFT COLUMN - DETAILS & USER INFO */}
+          <div className="flex flex-col gap-8">
+            
+            {/* DETAILS BLOCK */}
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <div className="flex flex-col gap-6">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant={isActive ? "default" : "secondary"}>
+                    {isActive ? 'ACTIVA' : 'CERRADA'}
                   </Badge>
-                )}
-              </div>
-
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                {buyRequest.title}
-              </h1>
-
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
-                  <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
+                  {buyRequest.categories && (
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <Tag className="h-3 w-3" />
+                      {buyRequest.categories.name}
+                    </Badge>
+                  )}
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
-                  <p className="text-base text-foreground">{buyRequest.zone}</p>
-                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                  {buyRequest.title}
+                </h1>
 
-                {buyRequest.description && (
+                <div className="space-y-6">
                   <div>
-                    <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
-                    <p className="text-base text-foreground whitespace-pre-wrap">
-                      {buyRequest.description}
-                    </p>
+                    <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
+                    <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
                   </div>
-                )}
+
+                  <div>
+                    <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
+                    <p className="text-base text-foreground">{buyRequest.zone}</p>
+                  </div>
+
+                  {buyRequest.description && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
+                      <p className="text-base text-foreground whitespace-pre-wrap">
+                        {buyRequest.description}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {(buyRequest as any).reference_url && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-muted-foreground mb-1">Enlace de referencia</h3>
+                      <Button variant="link" asChild className="p-0 h-auto text-base">
+                        <a href={(buyRequest as any).reference_url} target="_blank" rel="noopener noreferrer">
+                          Ver acá
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="bg-card rounded-lg border border-border p-6 space-y-4">
+            {/* USER INFO BLOCK */}
+            <div className="bg-card rounded-lg border border-border p-6 space-y-4 shadow-sm">
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha de publicación</h3>
                 <p className="text-base text-foreground">{formatDate(buyRequest.created_at)}</p>
@@ -159,27 +174,18 @@ const BuyRequestDetail = () => {
                 </div>
               </div>
             </div>
-
-            {!isOwner && isActive && (
-              <div className="pt-6 border-t border-border">
-                <OfferForm 
-                  buyRequestId={buyRequest.id}
-                  buyRequestTitle={buyRequest.title}
-                />
-              </div>
-            )}
           </div>
           
           {/* RIGHT COLUMN - IMAGE */}
-          <div className="w-full flex items-start justify-center md:justify-end">
+          <div className="bg-card rounded-lg border border-border p-4 shadow-sm sticky top-24">
             {buyRequest.reference_image ? (
               <img
                 src={buyRequest.reference_image}
                 alt="Imagen de referencia"
-                className="rounded-lg w-full max-w-md h-auto object-cover border border-border shadow-lg"
+                className="rounded-md w-full h-auto object-cover"
               />
             ) : (
-              <div className="w-full aspect-square max-w-md bg-muted rounded-lg flex items-center justify-center text-muted-foreground border border-border">
+              <div className="w-full aspect-video bg-muted rounded-md flex items-center justify-center text-muted-foreground">
                 Sin imagen de referencia
               </div>
             )}
@@ -187,7 +193,16 @@ const BuyRequestDetail = () => {
         </div>
 
         {/* OFFERS SECTION */}
-        <div className="border-t border-border pt-8">
+        {!isOwner && isActive && (
+          <div className="pt-8 border-t border-border mt-8">
+            <OfferForm 
+              buyRequestId={buyRequest.id}
+              buyRequestTitle={buyRequest.title}
+            />
+          </div>
+        )}
+
+        <div className="border-t border-border pt-8 mt-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ofertas Recibidas</h2>
           <CompareOffers buyRequestId={buyRequest.id} isOwner={isOwner} />
         </div>
