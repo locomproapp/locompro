@@ -67,9 +67,8 @@ const BuyRequestForm = () => {
           onMaxPriceChange={setMaxPrice}
         />
 
-        {/* Características arriba, aquí sección imágenes */}
+        {/* Imagenes (no extra label, just upload) */}
         <div>
-          <Label>Fotos de Referencia</Label>
           <BuyRequestImageUpload images={formData.images} setImages={setImages} />
         </div>
 

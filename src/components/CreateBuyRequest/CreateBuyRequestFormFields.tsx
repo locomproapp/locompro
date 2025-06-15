@@ -46,7 +46,7 @@ const CreateBuyRequestFormFields = ({
   onMinPriceChange,
   onMaxPriceChange,
 }: CreateBuyRequestFormFieldsProps) => {
-  // Make sure changing the input updates only integers
+  // Only show currency for non-zero
   const handleMinInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = parseCurrencyInput(e.target.value);
     val = Math.max(MIN, Math.min(val, maxPrice));
@@ -95,7 +95,7 @@ const CreateBuyRequestFormFields = ({
         </RadioGroup>
       </div>
 
-      {/* Presupuesto estimado (Min/Max input, no slider) */}
+      {/* Presupuesto estimado inputs (only two, both empty by default) */}
       <div>
         <Label>Presupuesto estimado</Label>
         <div className="grid grid-cols-2 gap-4 items-center mt-4">
@@ -106,7 +106,7 @@ const CreateBuyRequestFormFields = ({
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={minPrice === 0 ? "" : formatCurrency(minPrice)}
+              value={minPrice === 0 ? "$" : formatCurrency(minPrice)}
               onChange={handleMinInput}
               placeholder="$"
               autoComplete="off"
@@ -119,7 +119,7 @@ const CreateBuyRequestFormFields = ({
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={maxPrice === 0 ? "" : formatCurrency(maxPrice)}
+              value={maxPrice === 0 ? "$" : formatCurrency(maxPrice)}
               onChange={handleMaxInput}
               placeholder="$"
               autoComplete="off"

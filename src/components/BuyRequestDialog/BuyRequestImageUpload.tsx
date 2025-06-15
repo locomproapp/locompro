@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,7 +41,6 @@ const BuyRequestImageUpload = ({ images, setImages }: BuyRequestImageUploadProps
 
   return (
     <div>
-      <Label>Fotos de Referencia *</Label>
       <div className="space-y-4">
         <Input
           type="file"
@@ -64,7 +62,7 @@ const BuyRequestImageUpload = ({ images, setImages }: BuyRequestImageUploadProps
             <div className="flex flex-col items-center justify-center gap-2">
               <Upload className="h-6 w-6" />
               <span className="text-sm">
-                {uploading ? 'Subiendo imágenes...' : !user ? 'Inicia sesión para subir imágenes' : 'Subir imágenes desde dispositivo *'}
+                {uploading ? 'Subiendo imágenes...' : !user ? 'Inicia sesión para subir imágenes' : 'Subir imágenes desde dispositivo'}
               </span>
             </div>
           </Button>
