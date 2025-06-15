@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar } from 'lucide-react';
 
@@ -14,9 +13,11 @@ interface PriceHistoryProps {
 }
 
 const PriceHistory = ({ currentPrice, priceHistory }: PriceHistoryProps) => {
+  const format = (p: number) => '$' + p.toLocaleString('es-AR');
+
   if (!priceHistory || priceHistory.length === 0) {
     return (
-      <div className="text-xl font-bold text-primary">${currentPrice}</div>
+      <div className="text-xl font-bold text-primary">{format(currentPrice)}</div>
     );
   }
 
@@ -32,12 +33,12 @@ const PriceHistory = ({ currentPrice, priceHistory }: PriceHistoryProps) => {
 
   return (
     <div className="space-y-1">
-      <div className="text-xl font-bold text-blue-600">${currentPrice}</div>
+      <div className="text-xl font-bold text-blue-600">{format(currentPrice)}</div>
       <div className="text-xs text-muted-foreground">Nueva oferta</div>
       
       {priceHistory.map((item, index) => (
         <div key={index} className="text-sm space-y-1">
-          <div className="line-through text-muted-foreground">${item.price}</div>
+          <div className="line-through text-muted-foreground">{format(item.price)}</div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
             <span>Rechazada el {formatDate(item.timestamp)}</span>

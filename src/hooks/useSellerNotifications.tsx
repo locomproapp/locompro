@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from '@/hooks/use-toast';
 
 export const useSellerNotifications = () => {
   const { user } = useAuth();
@@ -68,11 +66,6 @@ export const useSellerNotifications = () => {
           // Check if offer was rejected with a reason
           if (payload.new.status === 'rejected' && payload.new.rejection_reason) {
             console.log('Offer rejected with reason, showing notification');
-            toast({
-              title: "Oferta rechazada",
-              description: `Tu oferta "${payload.new.title}" fue rechazada. Ve a notificaciones para ver los detalles.`,
-              variant: "destructive"
-            });
           }
           
           // Refetch notifications immediately

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -204,7 +203,7 @@ const OfferDetail = () => {
             <div className="bg-card rounded-lg border border-border p-6">
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-2">
-                  ${offer.price}
+                  ${offer.price.toLocaleString('es-AR')}
                 </div>
                 <p className="text-sm text-muted-foreground">Precio de la oferta</p>
               </div>

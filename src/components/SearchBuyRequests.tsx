@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -69,10 +68,11 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   });
 
   const formatPrice = (min: number | null, max: number | null) => {
+    const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (!min && !max) return 'Presupuesto abierto';
-    if (min && max && min !== max) return `$${min} - $${max}`;
-    if (min) return `Desde $${min}`;
-    if (max) return `Hasta $${max}`;
+    if (min && max && min !== max) return `${format(min)} - ${format(max)}`;
+    if (min) return `Desde ${format(min)}`;
+    if (max) return `Hasta ${format(max)}`;
     return 'Presupuesto abierto';
   };
 

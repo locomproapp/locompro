@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,10 +26,11 @@ interface PostCardProps {
 
 const PostCard = ({ post }: PostCardProps) => {
   const formatPrice = (min: number | null, max: number | null) => {
+    const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (!min && !max) return 'Precio a consultar';
-    if (min && max && min !== max) return `$${min} - $${max}`;
-    if (min) return `$${min}`;
-    if (max) return `$${max}`;
+    if (min && max && min !== max) return `${format(min)} - ${format(max)}`;
+    if (min) return format(min);
+    if (max) return format(max);
     return 'Precio a consultar';
   };
 

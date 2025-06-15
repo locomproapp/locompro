@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
@@ -47,7 +45,6 @@ function parseCurrencyInput(input: string) {
 }
 
 const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: EditBuyRequestDialogProps) => {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -114,11 +111,6 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
       setMaxPriceInput(formatCurrency(data.max_price));
     } catch (error) {
       console.error('Error fetching buy request:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo cargar la solicitud",
-        variant: "destructive"
-      });
     }
   };
 
@@ -135,7 +127,6 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Validar precios antes de guardar
     if (priceError) return;
     setLoading(true);
     try {
@@ -153,20 +144,10 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
 
       if (error) throw error;
 
-      toast({
-        title: "¡Solicitud actualizada!",
-        description: "Los cambios han sido guardados exitosamente"
-      });
-
       onOpenChange(false);
       onUpdate();
     } catch (error) {
       console.error('Error updating buy request:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar la solicitud",
-        variant: "destructive"
-      });
     } finally {
       setLoading(false);
     }
@@ -285,4 +266,3 @@ const EditBuyRequestDialog = ({ buyRequestId, open, onOpenChange, onUpdate }: Ed
 };
 
 export default EditBuyRequestDialog;
-
