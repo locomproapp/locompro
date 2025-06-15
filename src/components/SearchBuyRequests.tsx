@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -136,7 +137,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
                   </div>
                   <div className="flex items-center justify-between pt-2">
                     <p className="text-xs text-muted-foreground">
-                      Por: Usuario anónimo
+                      Por: {request.profiles?.full_name || 'Usuario anónimo'}
                     </p>
                     <Button asChild size="sm">
                       <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
