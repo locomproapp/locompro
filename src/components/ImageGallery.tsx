@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Image as ImageIcon } from 'lucide-react';
+import ImageLightbox from '@/components/ImageLightbox';
 
 interface ImageGalleryProps {
   images: string[];
@@ -9,6 +10,7 @@ interface ImageGalleryProps {
 
 const ImageGallery = ({ images }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (!images || images.length === 0) {
     return (
@@ -24,39 +26,53 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
   const mainImage = images[selectedIndex];
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 items-start">
-      {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[500px] pb-2 md:pb-0 md:pr-2">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => setSelectedIndex(index)}
-              className={cn(
-                "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
-                selectedIndex === index ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
-              )}
-            >
-              <img
-                src={image}
-                alt={`Thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </button>
-          ))}
+    <>
+      <div className="flex flex-col md:flex-row gap-4 items-start">
+        {/* Main Image */}
+        <div className="flex-1 w-full">
+          <button 
+            onClick={() => setLightboxOpen(true)} 
+            className="w-full rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            aria-label="Ver imagen en tamaño completo"
+          >
+            <img
+              src={mainImage}
+              alt="Imagen principal"
+              className="rounded-lg w-full h-auto object-cover border border-border"
+              style={{ aspectRatio: '1 / 1' }}
+            />
+          </button>
         </div>
-      )}
 
-      {/* Main Image */}
-      <div className="flex-1 w-full">
-        <img
-          src={mainImage}
-          alt="Imagen principal"
-          className="rounded-lg w-full h-auto object-cover border border-border"
-          style={{ aspectRatio: '1 / 1' }}
-        />
+        {/* Thumbnails */}
+        {images.length > 1 && (
+          <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[500px] pb-2 md:pb-0 md:pl-2">
+            {images.map((image, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedIndex(index)}
+                className={cn(
+                  "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
+                  selectedIndex === index ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
+                )}
+              >
+                <img
+                  src={image}
+                  alt={`Thumbnail ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+      <ImageLightbox
+        images={images}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        startIndex={selectedIndex}
+      />
+    </>
   );
 };
 
