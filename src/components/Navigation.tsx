@@ -177,11 +177,19 @@ export default function Navigation() {
                         </h4>
                         
                         <MobileLink 
+                          to="/profile" 
+                          onOpenChange={setOpen}
+                          icon={<User className="h-5 w-5" />}
+                        >
+                          Mi perfil
+                        </MobileLink>
+
+                        <MobileLink 
                           to="/my-requests" 
                           onOpenChange={setOpen}
                           icon={<ShoppingCart className="h-5 w-5" />}
                         >
-                          Mis Solicitudes
+                          Mis publicaciones
                         </MobileLink>
                         
                         <MobileLink 
@@ -276,9 +284,16 @@ export default function Navigation() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link to="/profile" className="w-full">
+                    <User className="mr-2 h-4 w-4" />
+                    Mi perfil
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
                   <Link to="/my-requests" className="w-full">
                     <ShoppingCart className="mr-2 h-4 w-4" />
-                    Mis Solicitudes
+                    Mis publicaciones
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

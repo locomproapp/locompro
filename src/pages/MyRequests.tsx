@@ -6,6 +6,7 @@ import BuyRequestCard from '@/components/BuyRequestCard';
 import { useUserBuyRequests } from '@/hooks/useUserBuyRequests';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, Search } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const MyRequests = () => {
   const { user } = useAuth();
@@ -13,9 +14,9 @@ const MyRequests = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
         <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
             <h1 className="text-2xl font-bold text-foreground mb-4">
               Inicia sesión para ver tus solicitudes
@@ -25,15 +26,16 @@ const MyRequests = () => {
             </p>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
@@ -94,6 +96,7 @@ const MyRequests = () => {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };

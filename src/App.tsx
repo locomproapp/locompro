@@ -16,6 +16,7 @@ import OfferDetail from "./pages/OfferDetail";
 import CreateBuyRequest from "./pages/CreateBuyRequest";
 import SendOffer from "./pages/SendOffer";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/create-buy-request" element={<CreateBuyRequest />} />
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/my-offers" element={<MyOffers />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<NotFound />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
