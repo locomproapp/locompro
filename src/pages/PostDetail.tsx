@@ -8,7 +8,7 @@ import PublicOffersList from '@/components/PublicOffersList';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -122,68 +122,71 @@ const PostDetail = () => {
           </Link>
         </Button>
 
-        {/* Redesigned header */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-4">
-          {/* Left info (2/3 width on desktop) */}
-          <div className="md:col-span-2 flex flex-col gap-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+        {/* Redesigned layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+          {/* Left column: Details */}
+          <div className="flex flex-col gap-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
               {post.title}
             </h1>
             
-            <div className="font-semibold text-xl text-primary">
-              {formatPrice(post.min_price, post.max_price)}
-            </div>
-
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>{post.zone}</span>
-            </div>
-
-            {formattedCharacteristics && (
-              <div className="space-y-1">
-                <h3 className="font-semibold text-foreground text-sm">Características:</h3>
-                <p className="text-muted-foreground text-sm">{formattedCharacteristics}</p>
+            <div className="space-y-5">
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
+                <p className="text-lg text-primary font-bold">{formatPrice(post.min_price, post.max_price)}</p>
               </div>
-            )}
 
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>Publicado el {formatDate(post.created_at)}</span>
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
+                <p className="text-base text-foreground">{post.zone}</p>
+              </div>
+
+              {formattedCharacteristics && (
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
+                  <p className="text-base text-foreground whitespace-pre-wrap">{formattedCharacteristics}</p>
+                </div>
+              )}
+
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha</h3>
+                <p className="text-base text-foreground">{formatDate(post.created_at)}</p>
+              </div>
+              
+              {post.profiles?.full_name && (
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
+                  <p className="text-base text-foreground">{post.profiles.full_name}</p>
+                </div>
+              )}
+
+              {post.reference_link && (
+                <div>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-1">Enlace de referencia</h3>
+                  <a
+                    href={post.reference_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-primary hover:underline text-base"
+                  >
+                    Ver ejemplo
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              )}
             </div>
-            
-            {post.profiles?.full_name && (
-              <div className="text-sm">
-                <span className="font-semibold text-foreground">Publicado por: </span>
-                <span className="text-muted-foreground">{post.profiles.full_name}</span>
-              </div>
-            )}
-
-            {post.reference_link && (
-              <div className="text-sm">
-                <span className="font-semibold text-foreground">Enlace de referencia: </span>
-                <a
-                  href={post.reference_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Ver ejemplo
-                </a>
-              </div>
-            )}
           </div>
-          {/* Right image (1/3 width on desktop) */}
-          <div className="md:col-span-1 w-full flex items-center justify-center">
+          
+          {/* Right column: Image */}
+          <div className="w-full flex items-start justify-center md:justify-end">
             {mainImage ? (
               <img
                 src={mainImage}
                 alt="Imagen principal"
-                className="rounded-lg max-w-xs w-full h-64 object-cover border border-border shadow"
-                style={{ background: '#f8fafc' }}
+                className="rounded-lg w-full max-w-md h-auto object-cover border border-border shadow-lg"
               />
             ) : (
-              <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center text-muted-foreground border border-border">
+              <div className="w-full aspect-square max-w-md bg-muted rounded-lg flex items-center justify-center text-muted-foreground border border-border">
                 Sin imagen
               </div>
             )}
@@ -191,7 +194,8 @@ const PostDetail = () => {
         </div>
 
         {/* Offers section */}
-        <div>
+        <div className="border-t border-border pt-8 mt-4">
+          <h2 className="text-2xl font-bold text-foreground mb-6">Ofertas Recibidas</h2>
           <PublicOffersList buyRequestId={post.id} />
         </div>
       </main>
