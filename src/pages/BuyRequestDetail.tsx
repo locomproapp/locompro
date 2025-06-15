@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Tag } from 'lucide-react';
+import ImageGallery from '@/components/ImageGallery';
 
 const BuyRequestDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -73,6 +74,20 @@ const BuyRequestDetail = () => {
     });
   };
 
+  const formatCondition = (condition: string | null) => {
+    if (!condition) return 'No especificado';
+    const map: { [key: string]: string } = {
+      'nuevo': 'Nuevo',
+      'usado': 'Usado',
+      'cualquiera': 'Cualquiera'
+    };
+    return map[condition] || condition.charAt(0).toUpperCase() + condition.slice(1);
+  };
+
+  const allImages = buyRequest.images?.length 
+    ? buyRequest.images 
+    : (buyRequest.reference_image ? [buyRequest.reference_image] : []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -81,7 +96,7 @@ const BuyRequestDetail = () => {
         <Button variant="ghost" asChild className="mb-4 self-start">
           <Link to="/marketplace" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Volver al marketplace
+            Volver al mercado
           </Link>
         </Button>
 
@@ -114,30 +129,24 @@ const BuyRequestDetail = () => {
                     <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
                   </div>
 
+                  {buyRequest.condition && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-muted-foreground mb-1">Condición del producto</h3>
+                      <p className="text-base text-foreground">{formatCondition(buyRequest.condition)}</p>
+                    </div>
+                  )}
+
                   <div>
                     <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
                     <p className="text-base text-foreground">{buyRequest.zone}</p>
                   </div>
 
-                  {buyRequest.description && (
-                    <div>
+                  <div>
                       <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
                       <p className="text-base text-foreground whitespace-pre-wrap">
-                        {buyRequest.description}
+                        {buyRequest.description || 'No se especificaron características.'}
                       </p>
-                    </div>
-                  )}
-                  
-                  {(buyRequest as any).reference_url && (
-                    <div>
-                      <h3 className="text-sm font-semibold text-muted-foreground mb-1">Enlace de referencia</h3>
-                      <Button variant="link" asChild className="p-0 h-auto text-base">
-                        <a href={(buyRequest as any).reference_url} target="_blank" rel="noopener noreferrer">
-                          Ver acá
-                        </a>
-                      </Button>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -176,18 +185,17 @@ const BuyRequestDetail = () => {
             </div>
           </div>
           
-          {/* RIGHT COLUMN - IMAGE */}
-          <div className="bg-card rounded-lg border border-border p-4 shadow-sm sticky top-24">
-            {buyRequest.reference_image ? (
-              <img
-                src={buyRequest.reference_image}
-                alt="Imagen de referencia"
-                className="rounded-md w-full h-auto object-cover"
-              />
-            ) : (
-              <div className="w-full aspect-video bg-muted rounded-md flex items-center justify-center text-muted-foreground">
-                Sin imagen de referencia
-              </div>
+          {/* RIGHT COLUMN - IMAGE & REFERENCE LINK */}
+          <div className="flex flex-col gap-4 sticky top-24">
+            <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
+              <ImageGallery images={allImages} />
+            </div>
+            {buyRequest.reference_url && (
+              <Button asChild className="w-full">
+                <a href={buyRequest.reference_url} target="_blank" rel="noopener noreferrer">
+                  Ver enlace de referencia
+                </a>
+              </Button>
             )}
           </div>
         </div>
