@@ -31,7 +31,7 @@ const Market = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <SearchBar 
               value={searchQuery}
-              onChange={setSearchQuery}
+              onSearch={setSearchQuery}
               placeholder="Buscar productos o solicitudes..."
             />
             <CreateUserPostDialog onPostCreated={handlePostCreated} />

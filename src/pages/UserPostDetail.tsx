@@ -8,7 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useUserPostDetail } from '@/hooks/useUserPostDetail';
 import PostDetailLoading from '@/components/PostDetail/PostDetailLoading';
 import PostDetailError from '@/components/PostDetail/PostDetailError';
-import PostInformation from '@/components/PostDetail/PostInformation';
+import UserPostInformation from '@/components/PostDetail/UserPostInformation';
 import PostImage from '@/components/PostDetail/PostImage';
 
 const UserPostDetail = () => {
@@ -35,7 +35,7 @@ const UserPostDetail = () => {
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          <PostInformation post={post} />
+          <UserPostInformation post={post} />
           <PostImage images={post.images} />
         </div>
       </main>
