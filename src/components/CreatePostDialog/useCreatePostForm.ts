@@ -38,9 +38,10 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setMinPriceInput(val);
-    form.setValue("min_price", parseCurrencyInput(val));
+    const parsedValue = parseCurrencyInput(val);
+    form.setValue("min_price", parsedValue);
     
-    const min = parseCurrencyInput(val);
+    const min = parsedValue;
     const max = parseCurrencyInput(maxPriceInput);
     if (min !== null && max !== null && max < min) {
       setPriceError('El máximo debe ser mayor al mínimo');
@@ -52,10 +53,11 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setMaxPriceInput(val);
-    form.setValue("max_price", parseCurrencyInput(val));
+    const parsedValue = parseCurrencyInput(val);
+    form.setValue("max_price", parsedValue);
     
     const min = parseCurrencyInput(minPriceInput);
-    const max = parseCurrencyInput(val);
+    const max = parsedValue;
     if (min !== null && max !== null && max < min) {
       setPriceError('El máximo debe ser mayor al mínimo');
     } else {
@@ -64,7 +66,12 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   };
 
   const handleSubmit = async (values: EditBuyRequestValues) => {
-    if (priceError) return;
+    if (priceError) {
+      console.log('=== ERROR DE PRECIO ===');
+      console.log('Price error:', priceError);
+      return;
+    }
+    
     if (!user) {
       toast({
         title: "Error",
@@ -83,25 +90,31 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       return;
     }
 
+    console.log('=== INICIANDO CREACIÓN ===');
+    console.log('Valores del formulario completos:', JSON.stringify(values, null, 2));
+    console.log('Usuario ID:', user.id);
+
     setLoading(true);
     try {
-      console.log('=== DATOS FINALES PARA LA BASE DE DATOS ===');
-      console.log('Valores del form:', JSON.stringify(values, null, 2));
+      const insertData = {
+        user_id: user.id,
+        title: values.title,
+        description: values.description || null,
+        min_price: values.min_price,
+        max_price: values.max_price,
+        zone: values.zone,
+        condition: values.condition,
+        reference_url: values.reference_url || null,
+        images: values.images,
+        reference_image: values.images[0] || null,
+      };
+
+      console.log('=== DATOS PARA INSERTAR ===');
+      console.log('Insert data:', JSON.stringify(insertData, null, 2));
 
       const { data, error } = await supabase
         .from('buy_requests')
-        .insert({
-          user_id: user.id,
-          title: values.title,
-          description: values.description || null,
-          min_price: values.min_price,
-          max_price: values.max_price,
-          zone: values.zone,
-          condition: values.condition,
-          reference_url: values.reference_url || null,
-          images: values.images,
-          reference_image: values.images[0] || null,
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -110,8 +123,8 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
         throw error;
       }
 
-      console.log('=== RESPUESTA DE LA BASE DE DATOS ===');
-      console.log('Buy request creado exitosamente:', JSON.stringify(data, null, 2));
+      console.log('=== CREACIÓN EXITOSA ===');
+      console.log('Buy request creado:', JSON.stringify(data, null, 2));
 
       toast({
         title: "¡Éxito!",

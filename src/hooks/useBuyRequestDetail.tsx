@@ -43,7 +43,8 @@ export const useBuyRequestDetail = (id: string) => {
       console.log('Descripción:', data.description);
       console.log('Condición:', data.condition);
       console.log('Reference URL:', data.reference_url);
-      console.log('Imágenes:', data.images);
+      console.log('Images array:', data.images);
+      console.log('Reference image:', data.reference_image);
       
       return data;
     },

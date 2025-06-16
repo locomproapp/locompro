@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { supabase } from '@/integrations/supabase/client';
 import { editBuyRequestSchema, EditBuyRequestValues } from '@/components/edit-buy-request/schema';
 import { formatCurrency, parseCurrencyInput } from '@/components/edit-buy-request/utils';
+import { toast } from '@/hooks/use-toast';
 
 interface UseEditBuyRequestProps {
   buyRequestId: string;
@@ -35,6 +36,11 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
   const [priceError, setPriceError] = useState<string | null>(null);
   
   const fetchBuyRequest = useCallback(async () => {
+    if (!buyRequestId) return;
+    
+    console.log('=== CARGANDO DATOS PARA EDICIÓN ===');
+    console.log('Buy Request ID:', buyRequestId);
+    
     setIsFetching(true);
     try {
       const { data, error } = await supabase
@@ -43,12 +49,25 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
         .eq('id', buyRequestId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching buy request:', error);
+        throw error;
+      }
       
-      // Usar las imágenes del campo images si existe, si no usar reference_image
-      const allImages = data.images?.length ? data.images : (data.reference_image ? [data.reference_image] : []);
+      console.log('=== DATOS OBTENIDOS DE LA BD ===');
+      console.log('Data completa:', JSON.stringify(data, null, 2));
+      
+      // Procesar las imágenes
+      let allImages: string[] = [];
+      if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+        allImages = data.images;
+        console.log('Usando images array:', allImages);
+      } else if (data.reference_image) {
+        allImages = [data.reference_image];
+        console.log('Usando reference_image:', allImages);
+      }
 
-      form.reset({
+      const formData = {
         title: data.title || '',
         description: data.description || '',
         min_price: data.min_price || null,
@@ -57,20 +76,36 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
         condition: data.condition || 'cualquiera',
         reference_url: data.reference_url || '',
         images: allImages,
-      });
+      };
+
+      console.log('=== DATOS PARA EL FORMULARIO ===');
+      console.log('Form data:', JSON.stringify(formData, null, 2));
+
+      form.reset(formData);
 
       // Actualizar los inputs de precio formateados
       setMinPriceInput(formatCurrency(data.min_price));
       setMaxPriceInput(formatCurrency(data.max_price));
+      
+      console.log('=== PRECIOS FORMATEADOS ===');
+      console.log('Min price input:', formatCurrency(data.min_price));
+      console.log('Max price input:', formatCurrency(data.max_price));
+      
     } catch (error) {
       console.error('Error fetching buy request:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar los datos",
+        variant: "destructive"
+      });
     } finally {
-        setIsFetching(false);
+      setIsFetching(false);
     }
   }, [buyRequestId, form]);
 
   useEffect(() => {
     if (open && buyRequestId) {
+      console.log('Modal abierto, cargando datos...');
       fetchBuyRequest();
     }
   }, [open, buyRequestId, fetchBuyRequest]);
@@ -90,6 +125,7 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
     setMinPriceInput(val);
     form.setValue("min_price", parseCurrencyInput(val));
   };
+  
   const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setMaxPriceInput(val);
@@ -98,28 +134,56 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
   
   const onSubmit = async (values: EditBuyRequestValues) => {
     if (priceError) return;
+    
+    console.log('=== ENVIANDO ACTUALIZACIÓN ===');
+    console.log('Valores del formulario:', JSON.stringify(values, null, 2));
+    
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('buy_requests')
-        .update({
-          title: values.title,
-          description: values.description || null,
-          min_price: values.min_price,
-          max_price: values.max_price,
-          zone: values.zone,
-          condition: values.condition,
-          reference_url: values.reference_url || null,
-          images: values.images,
-          reference_image: values.images[0] || null,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', buyRequestId);
+      const updateData = {
+        title: values.title,
+        description: values.description || null,
+        min_price: values.min_price,
+        max_price: values.max_price,
+        zone: values.zone,
+        condition: values.condition,
+        reference_url: values.reference_url || null,
+        images: values.images,
+        reference_image: values.images && values.images.length > 0 ? values.images[0] : null,
+        updated_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      console.log('=== DATOS PARA ACTUALIZAR ===');
+      console.log('Update data:', JSON.stringify(updateData, null, 2));
+
+      const { data, error } = await supabase
+        .from('buy_requests')
+        .update(updateData)
+        .eq('id', buyRequestId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating buy request:', error);
+        throw error;
+      }
+
+      console.log('=== ACTUALIZACIÓN EXITOSA ===');
+      console.log('Updated data:', JSON.stringify(data, null, 2));
+
+      toast({
+        title: "¡Éxito!",
+        description: "Solicitud actualizada correctamente"
+      });
+
       onSuccess();
     } catch (error) {
       console.error('Error updating buy request:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la solicitud",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

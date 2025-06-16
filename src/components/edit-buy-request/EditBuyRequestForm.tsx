@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Control } from 'react-hook-form';
+import { Control, useFormContext } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,6 +27,8 @@ export const EditBuyRequestForm = ({
   handleMaxPriceInput,
   isFetching,
 }: EditBuyRequestFormProps) => {
+  const { watch } = useFormContext<EditBuyRequestValues>();
+  const watchedValues = watch();
 
   if (isFetching) {
     return <div className="text-center p-8 h-96 flex items-center justify-center">Cargando datos...</div>
@@ -58,6 +60,7 @@ export const EditBuyRequestForm = ({
               <Textarea
                 placeholder="Describe con más detalle lo que buscas..."
                 {...field}
+                value={field.value || ''}
               />
             </FormControl>
             <FormMessage />
@@ -90,6 +93,7 @@ export const EditBuyRequestForm = ({
               placeholder="$"
               autoComplete="off"
               onChange={handleMaxPriceInput}
+              className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''}
             />
           </FormControl>
           {priceError && (
@@ -161,7 +165,11 @@ export const EditBuyRequestForm = ({
               Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
             </FormLabel>
             <FormControl>
-              <Input placeholder="https://ejemplo.com/producto" {...field} value={field.value ?? ''} />
+              <Input 
+                placeholder="https://ejemplo.com/producto" 
+                {...field} 
+                value={field.value || ''} 
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -176,7 +184,7 @@ export const EditBuyRequestForm = ({
             <FormLabel>Fotos de Referencia</FormLabel>
             <FormControl>
               <BuyRequestImageUpload
-                images={field.value ?? []}
+                images={field.value || []}
                 setImages={field.onChange}
               />
             </FormControl>
