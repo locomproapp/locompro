@@ -13,3 +13,9 @@ export interface FormData {
 export interface CreatePostDialogProps {
   onPostCreated?: () => void;
 }
+
+export interface PriceInputState {
+  minPriceInput: string;
+  maxPriceInput: string;
+  priceError: string | null;
+}
