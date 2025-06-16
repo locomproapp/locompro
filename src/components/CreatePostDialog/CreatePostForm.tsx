@@ -50,7 +50,7 @@ const CreatePostForm = ({
       </div>
 
       <div>
-        <Label htmlFor="description">Descripción (opcional)</Label>
+        <Label htmlFor="description">Características (opcional)</Label>
         <Textarea
           id="description"
           {...form.register('description')}
