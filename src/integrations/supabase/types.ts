@@ -381,6 +381,57 @@ export type Database = {
           },
         ]
       }
+      user_posts: {
+        Row: {
+          condition: string
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          max_price: number | null
+          min_price: number | null
+          reference_image: string | null
+          reference_url: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          zone: string
+        }
+        Insert: {
+          condition?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          max_price?: number | null
+          min_price?: number | null
+          reference_image?: string | null
+          reference_url?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          zone: string
+        }
+        Update: {
+          condition?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          max_price?: number | null
+          min_price?: number | null
+          reference_image?: string | null
+          reference_url?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          zone?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
