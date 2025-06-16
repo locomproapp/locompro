@@ -91,40 +91,95 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     }
 
     console.log('=== INICIANDO CREACIÓN ===');
-    console.log('Valores del formulario completos:', JSON.stringify(values, null, 2));
+    console.log('Valores del formulario RAW:', JSON.stringify(values, null, 2));
     console.log('Usuario ID:', user.id);
 
     setLoading(true);
     try {
+      // REVISIÓN EXHAUSTIVA: Verificar cada campo antes de armar insertData
+      console.log('=== VERIFICACIÓN CAMPO POR CAMPO ===');
+      console.log('title:', values.title);
+      console.log('description (raw):', values.description);
+      console.log('description (processed):', values.description || null);
+      console.log('condition (raw):', values.condition);
+      console.log('reference_url (raw):', values.reference_url);
+      console.log('reference_url (processed):', values.reference_url || null);
+      console.log('images (raw):', values.images);
+      console.log('images length:', values.images?.length || 0);
+      console.log('reference_image (será):', values.images?.[0] || null);
+
       const insertData = {
         user_id: user.id,
         title: values.title,
-        description: values.description || null,
+        description: values.description && values.description.trim() !== '' ? values.description : null,
         min_price: values.min_price,
         max_price: values.max_price,
         zone: values.zone,
         condition: values.condition,
-        reference_url: values.reference_url || null,
-        images: values.images,
-        reference_image: values.images[0] || null,
+        reference_url: values.reference_url && values.reference_url.trim() !== '' ? values.reference_url : null,
+        images: values.images && values.images.length > 0 ? values.images : null,
+        reference_image: values.images && values.images.length > 0 ? values.images[0] : null,
       };
 
-      console.log('=== DATOS PARA INSERTAR ===');
+      console.log('=== DATOS PARA INSERTAR (FINAL) ===');
       console.log('Insert data:', JSON.stringify(insertData, null, 2));
 
       const { data, error } = await supabase
         .from('buy_requests')
         .insert(insertData)
-        .select()
+        .select(`
+          *,
+          categories (name),
+          profiles (
+            full_name,
+            avatar_url,
+            bio,
+            location
+          )
+        `)
         .single();
 
       if (error) {
+        console.error('=== ERROR EN INSERT ===');
         console.error('Error al crear buy request:', error);
         throw error;
       }
 
-      console.log('=== CREACIÓN EXITOSA ===');
-      console.log('Buy request creado:', JSON.stringify(data, null, 2));
+      console.log('=== DATOS DESDE INSERT (RESPUESTA INMEDIATA) ===');
+      console.log(JSON.stringify(data, null, 2));
+
+      // PRUEBA DE VALIDACIÓN: Fetch inmediato para verificar lo que realmente se guardó
+      console.log('=== INICIANDO VALIDACIÓN CON FETCH INDEPENDIENTE ===');
+      const { data: validatedData, error: fetchError } = await supabase
+        .from('buy_requests')
+        .select(`
+          *,
+          categories (name),
+          profiles (
+            full_name,
+            avatar_url,
+            bio,
+            location
+          )
+        `)
+        .eq('id', data.id)
+        .single();
+
+      if (fetchError) {
+        console.error('=== ERROR EN FETCH DE VALIDACIÓN ===');
+        console.error('Error al validar datos:', fetchError);
+      } else {
+        console.log('=== DATOS VALIDANDO (FETCH INDEPENDIENTE) ===');
+        console.log(JSON.stringify(validatedData, null, 2));
+        
+        // Comparación campo por campo
+        console.log('=== COMPARACIÓN CAMPO POR CAMPO ===');
+        console.log('description - insertData:', insertData.description, '| validatedData:', validatedData.description);
+        console.log('condition - insertData:', insertData.condition, '| validatedData:', validatedData.condition);
+        console.log('reference_url - insertData:', insertData.reference_url, '| validatedData:', validatedData.reference_url);
+        console.log('images - insertData:', insertData.images, '| validatedData:', validatedData.images);
+        console.log('reference_image - insertData:', insertData.reference_image, '| validatedData:', validatedData.reference_image);
+      }
 
       toast({
         title: "¡Éxito!",

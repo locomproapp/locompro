@@ -20,11 +20,24 @@ const ImageAndActionsCard = ({
   user,
   onUpdate,
 }: ImageAndActionsCardProps) => {
-  const allImages = buyRequest.images?.length
-    ? buyRequest.images
-    : buyRequest.reference_image
-    ? [buyRequest.reference_image]
-    : [];
+  console.log('=== RENDERIZANDO IMAGE AND ACTIONS CARD ===');
+  console.log('buyRequest.images:', buyRequest.images, '(tipo:', typeof buyRequest.images, ')');
+  console.log('buyRequest.reference_image:', buyRequest.reference_image, '(tipo:', typeof buyRequest.reference_image, ')');
+  
+  // Lógica mejorada para construir el array de imágenes
+  let allImages: string[] = [];
+  
+  if (buyRequest.images && Array.isArray(buyRequest.images) && buyRequest.images.length > 0) {
+    // Si hay un array de imágenes, usarlo
+    allImages = buyRequest.images.filter(img => img && typeof img === 'string');
+    console.log('Usando array de imágenes:', allImages);
+  } else if (buyRequest.reference_image && typeof buyRequest.reference_image === 'string') {
+    // Si no hay array pero sí reference_image, usar solo esa
+    allImages = [buyRequest.reference_image];
+    console.log('Usando solo reference_image:', allImages);
+  }
+  
+  console.log('Array final de imágenes:', allImages);
 
   const isOwner = user?.id === buyRequest.user_id;
   const [editOpen, setEditOpen] = useState(false);
@@ -101,6 +114,17 @@ const ImageAndActionsCard = ({
             </AlertDialog>
           </div>
         )}
+        
+        {/* Debug info visible en desarrollo */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-xs text-red-500 mb-2 p-2 bg-red-50 rounded">
+            <div><strong>DEBUG IMÁGENES:</strong></div>
+            <div>images raw: {JSON.stringify(buyRequest.images)}</div>
+            <div>reference_image: {buyRequest.reference_image}</div>
+            <div>allImages final: {JSON.stringify(allImages)}</div>
+          </div>
+        )}
+        
         <ImageGallery images={allImages} />
       </div>
 
@@ -113,7 +137,7 @@ const ImageAndActionsCard = ({
         />
       )}
 
-      {buyRequest.reference_url && (
+      {buyRequest.reference_url && buyRequest.reference_url !== null && buyRequest.reference_url !== 'null' && buyRequest.reference_url.trim() !== '' && (
         <Button asChild className="w-full">
           <a href={buyRequest.reference_url} target="_blank" rel="noopener noreferrer">
             Ver producto de referencia

@@ -26,7 +26,7 @@ export const useBuyRequestDetail = (id: string) => {
         .maybeSingle();
       
       console.log('=== RESPUESTA DE LA CONSULTA ===');
-      console.log('Data recibida:', data);
+      console.log('Data recibida:', JSON.stringify(data, null, 2));
       console.log('Error (si hay):', error);
       
       if (error) {
@@ -39,37 +39,42 @@ export const useBuyRequestDetail = (id: string) => {
         throw new Error('Buy request not found');
       }
       
-      console.log('=== DATOS PROCESADOS ===');
-      console.log('Título:', data.title);
-      console.log('Descripción:', data.description);
-      console.log('Condición:', data.condition);
-      console.log('Reference URL:', data.reference_url);
-      console.log('Images array:', data.images);
-      console.log('Reference image:', data.reference_image);
+      console.log('=== ANÁLISIS DETALLADO DE CAMPOS PROBLEMÁTICOS ===');
+      console.log('description:', data.description, '(tipo:', typeof data.description, ')');
+      console.log('condition:', data.condition, '(tipo:', typeof data.condition, ')');
+      console.log('reference_url:', data.reference_url, '(tipo:', typeof data.reference_url, ')');
+      console.log('images array:', data.images, '(tipo:', typeof data.images, ', length:', data.images?.length || 'N/A', ')');
+      console.log('reference_image:', data.reference_image, '(tipo:', typeof data.reference_image, ')');
       
       return data;
     },
     enabled: !!id,
-    // Revalidar siempre al montar el componente para evitar problemas de timing
-    refetchOnMount: true,
-    // Agregar un pequeño retry para casos de timing
+    // Forzar revalidación siempre para evitar problemas de cache
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    // Cache muy corto para debugging
+    staleTime: 0,
+    gcTime: 0,
+    // Retry mejorado
     retry: (failureCount, error) => {
-      // Solo reintentar si es un problema de datos no encontrados y hemos hecho menos de 2 intentos
-      if (failureCount < 2 && error?.message === 'Buy request not found') {
+      if (failureCount < 3 && error?.message === 'Buy request not found') {
+        console.log(`=== RETRY ${failureCount + 1}/3 ===`);
         return true;
       }
       return false;
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000)
+    retryDelay: (attemptIndex) => Math.min(500 * 2 ** attemptIndex, 2000)
   });
 
   // Efecto para revalidar explícitamente cuando cambia el ID
   useEffect(() => {
     if (id && query.refetch) {
+      console.log('=== REVALIDACIÓN POR CAMBIO DE ID ===');
       // Pequeño delay para asegurar que los datos estén propagados
       const timer = setTimeout(() => {
+        console.log('=== EJECUTANDO REFETCH ===');
         query.refetch();
-      }, 200);
+      }, 300);
       
       return () => clearTimeout(timer);
     }
