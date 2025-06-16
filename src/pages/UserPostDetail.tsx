@@ -35,7 +35,7 @@ const UserPostDetail = () => {
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          <UserPostInformation post={post} />
+          <UserPostInformation post={post as any} />
           <PostImage images={post.images} />
         </div>
       </main>

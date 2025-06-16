@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 
@@ -19,32 +18,32 @@ interface UserPostInformationProps {
 }
 
 const UserPostInformation = ({ post }: UserPostInformationProps) => {
-  const formatPrice = (min: number | null, max: number | null) => {
+  function formatPrice(min: number | null, max: number | null) {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (!min && !max) return 'Precio a consultar';
     if (min && max && min !== max) return `${format(min)} - ${format(max)}`;
     if (min) return format(min);
     if (max) return format(max);
     return 'Precio a consultar';
-  };
+  }
 
-  const formatDate = (dateString: string) => {
+  function formatDate(dateString: string) {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-AR', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
-  };
+  }
 
-  const formatCondition = (condition: string) => {
+  function formatCondition(condition: string) {
     const conditionMap: { [key: string]: string } = {
       'nuevo': 'Nuevo',
       'usado': 'Usado',
       'cualquiera': 'Cualquier estado'
     };
     return conditionMap[condition] || condition;
-  };
+  }
 
   return (
     <div className="flex flex-col gap-6">
