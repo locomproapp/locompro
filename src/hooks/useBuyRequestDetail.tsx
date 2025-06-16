@@ -1,9 +1,10 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useEffect } from 'react';
 
 export const useBuyRequestDetail = (id: string) => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['buy-request', id],
     queryFn: async () => {
       console.log('=== CONSULTANDO BUY REQUEST ===');
@@ -48,6 +49,31 @@ export const useBuyRequestDetail = (id: string) => {
       
       return data;
     },
-    enabled: !!id
+    enabled: !!id,
+    // Revalidar siempre al montar el componente para evitar problemas de timing
+    refetchOnMount: true,
+    // Agregar un pequeño retry para casos de timing
+    retry: (failureCount, error) => {
+      // Solo reintentar si es un problema de datos no encontrados y hemos hecho menos de 2 intentos
+      if (failureCount < 2 && error?.message === 'Buy request not found') {
+        return true;
+      }
+      return false;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000)
   });
+
+  // Efecto para revalidar explícitamente cuando cambia el ID
+  useEffect(() => {
+    if (id && query.refetch) {
+      // Pequeño delay para asegurar que los datos estén propagados
+      const timer = setTimeout(() => {
+        query.refetch();
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [id]);
+
+  return query;
 };

@@ -137,6 +137,12 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       setPriceError(null);
       onPostCreated?.();
       
+      // Esperar un poco para asegurar que los datos estén propagados en Supabase
+      // antes de navegar al detalle
+      console.log('=== ESPERANDO PROPAGACIÓN DE DATOS ===');
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      
+      console.log('=== NAVEGANDO AL DETALLE ===');
       navigate(`/buy-request/${data.id}`);
     } catch (error) {
       console.error('Error creating buy request:', error);

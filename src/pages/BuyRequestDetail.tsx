@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -17,6 +18,14 @@ const BuyRequestDetail = () => {
   const { user } = useAuth();
 
   const { data: buyRequest, isLoading, error, refetch } = useBuyRequestDetail(id || '');
+
+  // Revalidación explícita cuando se monta el componente para asegurar datos frescos
+  useEffect(() => {
+    if (id && refetch) {
+      console.log('=== REVALIDANDO DATOS AL MONTAR COMPONENTE ===');
+      refetch();
+    }
+  }, [id, refetch]);
 
   if (isLoading) {
     return (
