@@ -2,8 +2,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { editBuyRequestSchema, EditBuyRequestValues } from '@/components/edit-buy-request/schema';
-import { usePriceInputs } from './hooks/usePriceInputs';
+import { formatCurrency, parseCurrencyInput } from '@/components/edit-buy-request/utils';
 import { useFormSubmission } from './hooks/useFormSubmission';
+import { useState, useEffect } from 'react';
 
 export const useCreatePostForm = (onPostCreated?: () => void) => {
   const form = useForm<EditBuyRequestValues>({
@@ -20,16 +21,36 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     },
   });
 
-  const {
-    minPriceInput,
-    maxPriceInput,
-    priceError,
-    handleMinPriceInput,
-    handleMaxPriceInput,
-    resetPriceInputs
-  } = usePriceInputs(form);
+  // Usar EXACTAMENTE la misma lógica de price inputs que useEditBuyRequest
+  const [minPriceInput, setMinPriceInput] = useState('');
+  const [maxPriceInput, setMaxPriceInput] = useState('');
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   const { loading, handleSubmit: submitForm } = useFormSubmission(onPostCreated);
+
+  // Validación de precios igual que en useEditBuyRequest
+  useEffect(() => {
+    const min = parseCurrencyInput(minPriceInput);
+    const max = parseCurrencyInput(maxPriceInput);
+    if (min !== null && max !== null && max < min) {
+      setPriceError('El máximo debe ser mayor al mínimo');
+    } else {
+      setPriceError(null);
+    }
+  }, [minPriceInput, maxPriceInput]);
+
+  // Handlers de precio iguales que en useEditBuyRequest
+  const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMinPriceInput(val);
+    form.setValue("min_price", parseCurrencyInput(val));
+  };
+  
+  const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setMaxPriceInput(val);
+    form.setValue("max_price", parseCurrencyInput(val));
+  };
 
   // Watch form values
   const watchedValues = form.watch();
@@ -40,7 +61,9 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
   const resetForm = () => {
     form.reset();
-    resetPriceInputs();
+    setMinPriceInput('');
+    setMaxPriceInput('');
+    setPriceError(null);
   };
 
   return {

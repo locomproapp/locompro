@@ -43,7 +43,7 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
-      // Usar la misma lógica que el modal de edición para preparar los datos
+      // Usar EXACTAMENTE la misma lógica que useEditBuyRequest
       const insertData = {
         user_id: user.id,
         title: values.title,
@@ -57,7 +57,7 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
         reference_image: values.images && values.images.length > 0 ? values.images[0] : null,
       };
 
-      console.log('=== DATOS PARA INSERTAR (FINAL) ===');
+      console.log('=== DATOS PARA INSERTAR (USANDO LÓGICA DE EDICIÓN) ===');
       console.log('Insert data:', JSON.stringify(insertData, null, 2));
 
       const { data, error } = await supabase
