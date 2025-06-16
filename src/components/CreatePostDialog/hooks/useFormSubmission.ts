@@ -38,26 +38,26 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
     }
 
     console.log('=== INICIANDO CREACIÓN ===');
-    console.log('Valores del formulario:', JSON.stringify(values, null, 2));
+    console.log('Valores del formulario recibidos:', JSON.stringify(values, null, 2));
     console.log('Usuario ID:', user.id);
 
     setLoading(true);
     try {
-      // Usar EXACTAMENTE la misma lógica que useEditBuyRequest
+      // Preparar datos exactamente como en el modal de edición
       const insertData = {
         user_id: user.id,
         title: values.title,
-        description: values.description || null,
+        description: values.description && values.description.trim() !== '' ? values.description : null,
         min_price: values.min_price,
         max_price: values.max_price,
         zone: values.zone,
-        condition: values.condition,
-        reference_url: values.reference_url || null,
+        condition: values.condition || 'cualquiera',
+        reference_url: values.reference_url && values.reference_url.trim() !== '' ? values.reference_url : null,
         images: values.images,
         reference_image: values.images && values.images.length > 0 ? values.images[0] : null,
       };
 
-      console.log('=== DATOS PARA INSERTAR (USANDO LÓGICA DE EDICIÓN) ===');
+      console.log('=== DATOS PARA INSERTAR (PROCESADOS) ===');
       console.log('Insert data:', JSON.stringify(insertData, null, 2));
 
       const { data, error } = await supabase

@@ -35,8 +35,18 @@ const CreatePostForm = ({
   const { watch, handleSubmit } = useFormContext<EditBuyRequestValues>();
   const watchedValues = watch();
 
+  const handleFormSubmit = (values: EditBuyRequestValues) => {
+    console.log('=== VALORES DEL FORMULARIO ANTES DE ENVIAR ===');
+    console.log('Form values:', JSON.stringify(values, null, 2));
+    console.log('description:', values.description);
+    console.log('condition:', values.condition);
+    console.log('reference_url:', values.reference_url);
+    console.log('images:', values.images);
+    onSubmit(values);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       <FormField
         control={control}
         name="title"
@@ -63,6 +73,10 @@ const CreatePostForm = ({
                 rows={4}
                 {...field}
                 value={field.value || ''}
+                onChange={(e) => {
+                  console.log('Description changed to:', e.target.value);
+                  field.onChange(e.target.value || '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -129,8 +143,11 @@ const CreatePostForm = ({
             <FormLabel>Condición del producto</FormLabel>
             <FormControl>
               <RadioGroup
-                onValueChange={field.onChange}
-                value={field.value}
+                onValueChange={(value) => {
+                  console.log('Condition changed to:', value);
+                  field.onChange(value);
+                }}
+                value={field.value || 'cualquiera'}
                 className="flex gap-6 mt-2"
               >
                 <FormItem className="flex items-center space-x-2">
@@ -171,6 +188,10 @@ const CreatePostForm = ({
                 placeholder="https://ejemplo.com/producto" 
                 {...field} 
                 value={field.value || ''} 
+                onChange={(e) => {
+                  console.log('Reference URL changed to:', e.target.value);
+                  field.onChange(e.target.value || '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -187,7 +208,10 @@ const CreatePostForm = ({
             <FormControl>
               <BuyRequestImageUpload
                 images={field.value || []}
-                setImages={field.onChange}
+                setImages={(images) => {
+                  console.log('Images changed to:', images);
+                  field.onChange(images);
+                }}
               />
             </FormControl>
             <FormMessage />
