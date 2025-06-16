@@ -10,14 +10,16 @@ import { CreatePostDialogProps } from './types';
 const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
   const [open, setOpen] = useState(false);
   const {
-    formData,
+    form,
     loading,
-    touched,
-    showMaxPriceError,
-    handleInputChange,
-    handleImagesChange,
+    priceError,
+    minPriceInput,
+    maxPriceInput,
+    handleMinPriceInput,
+    handleMaxPriceInput,
     handleSubmit,
-    resetForm
+    resetForm,
+    watchedValues
   } = useCreatePostForm(onPostCreated);
 
   const handleCancel = () => {
@@ -25,8 +27,8 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     resetForm();
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    await handleSubmit(e);
+  const handleFormSubmit = async (values: any) => {
+    await handleSubmit(values);
     setOpen(false);
   };
 
@@ -52,14 +54,16 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
         </DialogHeader>
         
         <CreatePostForm
-          formData={formData}
+          form={form}
           loading={loading}
-          touched={touched}
-          showMaxPriceError={showMaxPriceError}
-          onInputChange={handleInputChange}
-          onImagesChange={handleImagesChange}
+          priceError={priceError}
+          minPriceInput={minPriceInput}
+          maxPriceInput={maxPriceInput}
+          onMinPriceInput={handleMinPriceInput}
+          onMaxPriceInput={handleMaxPriceInput}
           onSubmit={handleFormSubmit}
           onCancel={handleCancel}
+          watchedValues={watchedValues}
         />
       </DialogContent>
     </Dialog>
