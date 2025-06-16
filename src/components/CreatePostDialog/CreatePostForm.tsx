@@ -30,8 +30,6 @@ const CreatePostForm = ({
   onSubmit,
   onCancel
 }: CreatePostFormProps) => {
-  const currentImages = Array.isArray(formData.images) ? formData.images : [];
-
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
@@ -58,18 +56,18 @@ const CreatePostForm = ({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="minPrice">Precio Mínimo</Label>
+          <Label htmlFor="min_price">Precio Mínimo</Label>
           <Input
-            id="minPrice"
+            id="min_price"
             type="text"
             inputMode="numeric"
-            value={formData.minPrice}
+            value={formData.min_price}
             onChange={(e) => {
-              onInputChange('minPrice', e.target.value.replace(/[^\d.]/g, ''));
+              onInputChange('min_price', e.target.value.replace(/[^\d.]/g, ''));
             }}
             placeholder="$"
             className={
-              touched && formData.minPrice !== '' && !isValidPrice(formData.minPrice)
+              touched && formData.min_price !== '' && !isValidPrice(formData.min_price)
                 ? 'border-destructive focus-visible:ring-destructive'
                 : ''
             }
@@ -77,26 +75,26 @@ const CreatePostForm = ({
           />
         </div>
         <div>
-          <Label htmlFor="maxPrice">Precio Máximo</Label>
+          <Label htmlFor="max_price">Precio Máximo</Label>
           {showMaxPriceError && (
             <div className="text-destructive text-sm mb-1 font-medium">
               El máximo debe ser mayor al mínimo
             </div>
           )}
           <Input
-            id="maxPrice"
+            id="max_price"
             type="text"
             inputMode="numeric"
-            value={formData.maxPrice}
+            value={formData.max_price}
             onChange={(e) => {
-              onInputChange('maxPrice', e.target.value.replace(/[^\d.]/g, ''));
+              onInputChange('max_price', e.target.value.replace(/[^\d.]/g, ''));
             }}
             placeholder="$"
             className={
               (showMaxPriceError
                 ? 'border-destructive focus-visible:ring-destructive'
                 : '') +
-              ((touched && formData.maxPrice !== '' && !isValidPrice(formData.maxPrice))
+              ((touched && formData.max_price !== '' && !isValidPrice(formData.max_price))
                 ? ' border-destructive focus-visible:ring-destructive'
                 : '')
             }
@@ -119,8 +117,8 @@ const CreatePostForm = ({
       <div>
         <Label>Condición del producto</Label>
         <RadioGroup
-          value={formData.contactInfo || 'cualquiera'}
-          onValueChange={(value) => onInputChange('contactInfo', value)}
+          value={formData.condition || 'cualquiera'}
+          onValueChange={(value) => onInputChange('condition', value)}
           className="flex gap-6 mt-2"
         >
           <div className="flex items-center space-x-2">
@@ -139,14 +137,14 @@ const CreatePostForm = ({
       </div>
 
       <div>
-        <Label htmlFor="referenceLink">
+        <Label htmlFor="reference_url">
           Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
         </Label>
         <Input
-          id="referenceLink"
+          id="reference_url"
           type="url"
-          value={formData.referenceLink}
-          onChange={(e) => onInputChange('referenceLink', e.target.value)}
+          value={formData.reference_url}
+          onChange={(e) => onInputChange('reference_url', e.target.value)}
           placeholder="https://ejemplo.com/producto"
         />
       </div>
@@ -154,7 +152,7 @@ const CreatePostForm = ({
       <div>
         <Label>Fotos de Referencia *</Label>
         <BuyRequestImageUpload
-          images={currentImages}
+          images={formData.images}
           setImages={onImagesChange}
         />
       </div>
@@ -163,7 +161,7 @@ const CreatePostForm = ({
         <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
           Cancelar
         </Button>
-        <Button type="submit" disabled={loading || currentImages.length === 0} className="flex-1">
+        <Button type="submit" disabled={loading || formData.images.length === 0} className="flex-1">
           {loading ? 'Creando...' : 'Crear Publicación'}
         </Button>
       </div>

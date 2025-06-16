@@ -2,12 +2,12 @@
 export interface FormData {
   title: string;
   description: string;
-  minPrice: string;
-  maxPrice: string;
-  referenceLink: string;
+  min_price: string;
+  max_price: string;
+  reference_url: string;
   zone: string;
-  contactInfo: string;
-  images: string[] | string;
+  condition: string;
+  images: string[];
 }
 
 export interface CreatePostDialogProps {

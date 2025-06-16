@@ -14,11 +14,11 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
-    minPrice: '',
-    maxPrice: '',
-    referenceLink: '',
+    min_price: '',
+    max_price: '',
+    reference_url: '',
     zone: '',
-    contactInfo: 'cualquiera',
+    condition: 'cualquiera',
     images: []
   });
 
@@ -27,7 +27,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'maxPrice' || field === 'minPrice') {
+    if (field === 'max_price' || field === 'min_price') {
       setShowMaxPriceError(false);
     }
   };
@@ -40,7 +40,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     e.preventDefault();
     setTouched(true);
 
-    const priceIsInvalid = isMaxPriceInvalid(formData.minPrice, formData.maxPrice);
+    const priceIsInvalid = isMaxPriceInvalid(formData.min_price, formData.max_price);
     if (priceIsInvalid) {
       setShowMaxPriceError(true);
     }
@@ -69,21 +69,19 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
-      const imagesArray = Array.isArray(formData.images) ? formData.images : [];
-
       const { data, error } = await supabase
         .from('buy_requests')
         .insert({
           user_id: user.id,
           title: formData.title,
           description: formData.description || null,
-          min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
-          max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
-          reference_url: formData.referenceLink || null,
+          min_price: formData.min_price ? parseFloat(formData.min_price) : null,
+          max_price: formData.max_price ? parseFloat(formData.max_price) : null,
+          reference_url: formData.reference_url || null,
           zone: formData.zone,
-          condition: formData.contactInfo || 'cualquiera',
-          images: imagesArray.length > 0 ? imagesArray : null,
-          reference_image: imagesArray.length > 0 ? imagesArray[0] : null
+          condition: formData.condition || 'cualquiera',
+          images: formData.images.length > 0 ? formData.images : null,
+          reference_image: formData.images.length > 0 ? formData.images[0] : null
         })
         .select()
         .single();
@@ -121,11 +119,11 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     setFormData({
       title: '',
       description: '',
-      minPrice: '',
-      maxPrice: '',
-      referenceLink: '',
+      min_price: '',
+      max_price: '',
+      reference_url: '',
       zone: '',
-      contactInfo: 'cualquiera',
+      condition: 'cualquiera',
       images: []
     });
     setTouched(false);
