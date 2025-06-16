@@ -41,6 +41,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     e.preventDefault();
     setTouched(true);
 
+    console.log('=== INICIANDO VALIDACIÓN ===');
     console.log('FormData completo antes de validación:', formData);
 
     const priceIsInvalid = isMaxPriceInvalid(formData.min_price, formData.max_price);
@@ -72,22 +73,33 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
+      // Asegurar que los campos no estén vacíos antes de enviar
+      const description = formData.description.trim() || null;
+      const reference_url = formData.reference_url.trim() || null;
+      const condition = formData.condition || 'cualquiera';
+      
       const dataToInsert = {
         user_id: user.id,
-        title: formData.title,
-        description: formData.description || null,
+        title: formData.title.trim(),
+        description: description,
         min_price: formData.min_price ? parseFloat(formData.min_price) : null,
         max_price: formData.max_price ? parseFloat(formData.max_price) : null,
-        reference_url: formData.reference_url || null,
-        zone: formData.zone,
-        condition: formData.condition || 'cualquiera',
+        reference_url: reference_url,
+        zone: formData.zone.trim(),
+        condition: condition,
         images: formData.images.length > 0 ? formData.images : null,
         reference_image: formData.images.length > 0 ? formData.images[0] : null
       };
 
       console.log('=== DATOS COMPLETOS A INSERTAR ===');
-      console.log('FormData.description:', formData.description);
-      console.log('DataToInsert.description:', dataToInsert.description);
+      console.log('FormData.description original:', formData.description);
+      console.log('Description procesada:', description);
+      console.log('FormData.condition original:', formData.condition);
+      console.log('Condition procesada:', condition);
+      console.log('FormData.reference_url original:', formData.reference_url);
+      console.log('Reference URL procesada:', reference_url);
+      console.log('FormData.images original:', formData.images);
+      console.log('Images procesadas:', dataToInsert.images);
       console.log('Objeto completo dataToInsert:', JSON.stringify(dataToInsert, null, 2));
 
       const { data, error } = await supabase
