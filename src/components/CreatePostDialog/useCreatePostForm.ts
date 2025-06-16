@@ -69,42 +69,33 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
-      console.log('Creating buy request with data:', {
+      const dataToInsert = {
         user_id: user.id,
         title: formData.title,
-        description: formData.description,
+        description: formData.description || null,
         min_price: formData.min_price ? parseFloat(formData.min_price) : null,
         max_price: formData.max_price ? parseFloat(formData.max_price) : null,
-        reference_url: formData.reference_url,
+        reference_url: formData.reference_url || null,
         zone: formData.zone,
-        condition: formData.condition,
-        images: formData.images,
-        reference_image: formData.images[0]
-      });
+        condition: formData.condition || 'cualquiera',
+        images: formData.images.length > 0 ? formData.images : null,
+        reference_image: formData.images.length > 0 ? formData.images[0] : null
+      };
+
+      console.log('Datos que se van a insertar en buy_requests:', dataToInsert);
 
       const { data, error } = await supabase
         .from('buy_requests')
-        .insert({
-          user_id: user.id,
-          title: formData.title,
-          description: formData.description || null,
-          min_price: formData.min_price ? parseFloat(formData.min_price) : null,
-          max_price: formData.max_price ? parseFloat(formData.max_price) : null,
-          reference_url: formData.reference_url || null,
-          zone: formData.zone,
-          condition: formData.condition || 'cualquiera',
-          images: formData.images.length > 0 ? formData.images : null,
-          reference_image: formData.images.length > 0 ? formData.images[0] : null
-        })
+        .insert(dataToInsert)
         .select()
         .single();
 
       if (error) {
-        console.error('Error creating buy request:', error);
+        console.error('Error al crear buy request:', error);
         throw error;
       }
 
-      console.log('Buy request created successfully:', data);
+      console.log('Buy request creado exitosamente:', data);
 
       toast({
         title: "¡Éxito!",
