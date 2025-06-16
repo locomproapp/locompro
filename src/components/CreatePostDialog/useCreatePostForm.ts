@@ -56,6 +56,25 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const watchedValues = form.watch();
 
   const handleSubmit = async (values: EditBuyRequestValues) => {
+    console.log('=== SUBMIT DESDE useCreatePostForm ===');
+    console.log('Values before processing:', JSON.stringify(values, null, 2));
+    
+    // Validaciones adicionales antes de enviar
+    if (!values.title || values.title.trim() === '') {
+      console.error('Title is empty');
+      return;
+    }
+    
+    if (!values.zone || values.zone.trim() === '') {
+      console.error('Zone is empty');
+      return;
+    }
+    
+    if (!values.images || values.images.length === 0) {
+      console.error('No images provided');
+      return;
+    }
+    
     await submitForm(values, priceError);
   };
 
