@@ -26,6 +26,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const [showMaxPriceError, setShowMaxPriceError] = useState(false);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
+    console.log(`Campo ${field} cambiado a:`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'max_price' || field === 'min_price') {
       setShowMaxPriceError(false);
@@ -39,6 +40,8 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
+
+    console.log('FormData completo antes de validación:', formData);
 
     const priceIsInvalid = isMaxPriceInvalid(formData.min_price, formData.max_price);
     if (priceIsInvalid) {
@@ -82,7 +85,10 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
         reference_image: formData.images.length > 0 ? formData.images[0] : null
       };
 
-      console.log('Datos que se van a insertar en buy_requests:', dataToInsert);
+      console.log('=== DATOS COMPLETOS A INSERTAR ===');
+      console.log('FormData.description:', formData.description);
+      console.log('DataToInsert.description:', dataToInsert.description);
+      console.log('Objeto completo dataToInsert:', JSON.stringify(dataToInsert, null, 2));
 
       const { data, error } = await supabase
         .from('buy_requests')
@@ -95,7 +101,8 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
         throw error;
       }
 
-      console.log('Buy request creado exitosamente:', data);
+      console.log('=== RESPUESTA DE LA BASE DE DATOS ===');
+      console.log('Buy request creado exitosamente:', JSON.stringify(data, null, 2));
 
       toast({
         title: "¡Éxito!",
