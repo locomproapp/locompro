@@ -26,24 +26,47 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   const [showMaxPriceError, setShowMaxPriceError] = useState(false);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    console.log(`Campo ${field} cambiado a:`, value);
-    setFormData(prev => ({ ...prev, [field]: value }));
+    console.log(`=== HANDLE INPUT CHANGE ===`);
+    console.log(`Campo ${field} cambiando de "${formData[field]}" a "${value}"`);
+    
+    setFormData(prev => {
+      const newFormData = { ...prev, [field]: value };
+      console.log('FormData después del cambio:', JSON.stringify(newFormData, null, 2));
+      return newFormData;
+    });
+    
     if (field === 'max_price' || field === 'min_price') {
       setShowMaxPriceError(false);
     }
   };
 
   const handleImagesChange = (images: string[]) => {
-    console.log('Imágenes cambiadas:', images);
-    setFormData(prev => ({ ...prev, images }));
+    console.log('=== HANDLE IMAGES CHANGE ===');
+    console.log('Imágenes anteriores:', formData.images);
+    console.log('Imágenes nuevas:', images);
+    
+    setFormData(prev => {
+      const newFormData = { ...prev, images };
+      console.log('FormData después del cambio de imágenes:', JSON.stringify(newFormData, null, 2));
+      return newFormData;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
 
-    console.log('=== INICIANDO VALIDACIÓN ===');
-    console.log('FormData completo antes de validación:', formData);
+    console.log('=== INICIANDO SUBMIT ===');
+    console.log('FormData en el momento del submit:', JSON.stringify(formData, null, 2));
+    console.log('Detalles específicos:');
+    console.log('- title:', `"${formData.title}"`);
+    console.log('- description:', `"${formData.description}"`);
+    console.log('- condition:', `"${formData.condition}"`);
+    console.log('- reference_url:', `"${formData.reference_url}"`);
+    console.log('- images:', formData.images);
+    console.log('- min_price:', `"${formData.min_price}"`);
+    console.log('- max_price:', `"${formData.max_price}"`);
+    console.log('- zone:', `"${formData.zone}"`);
 
     const priceIsInvalid = isMaxPriceInvalid(formData.min_price, formData.max_price);
     if (priceIsInvalid) {

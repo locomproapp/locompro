@@ -30,6 +30,13 @@ const CreatePostForm = ({
   onSubmit,
   onCancel
 }: CreatePostFormProps) => {
+  console.log('=== CREATEPOSTFORM - FORMDATA ACTUAL ===');
+  console.log('FormData completo:', JSON.stringify(formData, null, 2));
+  console.log('description:', formData.description);
+  console.log('condition:', formData.condition);
+  console.log('reference_url:', formData.reference_url);
+  console.log('images:', formData.images);
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
@@ -48,7 +55,10 @@ const CreatePostForm = ({
         <Textarea
           id="description"
           value={formData.description}
-          onChange={(e) => onInputChange('description', e.target.value)}
+          onChange={(e) => {
+            console.log('Descripción cambiando a:', e.target.value);
+            onInputChange('description', e.target.value);
+          }}
           placeholder="Describe con más detalle lo que buscas..."
           rows={4}
         />
@@ -117,8 +127,11 @@ const CreatePostForm = ({
       <div>
         <Label>Condición del producto</Label>
         <RadioGroup
-          value={formData.condition || 'cualquiera'}
-          onValueChange={(value) => onInputChange('condition', value)}
+          value={formData.condition}
+          onValueChange={(value) => {
+            console.log('Condición cambiando a:', value);
+            onInputChange('condition', value);
+          }}
           className="flex gap-6 mt-2"
         >
           <div className="flex items-center space-x-2">
@@ -144,7 +157,10 @@ const CreatePostForm = ({
           id="reference_url"
           type="url"
           value={formData.reference_url}
-          onChange={(e) => onInputChange('reference_url', e.target.value)}
+          onChange={(e) => {
+            console.log('Reference URL cambiando a:', e.target.value);
+            onInputChange('reference_url', e.target.value);
+          }}
           placeholder="https://ejemplo.com/producto"
         />
       </div>
@@ -153,7 +169,10 @@ const CreatePostForm = ({
         <Label>Fotos de Referencia *</Label>
         <BuyRequestImageUpload
           images={formData.images}
-          setImages={onImagesChange}
+          setImages={(images) => {
+            console.log('Imágenes cambiando en CreatePostForm a:', images);
+            onImagesChange(images);
+          }}
         />
       </div>
 
