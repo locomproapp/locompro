@@ -15,6 +15,7 @@ interface CreatePostFormProps {
   touched: boolean;
   showMaxPriceError: boolean;
   onInputChange: (field: keyof FormData, value: string) => void;
+  onImagesChange: (images: string[]) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
 }
@@ -25,14 +26,11 @@ const CreatePostForm = ({
   touched,
   showMaxPriceError,
   onInputChange,
+  onImagesChange,
   onSubmit,
   onCancel
 }: CreatePostFormProps) => {
-  const handleImagesChange = (images: string[]) => {
-    onInputChange('images', JSON.stringify(images));
-  };
-
-  const currentImages = formData.images ? (typeof formData.images === 'string' ? JSON.parse(formData.images) : formData.images) : [];
+  const currentImages = Array.isArray(formData.images) ? formData.images : [];
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -154,10 +152,10 @@ const CreatePostForm = ({
       </div>
 
       <div>
-        <Label>Fotos de Referencia</Label>
+        <Label>Fotos de Referencia *</Label>
         <BuyRequestImageUpload
           images={currentImages}
-          setImages={handleImagesChange}
+          setImages={onImagesChange}
         />
       </div>
 

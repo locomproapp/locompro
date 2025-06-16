@@ -18,7 +18,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     maxPrice: '',
     referenceLink: '',
     zone: '',
-    contactInfo: '',
+    contactInfo: 'cualquiera',
     images: []
   });
 
@@ -34,6 +34,10 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     if (field === 'maxPrice' || field === 'minPrice') {
       setShowMaxPriceError(false);
     }
+  };
+
+  const handleImagesChange = (images: string[]) => {
+    setFormData(prev => ({ ...prev, images }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,6 +58,17 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       });
       return;
     }
+
+    // Validar que hay al menos una imagen
+    if (!formData.images || formData.images.length === 0) {
+      toast({
+        title: "Error",
+        description: "Debes subir al menos una imagen",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // Si hay error lógico en los precios, no enviar
     if (priceIsInvalid) {
       return;
@@ -120,7 +135,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       maxPrice: '',
       referenceLink: '',
       zone: '',
-      contactInfo: '',
+      contactInfo: 'cualquiera',
       images: []
     });
     setTouched(false);
@@ -133,6 +148,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     touched,
     showMaxPriceError,
     handleInputChange,
+    handleImagesChange,
     handleSubmit,
     resetForm
   };

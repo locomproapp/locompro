@@ -15,6 +15,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     touched,
     showMaxPriceError,
     handleInputChange,
+    handleImagesChange,
     handleSubmit,
     resetForm
   } = useCreatePostForm(onPostCreated);
@@ -56,6 +57,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           touched={touched}
           showMaxPriceError={showMaxPriceError}
           onInputChange={handleInputChange}
+          onImagesChange={handleImagesChange}
           onSubmit={handleFormSubmit}
           onCancel={handleCancel}
         />
