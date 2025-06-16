@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Tag, ExternalLink } from 'lucide-react';
+import { Tag } from 'lucide-react';
 
 const formatPrice = (min: number | null, max: number | null) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
@@ -70,21 +70,6 @@ const DetailsCard = ({ buyRequest }: { buyRequest: any }) => {
                             <p className="text-base text-foreground whitespace-pre-wrap">
                                 {buyRequest.description}
                             </p>
-                        </div>
-                    )}
-
-                    {buyRequest.reference_url && buyRequest.reference_url !== null && buyRequest.reference_url !== 'null' && buyRequest.reference_url.trim() !== '' && (
-                        <div>
-                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Enlace de referencia</h3>
-                            <a
-                                href={buyRequest.reference_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-primary hover:underline text-base"
-                            >
-                                Ver ejemplo
-                                <ExternalLink className="h-4 w-4" />
-                            </a>
                         </div>
                     )}
 
