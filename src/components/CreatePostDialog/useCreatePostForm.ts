@@ -69,6 +69,19 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
+      console.log('Creating buy request with data:', {
+        user_id: user.id,
+        title: formData.title,
+        description: formData.description,
+        min_price: formData.min_price ? parseFloat(formData.min_price) : null,
+        max_price: formData.max_price ? parseFloat(formData.max_price) : null,
+        reference_url: formData.reference_url,
+        zone: formData.zone,
+        condition: formData.condition,
+        images: formData.images,
+        reference_image: formData.images[0]
+      });
+
       const { data, error } = await supabase
         .from('buy_requests')
         .insert({
