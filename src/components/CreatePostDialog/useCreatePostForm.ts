@@ -61,23 +61,25 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('posts')
+      const { data, error } = await supabase
+        .from('buy_requests')
         .insert({
           user_id: user.id,
           title: formData.title,
           description: formData.description || null,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
-          reference_link: formData.referenceLink || null,
+          reference_url: formData.referenceLink || null,
           zone: formData.zone,
-          characteristics: formData.contactInfo ? { contact_info: formData.contactInfo } : null,
-          contact_info: formData.contactInfo ? { info: formData.contactInfo } : null,
-          images: formData.images.length > 0 ? formData.images : null
-        });
+          condition: 'cualquiera',
+          images: formData.images.length > 0 ? formData.images : null,
+          reference_image: formData.images.length > 0 ? formData.images[0] : null
+        })
+        .select()
+        .single();
 
       if (error) {
-        console.error('Error creating post:', error);
+        console.error('Error creating buy request:', error);
         throw error;
       }
 
@@ -89,10 +91,10 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       resetForm();
       onPostCreated?.();
       
-      // Redirigir al marketplace después de crear la publicación
-      navigate('/marketplace');
+      // Redirigir al detalle de la publicación creada
+      navigate(`/buy-request/${data.id}`);
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error('Error creating buy request:', error);
       toast({
         title: "Error",
         description: "No se pudo crear la publicación",

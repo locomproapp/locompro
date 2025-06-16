@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import BuyRequestImageUpload from '@/components/BuyRequestDialog/BuyRequestImageUpload';
 import { FormData } from './types';
 import { isValidPrice } from './validation';
 
@@ -27,26 +28,32 @@ const CreatePostForm = ({
   onSubmit,
   onCancel
 }: CreatePostFormProps) => {
+  const handleImagesChange = (images: string[]) => {
+    onInputChange('images', JSON.stringify(images));
+  };
+
+  const currentImages = formData.images ? (typeof formData.images === 'string' ? JSON.parse(formData.images) : formData.images) : [];
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="title">Título del Producto *</Label>
+        <Label htmlFor="title">¿Qué estás buscando? *</Label>
         <Input
           id="title"
           value={formData.title}
           onChange={(e) => onInputChange('title', e.target.value)}
-          placeholder="¿Qué estás vendiendo?"
+          placeholder="Ej: iPhone 14 Pro Max 256GB"
           required
         />
       </div>
 
       <div>
-        <Label htmlFor="description">Descripción y Características</Label>
+        <Label htmlFor="description">Descripción (opcional)</Label>
         <Textarea
           id="description"
           value={formData.description}
           onChange={(e) => onInputChange('description', e.target.value)}
-          placeholder="Describe tu producto: características, estado, marca, modelo, etc."
+          placeholder="Describe con más detalle lo que buscas..."
           rows={4}
         />
       </div>
@@ -62,14 +69,12 @@ const CreatePostForm = ({
             onChange={(e) => {
               onInputChange('minPrice', e.target.value.replace(/[^\d.]/g, ''));
             }}
-            placeholder="$ 0"
+            placeholder="$"
             className={
               touched && formData.minPrice !== '' && !isValidPrice(formData.minPrice)
                 ? 'border-destructive focus-visible:ring-destructive'
                 : ''
             }
-            min="0"
-            step="0.01"
             autoComplete="off"
           />
         </div>
@@ -88,7 +93,7 @@ const CreatePostForm = ({
             onChange={(e) => {
               onInputChange('maxPrice', e.target.value.replace(/[^\d.]/g, ''));
             }}
-            placeholder="$ 0"
+            placeholder="$"
             className={
               (showMaxPriceError
                 ? 'border-destructive focus-visible:ring-destructive'
@@ -97,22 +102,9 @@ const CreatePostForm = ({
                 ? ' border-destructive focus-visible:ring-destructive'
                 : '')
             }
-            min="0"
-            step="0.01"
             autoComplete="off"
           />
         </div>
-      </div>
-
-      <div>
-        <Label htmlFor="referenceLink">Enlace de Referencia</Label>
-        <Input
-          id="referenceLink"
-          type="url"
-          value={formData.referenceLink}
-          onChange={(e) => onInputChange('referenceLink', e.target.value)}
-          placeholder="https://mercadolibre.com.ar/..."
-        />
       </div>
 
       <div>
@@ -121,35 +113,59 @@ const CreatePostForm = ({
           id="zone"
           value={formData.zone}
           onChange={(e) => onInputChange('zone', e.target.value)}
-          placeholder="Capital Federal, Zona Norte, etc."
+          placeholder="Ej: CABA, Zona Norte, etc."
           required
         />
       </div>
 
       <div>
-        <Label htmlFor="contactInfo">Datos de Contacto</Label>
-        <Textarea
-          id="contactInfo"
-          value={formData.contactInfo}
-          onChange={(e) => onInputChange('contactInfo', e.target.value)}
-          placeholder="WhatsApp, email, horarios de contacto, etc."
-          rows={2}
+        <Label>Condición del producto</Label>
+        <RadioGroup
+          value={formData.contactInfo || 'cualquiera'}
+          onValueChange={(value) => onInputChange('contactInfo', value)}
+          className="flex gap-6 mt-2"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="nuevo" id="nuevo" />
+            <Label htmlFor="nuevo" className="font-normal">Nuevo</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="usado" id="usado" />
+            <Label htmlFor="usado" className="font-normal">Usado</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="cualquiera" id="cualquiera" />
+            <Label htmlFor="cualquiera" className="font-normal">Cualquiera</Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      <div>
+        <Label htmlFor="referenceLink">
+          Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
+        </Label>
+        <Input
+          id="referenceLink"
+          type="url"
+          value={formData.referenceLink}
+          onChange={(e) => onInputChange('referenceLink', e.target.value)}
+          placeholder="https://ejemplo.com/producto"
         />
       </div>
 
       <div>
-        <Label>Fotos (Opcional)</Label>
-        <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
-          <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Próximamente: Subir imágenes</p>
-        </div>
+        <Label>Fotos de Referencia</Label>
+        <BuyRequestImageUpload
+          images={currentImages}
+          setImages={handleImagesChange}
+        />
       </div>
 
       <div className="flex gap-3 pt-4">
         <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
           Cancelar
         </Button>
-        <Button type="submit" disabled={loading} className="flex-1">
+        <Button type="submit" disabled={loading || currentImages.length === 0} className="flex-1">
           {loading ? 'Creando...' : 'Crear Publicación'}
         </Button>
       </div>

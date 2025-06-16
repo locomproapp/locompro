@@ -7,7 +7,7 @@ export interface FormData {
   referenceLink: string;
   zone: string;
   contactInfo: string;
-  images: string[];
+  images: string[] | string;
 }
 
 export interface CreatePostDialogProps {
