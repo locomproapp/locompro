@@ -34,6 +34,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   };
 
   const handleImagesChange = (images: string[]) => {
+    console.log('Imágenes cambiadas:', images);
     setFormData(prev => ({ ...prev, images }));
   };
 
@@ -73,38 +74,31 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
-      // Asegurar que los campos no estén vacíos antes de enviar
-      const description = formData.description.trim() || null;
-      const reference_url = formData.reference_url.trim() || null;
-      const condition = formData.condition || 'cualquiera';
-      
-      const dataToInsert = {
+      // Procesar los datos asegurando que no se pierdan
+      const processedData = {
         user_id: user.id,
         title: formData.title.trim(),
-        description: description,
+        description: formData.description && formData.description.trim() ? formData.description.trim() : null,
         min_price: formData.min_price ? parseFloat(formData.min_price) : null,
         max_price: formData.max_price ? parseFloat(formData.max_price) : null,
-        reference_url: reference_url,
+        reference_url: formData.reference_url && formData.reference_url.trim() ? formData.reference_url.trim() : null,
         zone: formData.zone.trim(),
-        condition: condition,
-        images: formData.images.length > 0 ? formData.images : null,
-        reference_image: formData.images.length > 0 ? formData.images[0] : null
+        condition: formData.condition || 'cualquiera',
+        images: formData.images && formData.images.length > 0 ? formData.images : null,
+        reference_image: formData.images && formData.images.length > 0 ? formData.images[0] : null
       };
 
-      console.log('=== DATOS COMPLETOS A INSERTAR ===');
-      console.log('FormData.description original:', formData.description);
-      console.log('Description procesada:', description);
-      console.log('FormData.condition original:', formData.condition);
-      console.log('Condition procesada:', condition);
-      console.log('FormData.reference_url original:', formData.reference_url);
-      console.log('Reference URL procesada:', reference_url);
-      console.log('FormData.images original:', formData.images);
-      console.log('Images procesadas:', dataToInsert.images);
-      console.log('Objeto completo dataToInsert:', JSON.stringify(dataToInsert, null, 2));
+      console.log('=== DATOS FINALES PARA LA BASE DE DATOS ===');
+      console.log('FormData original:', JSON.stringify(formData, null, 2));
+      console.log('Datos procesados:', JSON.stringify(processedData, null, 2));
+      console.log('description final:', processedData.description);
+      console.log('condition final:', processedData.condition);
+      console.log('reference_url final:', processedData.reference_url);
+      console.log('images final:', processedData.images);
 
       const { data, error } = await supabase
         .from('buy_requests')
-        .insert(dataToInsert)
+        .insert(processedData)
         .select()
         .single();
 
