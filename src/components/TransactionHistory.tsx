@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ShoppingBag, Tag, Clock, Check, X, Star } from 'lucide-react';
 import ReviewForm from './ReviewForm';
 
@@ -16,8 +15,8 @@ interface BuyRequest {
   title: string;
   status: string;
   created_at: string;
-  min_price: number | null;
-  max_price: number | null;
+  min_price: number;
+  max_price: number;
 }
 
 interface Offer {
@@ -40,7 +39,6 @@ const TransactionHistory = () => {
   const { user } = useAuth();
   const [showReviewForm, setShowReviewForm] = useState<string | null>(null);
 
-  // Fetch user's buy requests
   const { data: buyRequests, isLoading: loadingRequests } = useQuery({
     queryKey: ['user-buy-requests', user?.id],
     queryFn: async () => {
@@ -58,7 +56,6 @@ const TransactionHistory = () => {
     enabled: !!user
   });
 
-  // Fetch user's offers
   const { data: offers, isLoading: loadingOffers } = useQuery({
     queryKey: ['user-offers', user?.id],
     queryFn: async () => {
@@ -72,7 +69,7 @@ const TransactionHistory = () => {
             full_name,
             avatar_url
           ),
-          buy_requests (
+          buy_requests!inner (
             title
           )
         `)
@@ -80,7 +77,10 @@ const TransactionHistory = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Offer[];
+      return data.map(item => ({
+        ...item,
+        buy_requests: item.buy_requests || { title: 'Solicitud eliminada' }
+      })) as Offer[];
     },
     enabled: !!user
   });
@@ -102,12 +102,10 @@ const TransactionHistory = () => {
     }
   };
 
-  const formatPrice = (min: number | null, max: number | null) => {
-    if (!min && !max) return 'Presupuesto abierto';
-    if (min && max && min !== max) return `$${min} - $${max}`;
-    if (min) return `Desde $${min}`;
-    if (max) return `Hasta $${max}`;
-    return 'Presupuesto abierto';
+  const formatPrice = (min: number, max: number) => {
+    const format = (p: number) => '$' + p.toLocaleString('es-AR');
+    if (min === max) return format(min);
+    return `${format(min)} - ${format(max)}`;
   };
 
   const formatDate = (dateString: string) => {

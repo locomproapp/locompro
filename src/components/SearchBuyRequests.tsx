@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,14 +12,11 @@ interface BuyRequest {
   id: string;
   title: string;
   description: string | null;
-  min_price: number | null;
-  max_price: number | null;
+  min_price: number;
+  max_price: number;
   reference_image: string | null;
   zone: string;
   created_at: string;
-  categories: {
-    name: string;
-  } | null;
   profiles: {
     full_name: string | null;
   } | null;
@@ -29,21 +27,6 @@ interface SearchBuyRequestsProps {
 }
 
 const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' }) => {
-  // Remove separate state for search and filters, use prop instead
-
-  // Fetch categories just for category names on cards
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const { data: buyRequests, isLoading } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
@@ -51,7 +34,6 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          categories (name),
           profiles (full_name)
         `)
         .eq('status', 'active')
@@ -67,13 +49,10 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
     }
   });
 
-  const formatPrice = (min: number | null, max: number | null) => {
+  const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
-    if (!min && !max) return 'Presupuesto abierto';
-    if (min && max && min !== max) return `${format(min)} - ${format(max)}`;
-    if (min) return `Desde ${format(min)}`;
-    if (max) return `Hasta ${format(max)}`;
-    return 'Presupuesto abierto';
+    if (min === max) return format(min);
+    return `${format(min)} - ${format(max)}`;
   };
 
   const formatDate = (dateString: string) => {
@@ -86,7 +65,6 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
 
   return (
     <div className="space-y-4">
-      {/* Results */}
       {isLoading ? (
         <div className="text-center py-8">
           <p className="text-muted-foreground">Cargando publicaciones</p>

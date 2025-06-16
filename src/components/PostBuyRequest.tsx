@@ -5,12 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Upload } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -18,11 +17,12 @@ import { toast } from '@/hooks/use-toast';
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
   description: z.string().optional(),
-  category_id: z.string().min(1, 'Selecciona una categoría'),
-  min_price: z.number().min(0, 'El precio mínimo debe ser mayor a 0').optional(),
-  max_price: z.number().min(0, 'El precio máximo debe ser mayor a 0').optional(),
+  min_price: z.number().min(0, 'El precio mínimo debe ser mayor a 0'),
+  max_price: z.number().min(0, 'El precio máximo debe ser mayor a 0'),
   zone: z.string().min(3, 'La zona es requerida'),
-  reference_image: z.string().optional()
+  condition: z.enum(['nuevo', 'usado', 'cualquiera']),
+  reference_url: z.string().url({ message: "Debe ser una URL válida" }).optional().or(z.literal('')),
+  images: z.array(z.string()).min(1, 'Debes subir al menos una imagen'),
 });
 
 interface PostBuyRequestProps {
@@ -39,22 +39,12 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
     defaultValues: {
       title: '',
       description: '',
-      category_id: '',
+      min_price: 0,
+      max_price: 0,
       zone: '',
-      reference_image: ''
-    }
-  });
-
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data;
+      condition: 'cualquiera',
+      reference_url: '',
+      images: []
     }
   });
 
@@ -74,12 +64,13 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
         .insert({
           user_id: user.id,
           title: values.title,
-          description: values.description,
-          category_id: values.category_id,
+          description: values.description || null,
           min_price: values.min_price,
           max_price: values.max_price,
           zone: values.zone,
-          reference_image: values.reference_image
+          condition: values.condition,
+          reference_url: values.reference_url || null,
+          images: values.images
         });
 
       if (error) throw error;
@@ -121,7 +112,8 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
         .from('buy-requests')
         .getPublicUrl(fileName);
 
-      form.setValue('reference_image', data.publicUrl);
+      const currentImages = form.getValues('images') || [];
+      form.setValue('images', [...currentImages, data.publicUrl]);
       
       toast({
         title: "Imagen subida",
@@ -177,31 +169,6 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="category_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Categoría</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una categoría" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories?.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -214,7 +181,7 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
                         type="number" 
                         placeholder="0" 
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -233,7 +200,7 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
                         type="number" 
                         placeholder="1000" 
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -258,6 +225,43 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
 
             <FormField
               control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condición del producto</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex gap-6 mt-2"
+                    >
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="nuevo" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Nuevo</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="usado" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Usado</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="cualquiera" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Cualquiera</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -274,8 +278,25 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="reference_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enlace de referencia (opcional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="https://ejemplo.com/producto" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="space-y-2">
-              <FormLabel>Imagen de referencia (opcional)</FormLabel>
+              <FormLabel>Imágenes de referencia</FormLabel>
               <div className="flex items-center gap-4">
                 <Input
                   type="file"
@@ -299,12 +320,17 @@ const PostBuyRequest = ({ onRequestCreated }: PostBuyRequestProps) => {
                     </span>
                   </Button>
                 </label>
-                {form.watch('reference_image') && (
-                  <img 
-                    src={form.watch('reference_image')} 
-                    alt="Referencia" 
-                    className="h-16 w-16 object-cover rounded"
-                  />
+                {form.watch('images') && form.watch('images').length > 0 && (
+                  <div className="flex gap-2">
+                    {form.watch('images').map((image, index) => (
+                      <img 
+                        key={index}
+                        src={image} 
+                        alt={`Referencia ${index + 1}`} 
+                        className="h-16 w-16 object-cover rounded"
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

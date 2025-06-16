@@ -39,7 +39,7 @@ const SellerNotifications = () => {
           rejection_reason,
           status,
           updated_at,
-          buy_requests (
+          buy_requests!inner (
             title,
             zone
           )
@@ -51,13 +51,15 @@ const SellerNotifications = () => {
         .limit(10);
 
       if (error) throw error;
-      return data as RejectedOffer[];
+      return data.map(item => ({
+        ...item,
+        buy_requests: item.buy_requests || { title: 'Solicitud eliminada', zone: 'N/A' }
+      })) as RejectedOffer[];
     },
     enabled: !!user,
-    refetchInterval: 10000 // More frequent updates
+    refetchInterval: 10000
   });
 
-  // Subscribe to real-time updates
   React.useEffect(() => {
     if (!user) return;
 
@@ -73,7 +75,6 @@ const SellerNotifications = () => {
         },
         (payload) => {
           console.log('Real-time offer update:', payload);
-          // Refetch notifications when an offer is updated
           refetch();
         }
       )

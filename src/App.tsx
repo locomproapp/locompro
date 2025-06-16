@@ -17,7 +17,6 @@ import MyOffers from "./pages/MyOffers";
 import MyPosts from "./pages/MyPosts";
 import Market from "./pages/Market";
 import PostDetail from "./pages/PostDetail";
-import UserPostDetail from "./pages/UserPostDetail";
 import SendOffer from "./pages/SendOffer";
 import OfferDetail from "./pages/OfferDetail";
 import NotFound from "./pages/NotFound";
@@ -43,7 +42,6 @@ const App = () => (
             <Route path="/my-posts" element={<MyPosts />} />
             <Route path="/market" element={<Market />} />
             <Route path="/post-detail/:id" element={<PostDetail />} />
-            <Route path="/user-post/:id" element={<UserPostDetail />} />
             <Route path="/send-offer/:buyRequestId" element={<SendOffer />} />
             <Route path="/offer/:id" element={<OfferDetail />} />
             <Route path="*" element={<NotFound />} />

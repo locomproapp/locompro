@@ -6,8 +6,8 @@ interface BuyRequest {
   id: string;
   title: string;
   description: string | null;
-  min_price: number | null;
-  max_price: number | null;
+  min_price: number;
+  max_price: number;
   reference_image: string | null;
   zone: string;
   status: string;

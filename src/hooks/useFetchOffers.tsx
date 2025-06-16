@@ -1,70 +1,69 @@
 
-import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Offer } from '@/types/offer';
 
-interface UseFetchOffersProps {
-  buyRequestId: string | undefined;
-  setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
+interface Offer {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  delivery_time: string | null;
+  contact_info: any;
+  images: string[] | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  seller_id: string;
+  buy_request_id: string;
+  message: string | null;
+  rejection_reason: string | null;
+  buyer_rating: number | null;
+  public_visibility: boolean | null;
+  price_history: Array<{ price: number; timestamp: string; type: 'initial' | 'rejected' }> | null;
+  profiles: {
+    full_name: string;
+    email: string;
+  };
+  buy_requests: {
+    title: string;
+    zone: string;
+    status: string;
+  } | null;
 }
 
-export const useFetchOffers = ({ buyRequestId, setOffers, setLoading, setError }: UseFetchOffersProps) => {
-  const fetchOffers = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      let query = supabase
+export const useFetchOffers = (buyRequestId: string) => {
+  return useQuery({
+    queryKey: ['offers', buyRequestId],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('offers')
         .select(`
           *,
-          profiles (
+          profiles!inner (
             full_name,
             email
           ),
-          buy_requests (
+          buy_requests!inner (
             title,
             zone,
             status
           )
         `)
+        .eq('buy_request_id', buyRequestId)
         .order('created_at', { ascending: false });
 
-      if (buyRequestId) {
-        query = query.eq('buy_request_id', buyRequestId);
-      }
-
-      console.log('Fetching offers for buy request:', buyRequestId);
-      const { data, error } = await query;
-
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Error fetching offers:', error);
         throw error;
       }
-      
-      console.log('Offers fetched successfully:', data);
-      
-      const transformedData: Offer[] = (data || []).map(offer => ({
-        ...offer,
-        price_history: offer.price_history as Array<{
-          price: number;
-          timestamp: string;
-          type: 'rejected' | 'initial';
-        }> | null,
-        profiles: offer.profiles || null,
-        buy_requests: offer.buy_requests || null
-      }));
-      
-      setOffers(transformedData);
-    } catch (err) {
-      console.error('Error fetching offers:', err);
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
-  }, [buyRequestId, setOffers, setLoading, setError]);
 
-  return { fetchOffers };
+      const transformedOffers: Offer[] = (data || []).map(offer => ({
+        ...offer,
+        buy_requests: offer.buy_requests || { title: 'Solicitud eliminada', zone: 'N/A', status: 'inactive' }
+      }));
+
+      return transformedOffers;
+    },
+    enabled: !!buyRequestId
+  });
 };
