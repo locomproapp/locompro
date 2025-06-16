@@ -3,7 +3,7 @@ import React from 'react';
 import Navigation from '@/components/Navigation';
 import SearchBar from '@/components/SearchBar';
 import Footer from '@/components/Footer';
-import { CreateUserPostDialog } from '@/components/CreateUserPost';
+import { CreateBuyRequestDialog } from '@/components/BuyRequest';
 import { usePosts } from '@/hooks/usePosts';
 import PostCard from '@/components/PostCard';
 
@@ -34,7 +34,7 @@ const Market = () => {
               onSearch={setSearchQuery}
               placeholder="Buscar productos o solicitudes..."
             />
-            <CreateUserPostDialog onPostCreated={handlePostCreated} />
+            <CreateBuyRequestDialog onRequestCreated={handlePostCreated} />
           </div>
         </div>
 

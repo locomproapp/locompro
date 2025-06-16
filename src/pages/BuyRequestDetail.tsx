@@ -9,7 +9,7 @@ import { useBuyRequestDetail } from '@/hooks/useBuyRequestDetail';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import DetailsCard from '@/components/BuyRequestDetail/DetailsCard';
+import BuyRequestInformation from '@/components/BuyRequestDetail/BuyRequestInformation';
 import PublisherCard from '@/components/BuyRequestDetail/PublisherCard';
 import ImageAndActionsCard from '@/components/BuyRequestDetail/ImageAndActionsCard';
 
@@ -19,10 +19,8 @@ const BuyRequestDetail = () => {
 
   const { data: buyRequest, isLoading, error, refetch } = useBuyRequestDetail(id || '');
 
-  // Revalidación explícita cuando se monta el componente para asegurar datos frescos
   useEffect(() => {
     if (id && refetch) {
-      console.log('=== REVALIDANDO DATOS AL MONTAR COMPONENTE ===');
       refetch();
     }
   }, [id, refetch]);
@@ -79,13 +77,11 @@ const BuyRequestDetail = () => {
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* LEFT COLUMN - DETAILS & USER INFO */}
           <div className="flex flex-col gap-8">
-            <DetailsCard buyRequest={buyRequest} />
+            <BuyRequestInformation buyRequest={buyRequest} />
             <PublisherCard buyRequest={buyRequest} />
           </div>
           
-          {/* RIGHT COLUMN - IMAGE & REFERENCE LINK, con onUpdate para recargar */}
           <ImageAndActionsCard
             buyRequest={buyRequest}
             user={user}
@@ -93,7 +89,6 @@ const BuyRequestDetail = () => {
           />
         </div>
 
-        {/* OFFERS SECTION */}
         {!isOwner && isActive && (
           <div className="pt-8 border-t border-border mt-8">
             <OfferForm 

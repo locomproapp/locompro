@@ -11,14 +11,13 @@ export type Database = {
     Tables: {
       buy_requests: {
         Row: {
-          category_id: string | null
-          condition: string | null
+          condition: string
           created_at: string
           description: string | null
           id: string
           images: string[] | null
-          max_price: number | null
-          min_price: number | null
+          max_price: number
+          min_price: number
           reference_image: string | null
           reference_url: string | null
           status: string
@@ -28,14 +27,13 @@ export type Database = {
           zone: string
         }
         Insert: {
-          category_id?: string | null
-          condition?: string | null
+          condition: string
           created_at?: string
           description?: string | null
           id?: string
           images?: string[] | null
-          max_price?: number | null
-          min_price?: number | null
+          max_price: number
+          min_price: number
           reference_image?: string | null
           reference_url?: string | null
           status?: string
@@ -45,14 +43,13 @@ export type Database = {
           zone: string
         }
         Update: {
-          category_id?: string | null
-          condition?: string | null
+          condition?: string
           created_at?: string
           description?: string | null
           id?: string
           images?: string[] | null
-          max_price?: number | null
-          min_price?: number | null
+          max_price?: number
+          min_price?: number
           reference_image?: string | null
           reference_url?: string | null
           status?: string
@@ -61,22 +58,7 @@ export type Database = {
           user_id?: string
           zone?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "buy_requests_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "buy_requests_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       categories: {
         Row: {
@@ -161,13 +143,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "chats_buy_request_id_fkey"
-            columns: ["buy_request_id"]
-            isOneToOne: false
-            referencedRelation: "buy_requests"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "chats_offer_id_fkey"
             columns: ["offer_id"]
             isOneToOne: false
@@ -235,13 +210,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "offers_buy_request_id_fkey"
-            columns: ["buy_request_id"]
-            isOneToOne: false
-            referencedRelation: "buy_requests"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "offers_seller_id_fkey"
             columns: ["seller_id"]
@@ -380,57 +348,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_posts: {
-        Row: {
-          condition: string
-          created_at: string
-          description: string | null
-          id: string
-          images: string[] | null
-          max_price: number | null
-          min_price: number | null
-          reference_image: string | null
-          reference_url: string | null
-          status: string
-          title: string
-          updated_at: string
-          user_id: string
-          zone: string
-        }
-        Insert: {
-          condition?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          images?: string[] | null
-          max_price?: number | null
-          min_price?: number | null
-          reference_image?: string | null
-          reference_url?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-          user_id: string
-          zone: string
-        }
-        Update: {
-          condition?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          images?: string[] | null
-          max_price?: number | null
-          min_price?: number | null
-          reference_image?: string | null
-          reference_url?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-          zone?: string
-        }
-        Relationships: []
       }
     }
     Views: {

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Navigation from '@/components/Navigation';
-import CreateBuyRequestDialog from '@/components/CreateBuyRequestDialog';
+import { CreateBuyRequestDialog } from '@/components/BuyRequest';
 import BuyRequestCard from '@/components/BuyRequestCard';
 import { useUserBuyRequests } from '@/hooks/useUserBuyRequests';
 import { useAuth } from '@/hooks/useAuth';
@@ -36,22 +36,20 @@ const MyRequests = () => {
       <Navigation />
       
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Mis publicaciones
+                Mis solicitudes
               </h1>
               <p className="text-lg text-muted-foreground">
-                Acá podés ver las publicaciones que creaste.
+                Acá podés ver las solicitudes que creaste.
               </p>
             </div>
             <CreateBuyRequestDialog onRequestCreated={refetch} />
           </div>
         </div>
 
-        {/* Contenido */}
         {loading ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -63,7 +61,7 @@ const MyRequests = () => {
           <>
             <div className="mb-6">
               <p className="text-muted-foreground">
-                {buyRequests.length} {buyRequests.length === 1 ? 'publicación' : 'publicaciones'}
+                {buyRequests.length} {buyRequests.length === 1 ? 'solicitud' : 'solicitudes'}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -102,4 +100,3 @@ const MyRequests = () => {
 };
 
 export default MyRequests;
-

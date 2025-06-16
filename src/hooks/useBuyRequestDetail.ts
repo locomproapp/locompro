@@ -2,13 +2,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export const useUserPostDetail = (id: string | undefined) => {
+export const useBuyRequestDetail = (id: string) => {
   return useQuery({
-    queryKey: ['user-post', id],
+    queryKey: ['buy-request', id],
     queryFn: async () => {
       if (!id) return null;
+      
       const { data, error } = await supabase
-        .from('user_posts')
+        .from('buy_requests')
         .select(`
           *,
           profiles (
@@ -20,7 +21,7 @@ export const useUserPostDetail = (id: string | undefined) => {
           )
         `)
         .eq('id', id)
-        .maybeSingle();
+        .single();
       
       if (error) throw error;
       return data;
