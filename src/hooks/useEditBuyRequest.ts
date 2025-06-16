@@ -45,18 +45,23 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
 
       if (error) throw error;
       
+      // Usar las imágenes del campo images si existe, si no usar reference_image
       const allImages = data.images?.length ? data.images : (data.reference_image ? [data.reference_image] : []);
 
       form.reset({
-        title: data.title,
+        title: data.title || '',
         description: data.description || '',
         min_price: data.min_price || null,
         max_price: data.max_price || null,
-        zone: data.zone,
+        zone: data.zone || '',
         condition: data.condition || 'cualquiera',
         reference_url: data.reference_url || '',
         images: allImages,
       });
+
+      // Actualizar los inputs de precio formateados
+      setMinPriceInput(formatCurrency(data.min_price));
+      setMaxPriceInput(formatCurrency(data.max_price));
     } catch (error) {
       console.error('Error fetching buy request:', error);
     } finally {
@@ -69,13 +74,6 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
       fetchBuyRequest();
     }
   }, [open, buyRequestId, fetchBuyRequest]);
-  
-  useEffect(() => {
-    const { min_price, max_price } = form.getValues();
-    setMinPriceInput(formatCurrency(min_price));
-    setMaxPriceInput(formatCurrency(max_price));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch('min_price'), form.watch('max_price')]);
 
   useEffect(() => {
     const min = parseCurrencyInput(minPriceInput);
