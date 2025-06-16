@@ -61,19 +61,25 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
     setLoading(true);
     try {
+      // Ensure images is always an array
+      const imagesArray = Array.isArray(formData.images) 
+        ? formData.images 
+        : formData.images 
+          ? JSON.parse(formData.images) 
+          : [];
+
       const { data, error } = await supabase
         .from('buy_requests')
         .insert({
-          user_id: user.id,
           title: formData.title,
           description: formData.description || null,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
           max_price: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
           reference_url: formData.referenceLink || null,
           zone: formData.zone,
-          condition: 'cualquiera',
-          images: formData.images.length > 0 ? formData.images : null,
-          reference_image: formData.images.length > 0 ? formData.images[0] : null
+          condition: formData.contactInfo || 'cualquiera',
+          images: imagesArray.length > 0 ? imagesArray : null,
+          reference_image: imagesArray.length > 0 ? imagesArray[0] : null
         })
         .select()
         .single();
