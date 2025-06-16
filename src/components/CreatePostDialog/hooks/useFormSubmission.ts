@@ -5,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { EditBuyRequestValues } from '@/components/edit-buy-request/schema';
-import { cleanFormData, validateFormData } from '../utils/formValidation';
 
 export const useFormSubmission = (onPostCreated?: () => void) => {
   const { user } = useAuth();
@@ -28,41 +27,34 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
       return;
     }
 
-    const validationError = validateFormData(values);
-    if (validationError) {
+    // Validación de imágenes requeridas
+    if (!values.images || values.images.length === 0) {
       toast({
         title: "Error",
-        description: validationError,
+        description: "Debes subir al menos una imagen",
         variant: "destructive"
       });
       return;
     }
 
     console.log('=== INICIANDO CREACIÓN ===');
-    console.log('Valores del formulario RAW:', JSON.stringify(values, null, 2));
+    console.log('Valores del formulario:', JSON.stringify(values, null, 2));
     console.log('Usuario ID:', user.id);
 
     setLoading(true);
     try {
-      const {
-        cleanDescription,
-        cleanCondition,
-        cleanReferenceUrl,
-        cleanImages,
-        cleanReferenceImage
-      } = cleanFormData(values);
-
+      // Usar la misma lógica que el modal de edición para preparar los datos
       const insertData = {
         user_id: user.id,
         title: values.title,
-        description: cleanDescription,
+        description: values.description || null,
         min_price: values.min_price,
         max_price: values.max_price,
         zone: values.zone,
-        condition: cleanCondition,
-        reference_url: cleanReferenceUrl,
-        images: cleanImages,
-        reference_image: cleanReferenceImage,
+        condition: values.condition,
+        reference_url: values.reference_url || null,
+        images: values.images,
+        reference_image: values.images && values.images.length > 0 ? values.images[0] : null,
       };
 
       console.log('=== DATOS PARA INSERTAR (FINAL) ===');
@@ -91,38 +83,6 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
 
       console.log('=== DATOS DESDE INSERT (RESPUESTA INMEDIATA) ===');
       console.log(JSON.stringify(data, null, 2));
-
-      // Validación con fetch independiente
-      console.log('=== INICIANDO VALIDACIÓN CON FETCH INDEPENDIENTE ===');
-      const { data: validatedData, error: fetchError } = await supabase
-        .from('buy_requests')
-        .select(`
-          *,
-          categories (name),
-          profiles (
-            full_name,
-            avatar_url,
-            bio,
-            location
-          )
-        `)
-        .eq('id', data.id)
-        .single();
-
-      if (fetchError) {
-        console.error('=== ERROR EN FETCH DE VALIDACIÓN ===');
-        console.error('Error al validar datos:', fetchError);
-      } else {
-        console.log('=== DATOS VALIDANDO (FETCH INDEPENDIENTE) ===');
-        console.log(JSON.stringify(validatedData, null, 2));
-        
-        console.log('=== COMPARACIÓN CAMPO POR CAMPO ===');
-        console.log('description - insertData:', insertData.description, '| validatedData:', validatedData.description);
-        console.log('condition - insertData:', insertData.condition, '| validatedData:', validatedData.condition);
-        console.log('reference_url - insertData:', insertData.reference_url, '| validatedData:', validatedData.reference_url);
-        console.log('images - insertData:', insertData.images, '| validatedData:', validatedData.images);
-        console.log('reference_image - insertData:', insertData.reference_image, '| validatedData:', validatedData.reference_image);
-      }
 
       toast({
         title: "¡Éxito!",

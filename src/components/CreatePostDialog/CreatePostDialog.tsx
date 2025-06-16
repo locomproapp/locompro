@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import CreatePostForm from './CreatePostForm';
@@ -19,7 +20,6 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     handleMaxPriceInput,
     handleSubmit,
     resetForm,
-    watchedValues
   } = useCreatePostForm(onPostCreated);
 
   const handleCancel = () => {
@@ -53,18 +53,19 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
           <DialogTitle>Crear Nueva Publicación</DialogTitle>
         </DialogHeader>
         
-        <CreatePostForm
-          form={form}
-          loading={loading}
-          priceError={priceError}
-          minPriceInput={minPriceInput}
-          maxPriceInput={maxPriceInput}
-          onMinPriceInput={handleMinPriceInput}
-          onMaxPriceInput={handleMaxPriceInput}
-          onSubmit={handleFormSubmit}
-          onCancel={handleCancel}
-          watchedValues={watchedValues}
-        />
+        <Form {...form}>
+          <CreatePostForm
+            control={form.control}
+            minPriceInput={minPriceInput}
+            maxPriceInput={maxPriceInput}
+            priceError={priceError}
+            handleMinPriceInput={handleMinPriceInput}
+            handleMaxPriceInput={handleMaxPriceInput}
+            onSubmit={handleFormSubmit}
+            onCancel={handleCancel}
+            loading={loading}
+          />
+        </Form>
       </DialogContent>
     </Dialog>
   );

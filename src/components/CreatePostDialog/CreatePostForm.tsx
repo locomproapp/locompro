@@ -1,163 +1,212 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Control, useFormContext } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Button } from '@/components/ui/button';
 import BuyRequestImageUpload from '@/components/BuyRequestDialog/BuyRequestImageUpload';
 import { EditBuyRequestValues } from '@/components/edit-buy-request/schema';
-import { UseFormReturn } from 'react-hook-form';
 
 interface CreatePostFormProps {
-  form: UseFormReturn<EditBuyRequestValues>;
-  loading: boolean;
-  priceError: string | null;
+  control: Control<EditBuyRequestValues>;
   minPriceInput: string;
   maxPriceInput: string;
-  onMinPriceInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onMaxPriceInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  priceError: string | null;
+  handleMinPriceInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleMaxPriceInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (values: EditBuyRequestValues) => void;
   onCancel: () => void;
-  watchedValues: EditBuyRequestValues;
+  loading: boolean;
 }
 
 const CreatePostForm = ({
-  form,
-  loading,
-  priceError,
+  control,
   minPriceInput,
   maxPriceInput,
-  onMinPriceInput,
-  onMaxPriceInput,
+  priceError,
+  handleMinPriceInput,
+  handleMaxPriceInput,
   onSubmit,
   onCancel,
-  watchedValues
+  loading,
 }: CreatePostFormProps) => {
+  const { watch, handleSubmit } = useFormContext<EditBuyRequestValues>();
+  const watchedValues = watch();
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <Label htmlFor="title">¿Qué estás buscando? *</Label>
-        <Input
-          id="title"
-          {...form.register('title')}
-          placeholder="Ej: iPhone 14 Pro Max 256GB"
-          required
-        />
-        {form.formState.errors.title && (
-          <p className="text-sm text-destructive mt-1">{form.formState.errors.title.message}</p>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <FormField
+        control={control}
+        name="title"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>¿Qué estás buscando? *</FormLabel>
+            <FormControl>
+              <Input placeholder="Ej: iPhone 14 Pro Max 256GB" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
         )}
-      </div>
+      />
 
-      <div>
-        <Label htmlFor="description">Características (opcional)</Label>
-        <Textarea
-          id="description"
-          {...form.register('description')}
-          placeholder="Describe con más detalle lo que buscas..."
-          rows={4}
-        />
-      </div>
+      <FormField
+        control={control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Características (opcional)</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Describe con más detalle lo que buscas..."
+                rows={4}
+                {...field}
+                value={field.value || ''}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="min_price">Precio Mínimo</Label>
-          <Input
-            id="min_price"
-            type="text"
-            inputMode="numeric"
-            value={minPriceInput}
-            onChange={onMinPriceInput}
-            placeholder="$"
-            autoComplete="off"
-          />
-        </div>
-        <div>
-          <Label htmlFor="max_price">Precio Máximo</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormItem>
+          <FormLabel>Precio Mínimo</FormLabel>
+          <FormControl>
+            <Input
+              type="text"
+              inputMode="numeric"
+              value={minPriceInput}
+              placeholder="$"
+              autoComplete="off"
+              onChange={handleMinPriceInput}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+        <FormItem>
+          <FormLabel>Precio Máximo</FormLabel>
+          <FormControl>
+            <Input
+              type="text"
+              inputMode="numeric"
+              value={maxPriceInput}
+              placeholder="$"
+              autoComplete="off"
+              onChange={handleMaxPriceInput}
+              className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''}
+            />
+          </FormControl>
           {priceError && (
-            <div className="text-destructive text-sm mb-1 font-medium">
+            <p className="text-destructive text-sm font-medium mt-1">
               {priceError}
-            </div>
+            </p>
           )}
-          <Input
-            id="max_price"
-            type="text"
-            inputMode="numeric"
-            value={maxPriceInput}
-            onChange={onMaxPriceInput}
-            placeholder="$"
-            className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''}
-            autoComplete="off"
-          />
-        </div>
+          <FormMessage />
+        </FormItem>
       </div>
 
-      <div>
-        <Label htmlFor="zone">Zona *</Label>
-        <Input
-          id="zone"
-          {...form.register('zone')}
-          placeholder="Ej: CABA, Zona Norte, etc."
-          required
-        />
-        {form.formState.errors.zone && (
-          <p className="text-sm text-destructive mt-1">{form.formState.errors.zone.message}</p>
+      <FormField
+        control={control}
+        name="zone"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Zona *</FormLabel>
+            <FormControl>
+              <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
         )}
-      </div>
+      />
 
-      <div>
-        <Label>Condición del producto</Label>
-        <RadioGroup
-          value={watchedValues.condition}
-          onValueChange={(value) => form.setValue('condition', value as any)}
-          className="flex gap-6 mt-2"
+      <FormField
+        control={control}
+        name="condition"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Condición del producto</FormLabel>
+            <FormControl>
+              <RadioGroup
+                onValueChange={field.onChange}
+                value={field.value}
+                className="flex gap-6 mt-2"
+              >
+                <FormItem className="flex items-center space-x-2">
+                  <FormControl>
+                    <RadioGroupItem value="nuevo" />
+                  </FormControl>
+                  <FormLabel className="font-normal">Nuevo</FormLabel>
+                </FormItem>
+                <FormItem className="flex items-center space-x-2">
+                  <FormControl>
+                    <RadioGroupItem value="usado" />
+                  </FormControl>
+                  <FormLabel className="font-normal">Usado</FormLabel>
+                </FormItem>
+                <FormItem className="flex items-center space-x-2">
+                  <FormControl>
+                    <RadioGroupItem value="cualquiera" />
+                  </FormControl>
+                  <FormLabel className="font-normal">Cualquiera</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="reference_url"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>
+              Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
+            </FormLabel>
+            <FormControl>
+              <Input 
+                placeholder="https://ejemplo.com/producto" 
+                {...field} 
+                value={field.value || ''} 
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="images"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Fotos de Referencia *</FormLabel>
+            <FormControl>
+              <BuyRequestImageUpload
+                images={field.value || []}
+                setImages={field.onChange}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="flex gap-2 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={loading}
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="nuevo" id="nuevo" />
-            <Label htmlFor="nuevo" className="font-normal">Nuevo</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="usado" id="usado" />
-            <Label htmlFor="usado" className="font-normal">Usado</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cualquiera" id="cualquiera" />
-            <Label htmlFor="cualquiera" className="font-normal">Cualquiera</Label>
-          </div>
-        </RadioGroup>
-      </div>
-
-      <div>
-        <Label htmlFor="reference_url">
-          Enlace de referencia <span className="text-muted-foreground font-normal">(opcional)</span>
-        </Label>
-        <Input
-          id="reference_url"
-          type="url"
-          {...form.register('reference_url')}
-          placeholder="https://ejemplo.com/producto"
-        />
-      </div>
-
-      <div>
-        <Label>Fotos de Referencia *</Label>
-        <BuyRequestImageUpload
-          images={watchedValues.images || []}
-          setImages={(images) => form.setValue('images', images)}
-        />
-        {(!watchedValues.images || watchedValues.images.length === 0) && (
-          <p className="text-sm text-destructive mt-1">Debes subir al menos una imagen</p>
-        )}
-      </div>
-
-      <div className="flex gap-3 pt-4">
-        <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
           Cancelar
         </Button>
         <Button 
           type="submit" 
-          disabled={loading || !watchedValues.images || watchedValues.images.length === 0 || !!priceError} 
-          className="flex-1"
+          disabled={loading || !!priceError || !watchedValues.images || watchedValues.images.length === 0}
         >
           {loading ? 'Creando...' : 'Crear Publicación'}
         </Button>
