@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Tag } from 'lucide-react';
+import { Tag, ExternalLink } from 'lucide-react';
 
 const formatPrice = (min: number | null, max: number | null) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
@@ -62,12 +62,47 @@ const DetailsCard = ({ buyRequest }: { buyRequest: any }) => {
                         <p className="text-base text-foreground">{buyRequest.zone}</p>
                     </div>
 
+                    {buyRequest.description && (
+                        <div>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
+                            <p className="text-base text-foreground whitespace-pre-wrap">
+                                {buyRequest.description}
+                            </p>
+                        </div>
+                    )}
+
+                    {buyRequest.reference_url && (
+                        <div>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Enlace de referencia</h3>
+                            <a
+                                href={buyRequest.reference_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-primary hover:underline text-base"
+                            >
+                                Ver ejemplo
+                                <ExternalLink className="h-4 w-4" />
+                            </a>
+                        </div>
+                    )}
+
                     <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
-                        <p className="text-base text-foreground whitespace-pre-wrap">
-                            {buyRequest.description || 'No se especificaron características.'}
+                        <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha</h3>
+                        <p className="text-base text-foreground">
+                            {new Date(buyRequest.created_at).toLocaleDateString('es-AR', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                            })}
                         </p>
                     </div>
+
+                    {buyRequest.profiles?.full_name && (
+                        <div>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
+                            <p className="text-base text-foreground">{buyRequest.profiles.full_name}</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -47,7 +47,6 @@ const ImageAndActionsCard = ({
         description: 'La publicación fue borrada exitosamente.'
       });
       setDeleteDialogOpen(false);
-      // Redirect to marketplace after successful deletion
       navigate('/marketplace');
     } catch (error) {
       toast({
@@ -63,10 +62,8 @@ const ImageAndActionsCard = ({
   return (
     <div className="flex flex-col gap-4 sticky top-24">
       <div className="bg-card rounded-lg border border-border p-4 shadow-sm flex flex-col gap-4">
-        {/* Icons only if isOwner */}
         {isOwner && (
           <div className="flex gap-2 justify-end">
-            {/* EDIT ICON */}
             <button
               aria-label="Editar"
               onClick={() => setEditOpen(true)}
@@ -76,7 +73,6 @@ const ImageAndActionsCard = ({
             >
               <Edit className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
             </button>
-            {/* DELETE ICON with AlertDialog */}
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
               <AlertDialogTrigger asChild>
                 <button
@@ -108,7 +104,6 @@ const ImageAndActionsCard = ({
         <ImageGallery images={allImages} />
       </div>
 
-      {/* EDIT DIALOG (MODAL) */}
       {isOwner && (
         <EditBuyRequestDialog
           buyRequestId={buyRequest.id}

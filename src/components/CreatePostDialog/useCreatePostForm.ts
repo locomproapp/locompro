@@ -22,15 +22,11 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     images: []
   });
 
-  // Estado para mostrar errores luego de intentar enviar
   const [touched, setTouched] = useState(false);
-  // Estado de error específico de precios (por ejemplo, max <= min)
   const [showMaxPriceError, setShowMaxPriceError] = useState(false);
 
-  // Permitir edición completamente libre
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Si el usuario edita los precios, ocultamos el error hasta el próximo intento de submit.
     if (field === 'maxPrice' || field === 'minPrice') {
       setShowMaxPriceError(false);
     }
@@ -49,7 +45,6 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       setShowMaxPriceError(true);
     }
 
-    // Validación simple de campos requeridos
     if (!user || !formData.title || !formData.zone) {
       toast({
         title: "Error",
@@ -59,7 +54,6 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       return;
     }
 
-    // Validar que hay al menos una imagen
     if (!formData.images || formData.images.length === 0) {
       toast({
         title: "Error",
@@ -69,19 +63,13 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       return;
     }
 
-    // Si hay error lógico en los precios, no enviar
     if (priceIsInvalid) {
       return;
     }
 
     setLoading(true);
     try {
-      // Ensure images is always an array
-      const imagesArray = Array.isArray(formData.images) 
-        ? formData.images 
-        : formData.images 
-          ? JSON.parse(formData.images) 
-          : [];
+      const imagesArray = Array.isArray(formData.images) ? formData.images : [];
 
       const { data, error } = await supabase
         .from('buy_requests')
@@ -104,6 +92,8 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
         console.error('Error creating buy request:', error);
         throw error;
       }
+
+      console.log('Buy request created successfully:', data);
 
       toast({
         title: "¡Éxito!",
