@@ -71,6 +71,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
       const { data, error } = await supabase
         .from('buy_requests')
         .insert({
+          user_id: user.id,
           title: formData.title,
           description: formData.description || null,
           min_price: formData.minPrice ? parseFloat(formData.minPrice) : null,
