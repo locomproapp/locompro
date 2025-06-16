@@ -6,6 +6,9 @@ export const useBuyRequestDetail = (id: string) => {
   return useQuery({
     queryKey: ['buy-request', id],
     queryFn: async () => {
+      console.log('=== CONSULTANDO BUY REQUEST ===');
+      console.log('ID buscado:', id);
+      
       const { data, error } = await supabase
         .from('buy_requests')
         .select(`
@@ -19,17 +22,30 @@ export const useBuyRequestDetail = (id: string) => {
           )
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
+      
+      console.log('=== RESPUESTA DE LA CONSULTA ===');
+      console.log('Data recibida:', data);
+      console.log('Error (si hay):', error);
       
       if (error) {
         console.error("Error fetching buy request details:", error);
         throw error;
       }
       
-      // Using `as any` to bypass a potential type mismatch if the DB schema has been
-      // updated with 'images', 'condition', 'reference_url' but types are not yet synced.
-      // This will fix the build error.
-      return data as any;
+      if (!data) {
+        console.warn("No se encontró buy request con ID:", id);
+        throw new Error('Buy request not found');
+      }
+      
+      console.log('=== DATOS PROCESADOS ===');
+      console.log('Título:', data.title);
+      console.log('Descripción:', data.description);
+      console.log('Condición:', data.condition);
+      console.log('Reference URL:', data.reference_url);
+      console.log('Imágenes:', data.images);
+      
+      return data;
     },
     enabled: !!id
   });
