@@ -32,16 +32,20 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!open) return;
       
-      if (e.key === 'ArrowLeft') {
+      // Prevenir comportamiento por defecto y propagación para las flechas
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         e.preventDefault();
         e.stopPropagation();
-        goToPrevious();
+        e.stopImmediatePropagation();
+        
+        if (e.key === 'ArrowLeft') {
+          goToPrevious();
+        } else if (e.key === 'ArrowRight') {
+          goToNext();
+        }
+        return;
       }
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        e.stopPropagation();
-        goToNext();
-      }
+      
       if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
@@ -50,18 +54,34 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
     };
 
     if (open) {
-      document.addEventListener('keydown', handleKeyDown, true);
+      // Usar capture: true para interceptar antes que otros elementos
+      document.addEventListener('keydown', handleKeyDown, { capture: true });
+      
+      // Bloquear el scroll del body cuando el modal está abierto
+      document.body.style.overflow = 'hidden';
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, { capture: true });
+      document.body.style.overflow = 'unset';
     };
   }, [open, goToPrevious, goToNext, onOpenChange]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
+    // Solo cerrar si el click fue exactamente en el backdrop (no en sus hijos)
     if (e.target === e.currentTarget) {
       onOpenChange(false);
     }
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    // Cerrar cuando se hace click en cualquier parte del overlay
+    onOpenChange(false);
+  };
+
+  const handleImageContainerClick = (e: React.MouseEvent) => {
+    // Prevenir que el click en la imagen o sus controles cierre el modal
+    e.stopPropagation();
   };
 
   if (!images || images.length === 0) {
@@ -77,7 +97,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
       >
         <div 
           className="relative w-full h-full flex items-center justify-center bg-black/60 cursor-pointer"
-          onClick={handleBackdropClick}
+          onClick={handleOverlayClick}
         >
           {/* Close Button */}
           <Button
@@ -112,7 +132,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           {/* Image Container */}
           <div 
             className="w-full h-full flex items-center justify-center p-4 sm:p-8"
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleImageContainerClick}
           >
              <img
               src={images[currentIndex]}
