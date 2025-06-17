@@ -32,16 +32,19 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!open) return;
       
-      e.preventDefault();
-      e.stopPropagation();
-      
       if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        e.stopPropagation();
         goToPrevious();
       }
       if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        e.stopPropagation();
         goToNext();
       }
       if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
         onOpenChange(false);
       }
     };
@@ -73,7 +76,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center cursor-pointer"
+          className="relative w-full h-full flex items-center justify-center bg-black/80 cursor-pointer"
           onClick={handleBackdropClick}
         >
           {/* Close Button */}
@@ -107,7 +110,10 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           )}
 
           {/* Image Container */}
-          <div className="w-full h-full flex items-center justify-center p-4 sm:p-8">
+          <div 
+            className="w-full h-full flex items-center justify-center p-4 sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
              <img
               src={images[currentIndex]}
               alt={`Imagen ${currentIndex + 1}`}
