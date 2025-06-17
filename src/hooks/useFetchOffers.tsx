@@ -28,7 +28,7 @@ interface Offer {
     title: string;
     zone: string;
     status: string;
-  } | null;
+  };
 }
 
 export const useFetchOffers = (buyRequestId: string) => {
@@ -76,7 +76,7 @@ export const useFetchOffers = (buyRequestId: string) => {
         public_visibility: offer.public_visibility,
         price_history: Array.isArray(offer.price_history) ? offer.price_history as Array<{ price: number; timestamp: string; type: 'initial' | 'rejected' }> : null,
         profiles: offer.profiles,
-        buy_requests: offer.buy_requests || { title: 'Solicitud eliminada', zone: 'N/A', status: 'inactive' }
+        buy_requests: offer.buy_requests
       }));
 
       return transformedOffers;
