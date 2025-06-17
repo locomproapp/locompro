@@ -51,18 +51,18 @@ const BuyRequestInformation = ({ buyRequest }: BuyRequestInformationProps) => {
   const isActive = buyRequest.status === 'active';
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-2">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+      <div className="flex items-center gap-2 mb-4">
         <Badge variant={isActive ? "default" : "secondary"}>
           {isActive ? 'ACTIVA' : 'CERRADA'}
         </Badge>
       </div>
 
-      <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+      <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
         {buyRequest.title}
       </h1>
       
-      <div className="space-y-5">
+      <div className="space-y-4">
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
           <p className="text-lg text-primary font-bold">
@@ -96,21 +96,6 @@ const BuyRequestInformation = ({ buyRequest }: BuyRequestInformationProps) => {
           <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
             <p className="text-base text-foreground">{buyRequest.profiles.full_name}</p>
-          </div>
-        )}
-
-        {buyRequest.reference_url && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Enlace de referencia</h3>
-            <a
-              href={buyRequest.reference_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-primary hover:underline text-base"
-            >
-              Ver ejemplo
-              <ExternalLink className="h-4 w-4" />
-            </a>
           </div>
         )}
       </div>

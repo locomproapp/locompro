@@ -8,6 +8,17 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import BuyRequestImageUpload from '@/components/BuyRequestDialog/BuyRequestImageUpload';
 import { EditBuyRequestValues } from '@/components/edit-buy-request/schema';
+import { useToast } from '@/hooks/use-toast';
+
+function formatCurrency(value: string) {
+  if (!value || value === "") return "$";
+  // Remove all non-digit characters
+  const numericValue = value.replace(/\D/g, "");
+  if (numericValue === "") return "$";
+  // Format with thousands separator
+  const number = parseInt(numericValue);
+  return "$" + number.toLocaleString("es-AR").replace(/,/g, ".");
+}
 
 interface CreatePostFormProps {
   control: Control<EditBuyRequestValues>;
@@ -33,6 +44,7 @@ const CreatePostForm = ({
   loading,
 }: CreatePostFormProps) => {
   const { watch, handleSubmit } = useFormContext<EditBuyRequestValues>();
+  const { toast } = useToast();
   const watchedValues = watch();
 
   const handleFormSubmit = (values: EditBuyRequestValues) => {
@@ -42,6 +54,16 @@ const CreatePostForm = ({
     console.log('condition:', values.condition);
     console.log('reference_url:', values.reference_url);
     console.log('images:', values.images);
+    
+    if (priceError) {
+      toast({
+        title: "Error en precios",
+        description: priceError,
+        variant: "destructive"
+      });
+      return;
+    }
+    
     onSubmit(values);
   };
 
@@ -91,7 +113,7 @@ const CreatePostForm = ({
             <Input
               type="text"
               inputMode="numeric"
-              value={minPriceInput}
+              value={formatCurrency(minPriceInput)}
               placeholder="$"
               autoComplete="off"
               onChange={handleMinPriceInput}
@@ -105,7 +127,7 @@ const CreatePostForm = ({
             <Input
               type="text"
               inputMode="numeric"
-              value={maxPriceInput}
+              value={formatCurrency(maxPriceInput)}
               placeholder="$"
               autoComplete="off"
               onChange={handleMaxPriceInput}

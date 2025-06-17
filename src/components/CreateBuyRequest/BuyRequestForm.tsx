@@ -9,6 +9,7 @@ import CreateBuyRequestFormFields from "./CreateBuyRequestFormFields";
 import BuyRequestImageUpload from "@/components/BuyRequestDialog/BuyRequestImageUpload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface BuyRequestFormProps {
   from?: "/" | "/marketplace";
@@ -16,6 +17,7 @@ interface BuyRequestFormProps {
 
 const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const {
     formData,
     handleInputChange,
@@ -41,7 +43,7 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
   };
 
   React.useEffect(() => {
-    if (maxPrice > 0 && maxPrice <= minPrice) {
+    if (minPrice > 0 && maxPrice > 0 && maxPrice < minPrice) {
       setPriceError(true);
     } else {
       setPriceError(false);
@@ -65,6 +67,20 @@ const BuyRequestForm = ({ from = "/" }: BuyRequestFormProps) => {
     e.preventDefault();
 
     if (priceError) {
+      toast({
+        title: "Error en precios",
+        description: "El precio máximo debe ser mayor al mínimo",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.title || !formData.zone || formData.images.length === 0) {
+      toast({
+        title: "Campos requeridos",
+        description: "Por favor completá todos los campos obligatorios",
+        variant: "destructive"
+      });
       return;
     }
 

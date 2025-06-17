@@ -25,7 +25,7 @@ const ImageAndActionsCard = ({
   
   if (buyRequest.images && Array.isArray(buyRequest.images) && buyRequest.images.length > 0) {
     // Si hay un array de imágenes, usarlo
-    allImages = buyRequest.images.filter(img => img && typeof img === 'string');
+    allImages = buyRequest.images.filter((img: any) => img && typeof img === 'string');
   } else if (buyRequest.reference_image && typeof buyRequest.reference_image === 'string') {
     // Si no hay array pero sí reference_image, usar solo esa
     allImages = [buyRequest.reference_image];

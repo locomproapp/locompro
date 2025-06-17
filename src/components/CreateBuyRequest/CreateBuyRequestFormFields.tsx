@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +8,7 @@ import { BuyRequestFormData } from "@/hooks/useBuyRequestForm";
 import { cn } from "@/lib/utils";
 
 function formatCurrency(value: number) {
-  if (Number.isNaN(value) || !isFinite(value) || value === 0) return "";
+  if (Number.isNaN(value) || !isFinite(value) || value === 0) return "$";
   // Format as $20.000 style
   return (
     "$" +
@@ -16,7 +17,7 @@ function formatCurrency(value: number) {
         maximumFractionDigits: 0,
         useGrouping: true,
       })
-      .replace(/\./g, ".")
+      .replace(/,/g, ".")
   );
 }
 
@@ -91,7 +92,7 @@ const CreateBuyRequestFormFields = ({
         </RadioGroup>
       </div>
 
-      {/* Presupuesto estimado inputs (only two, both empty by default) */}
+      {/* Presupuesto estimado inputs */}
       <div>
         <Label>Presupuesto estimado</Label>
         <div className="grid grid-cols-2 gap-4 items-start mt-2">
@@ -101,7 +102,7 @@ const CreateBuyRequestFormFields = ({
               id="minPrice"
               type="text"
               inputMode="numeric"
-              value={minPrice === 0 ? "$" : formatCurrency(minPrice)}
+              value={formatCurrency(minPrice)}
               onChange={handleMinInput}
               placeholder="$"
               autoComplete="off"
@@ -113,7 +114,7 @@ const CreateBuyRequestFormFields = ({
               id="maxPrice"
               type="text"
               inputMode="numeric"
-              value={maxPrice === 0 ? "$" : formatCurrency(maxPrice)}
+              value={formatCurrency(maxPrice)}
               onChange={handleMaxInput}
               placeholder="$"
               autoComplete="off"

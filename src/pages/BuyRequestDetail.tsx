@@ -109,20 +109,22 @@ const BuyRequestDetail = () => {
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
             <BuyRequestInformation buyRequest={buyRequest} />
-            <PublisherCard buyRequest={buyRequest} />
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <PublisherCard buyRequest={buyRequest} />
+            </div>
           </div>
           
           <ImageAndActionsCard
-            buyRequest={buyRequest}
+            buyRequest={buyRequestData}
             user={user}
             onUpdate={() => refetch()}
           />
         </div>
 
         {!isOwner && isActive && (
-          <div className="pt-8 border-t border-border mt-8">
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
             <OfferForm 
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
@@ -130,7 +132,7 @@ const BuyRequestDetail = () => {
           </div>
         )}
 
-        <div className="border-t border-border pt-8 mt-8">
+        <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ofertas Recibidas</h2>
           <CompareOffers buyRequestId={buyRequest.id} isOwner={isOwner} />
         </div>
