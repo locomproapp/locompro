@@ -84,12 +84,12 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-transparent border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]"
+        className="bg-black/60 border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center bg-neutral-900/50 cursor-pointer"
+          className="relative w-full h-full flex items-center justify-center cursor-default"
           onClick={handleOverlayClick}
         >
           {/* Close Button */}
