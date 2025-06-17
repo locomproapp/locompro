@@ -76,7 +76,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center bg-black/80 cursor-pointer"
+          className="relative w-full h-full flex items-center justify-center bg-black/60 cursor-pointer"
           onClick={handleBackdropClick}
         >
           {/* Close Button */}
