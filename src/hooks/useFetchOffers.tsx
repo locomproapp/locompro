@@ -74,7 +74,7 @@ export const useFetchOffers = (buyRequestId: string) => {
         rejection_reason: offer.rejection_reason,
         buyer_rating: offer.buyer_rating,
         public_visibility: offer.public_visibility,
-        price_history: Array.isArray(offer.price_history) ? offer.price_history : null,
+        price_history: Array.isArray(offer.price_history) ? offer.price_history as Array<{ price: number; timestamp: string; type: 'initial' | 'rejected' }> : null,
         profiles: offer.profiles,
         buy_requests: offer.buy_requests || { title: 'Solicitud eliminada', zone: 'N/A', status: 'inactive' }
       }));
