@@ -84,7 +84,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-black/60 border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]"
+        className="bg-zinc-800/70 border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
