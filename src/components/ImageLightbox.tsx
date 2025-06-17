@@ -67,13 +67,6 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
     };
   }, [open, goToPrevious, goToNext, onOpenChange]);
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    // Solo cerrar si el click fue exactamente en el backdrop (no en sus hijos)
-    if (e.target === e.currentTarget) {
-      onOpenChange(false);
-    }
-  };
-
   const handleOverlayClick = (e: React.MouseEvent) => {
     // Cerrar cuando se hace click en cualquier parte del overlay
     onOpenChange(false);
@@ -96,7 +89,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center bg-black/60 cursor-pointer"
+          className="relative w-full h-full flex items-center justify-center bg-neutral-900/50 cursor-pointer"
           onClick={handleOverlayClick}
         >
           {/* Close Button */}
