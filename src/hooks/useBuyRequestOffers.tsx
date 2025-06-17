@@ -11,24 +11,44 @@ export const useBuyRequestOffers = (buyRequestId: string) => {
   const fetchOffers = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // First get the offers
+      const { data: offersData, error: offersError } = await supabase
         .from('buy_request_offers')
-        .select(`
-          *,
-          profiles (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .eq('buy_request_id', buyRequestId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      
+      if (offersError) throw offersError;
+
+      if (!offersData || offersData.length === 0) {
+        setOffers([]);
+        setError(null);
+        return;
+      }
+
+      // Get unique seller IDs
+      const sellerIds = [...new Set(offersData.map(offer => offer.seller_id))];
+
+      // Get profiles for all sellers
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', sellerIds);
+
+      if (profilesError) throw profilesError;
+
+      // Create a map of profiles by ID
+      const profilesMap = new Map();
+      (profilesData || []).forEach(profile => {
+        profilesMap.set(profile.id, profile);
+      });
+
       // Transform the data to match our interface
-      const transformedData = (data || []).map(offer => ({
+      const transformedData = offersData.map(offer => ({
         ...offer,
-        status: offer.status as 'pending' | 'accepted' | 'rejected' | 'finalized'
+        status: offer.status as 'pending' | 'accepted' | 'rejected' | 'finalized',
+        profiles: profilesMap.get(offer.seller_id) || null
       }));
       
       setOffers(transformedData);
