@@ -24,7 +24,14 @@ export const useBuyRequestOffers = (buyRequestId: string) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOffers(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData = (data || []).map(offer => ({
+        ...offer,
+        status: offer.status as 'pending' | 'accepted' | 'rejected' | 'finalized'
+      }));
+      
+      setOffers(transformedData);
       setError(null);
     } catch (err) {
       console.error('Error fetching offers:', err);
