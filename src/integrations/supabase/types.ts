@@ -219,6 +219,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "offers_buy_request_id_fkey"
+            columns: ["buy_request_id"]
+            isOneToOne: false
+            referencedRelation: "buy_requests"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "offers_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false

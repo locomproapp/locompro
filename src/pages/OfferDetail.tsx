@@ -56,7 +56,7 @@ const OfferDetail = () => {
   }
 
   const isSeller = user?.id === offer.seller_id;
-  const isBuyer = user?.id === (offer.buy_requests && typeof offer.buy_requests === 'object' && 'user_id' in offer.buy_requests ? offer.buy_requests.user_id : null);
+  const isBuyer = user?.id === offer.buy_requests?.user_id;
   const shouldShowChat = offer.status === 'accepted' && user && offer.buy_requests;
 
   return (
