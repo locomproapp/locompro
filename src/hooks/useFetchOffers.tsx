@@ -58,7 +58,24 @@ export const useFetchOffers = (buyRequestId: string) => {
       }
 
       const transformedOffers: Offer[] = (data || []).map(offer => ({
-        ...offer,
+        id: offer.id,
+        title: offer.title,
+        description: offer.description,
+        price: offer.price,
+        delivery_time: offer.delivery_time,
+        contact_info: offer.contact_info,
+        images: offer.images,
+        status: offer.status,
+        created_at: offer.created_at,
+        updated_at: offer.updated_at,
+        seller_id: offer.seller_id,
+        buy_request_id: offer.buy_request_id,
+        message: offer.message,
+        rejection_reason: offer.rejection_reason,
+        buyer_rating: offer.buyer_rating,
+        public_visibility: offer.public_visibility,
+        price_history: Array.isArray(offer.price_history) ? offer.price_history : null,
+        profiles: offer.profiles,
         buy_requests: offer.buy_requests || { title: 'Solicitud eliminada', zone: 'N/A', status: 'inactive' }
       }));
 

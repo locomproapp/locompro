@@ -13,11 +13,28 @@ import BuyRequestInformation from '@/components/BuyRequestDetail/BuyRequestInfor
 import PublisherCard from '@/components/BuyRequestDetail/PublisherCard';
 import ImageAndActionsCard from '@/components/BuyRequestDetail/ImageAndActionsCard';
 
+interface BuyRequestDetailType {
+  id: string;
+  title: string;
+  description: string | null;
+  min_price: number;
+  max_price: number;
+  zone: string;
+  condition: string;
+  reference_url: string | null;
+  status: string;
+  created_at: string;
+  user_id: string;
+  profiles: {
+    full_name: string | null;
+  } | null;
+}
+
 const BuyRequestDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
 
-  const { data: buyRequest, isLoading, error, refetch } = useBuyRequestDetail(id || '');
+  const { data: buyRequestData, isLoading, error, refetch } = useBuyRequestDetail(id || '');
 
   useEffect(() => {
     if (id && refetch) {
@@ -39,7 +56,7 @@ const BuyRequestDetail = () => {
     );
   }
 
-  if (error || !buyRequest) {
+  if (error || !buyRequestData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
         <Navigation />
@@ -60,6 +77,21 @@ const BuyRequestDetail = () => {
       </div>
     );
   }
+
+  const buyRequest: BuyRequestDetailType = {
+    id: buyRequestData.id,
+    title: buyRequestData.title,
+    description: buyRequestData.description,
+    min_price: buyRequestData.min_price,
+    max_price: buyRequestData.max_price,
+    zone: buyRequestData.zone,
+    condition: buyRequestData.condition,
+    reference_url: buyRequestData.reference_url,
+    status: buyRequestData.status,
+    created_at: buyRequestData.created_at,
+    user_id: buyRequestData.user_id,
+    profiles: buyRequestData.profiles
+  };
 
   const isOwner = user?.id === buyRequest.user_id;
   const isActive = buyRequest.status === 'active';

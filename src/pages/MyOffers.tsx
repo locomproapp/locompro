@@ -2,142 +2,113 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import OfferCard from '@/components/OfferCard';
-import SellerNotifications from '@/components/SellerNotifications';
 import { useUserOffers } from '@/hooks/useUserOffers';
-import { useAuth } from '@/hooks/useAuth';
-import { Package, Search, RefreshCw, Info } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Package, Clock, Check, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const MyOffers = () => {
-  const { user } = useAuth();
-  const { offers, loading, refetch } = useUserOffers();
+  const { data: offers = [], isLoading: loading } = useUserOffers();
 
-  const handleForceRefresh = async () => {
-    console.log('Manual force refresh triggered from MyOffers');
-    await refetch();
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pendiente</Badge>;
+      case 'accepted':
+        return <Badge variant="default" className="bg-green-500"><Check className="h-3 w-3 mr-1" />Aceptada</Badge>;
+      case 'rejected':
+        return <Badge variant="destructive"><X className="h-3 w-3 mr-1" />Rechazada</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
   };
 
-  // Now handle the conditional rendering AFTER all hooks have been called
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-        <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">
-              Inicia sesión para ver tus ofertas
-            </h1>
-            <p className="text-muted-foreground">
-              Necesitas estar logueado para acceder a esta sección.
-            </p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  // Count offers by status for better UX
-  const pendingOffers = offers.filter(offer => offer.status === 'pending');
-  const acceptedOffers = offers.filter(offer => offer.status === 'accepted');
-  const rejectedOffers = offers.filter(offer => offer.status === 'rejected');
-  const withdrawnOffers = offers.filter(offer => offer.status === 'withdrawn');
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-AR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Mis Ofertas
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Gestiona las ofertas que has enviado a compradores
-              </p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Mis Ofertas
+          </h1>
+          <p className="text-muted-foreground">
+            Gestiona todas las ofertas que has enviado
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Package className="h-6 w-6 text-primary animate-pulse" />
             </div>
-            <Button
-              onClick={handleForceRefresh}
-              variant="outline"
-              className="flex items-center gap-2"
-              disabled={loading}
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              {loading ? 'Actualizando...' : 'Actualizar'}
+            <p className="text-muted-foreground">Cargando ofertas...</p>
+          </div>
+        ) : offers.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Package className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              No has enviado ofertas
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              Cuando envíes ofertas aparecerán aquí
+            </p>
+            <Button asChild>
+              <Link to="/marketplace">Explorar solicitudes</Link>
             </Button>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Notifications sidebar */}
-          <div className="lg:col-span-1">
-            <SellerNotifications />
-          </div>
-
-          {/* Main content */}
-          <div className="lg:col-span-3">
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-8 w-8 text-primary animate-pulse" />
-                </div>
-                <p className="text-muted-foreground">Cargando tus ofertas...</p>
-              </div>
-            ) : offers.length > 0 ? (
-              <>
-                {/* Status summary */}
-                <div className="mb-6">
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      <strong>Resumen:</strong> {pendingOffers.length} pendiente{pendingOffers.length !== 1 ? 's' : ''}, {acceptedOffers.length} aceptada{acceptedOffers.length !== 1 ? 's' : ''}, {rejectedOffers.length} rechazada{rejectedOffers.length !== 1 ? 's' : ''}, {withdrawnOffers.length} retirada{withdrawnOffers.length !== 1 ? 's' : ''}
-                    </AlertDescription>
-                  </Alert>
-                </div>
-
-                {/* Info about offer management */}
-                <div className="mb-6">
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      <strong>Información importante:</strong> Solo los compradores pueden aceptar o rechazar ofertas. Como vendedor, puedes retirar tus ofertas pendientes si lo deseas.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {offers.map((offer) => (
-                    <OfferCard 
-                      key={`${offer.id}-${offer.status}-${offer.updated_at}`}
-                      offer={offer} 
-                      onStatusUpdate={refetch}
-                      currentUserId={user.id}
-                    />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
-                <div className="max-w-md mx-auto">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Package className="h-8 w-8 text-primary" />
+        ) : (
+          <div className="grid gap-6">
+            {offers.map((offer) => (
+              <Card key={offer.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-xl">{offer.title}</CardTitle>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Para: {offer.buy_requests?.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Zona: {offer.buy_requests?.zone}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-primary mb-2">
+                        ${offer.price.toLocaleString('es-AR')}
+                      </div>
+                      {getStatusBadge(offer.status)}
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    Aún no has enviado ofertas
-                  </h3>
-                  <p className="text-muted-foreground mb-6">
-                    Explora el mercado y envía ofertas a los compradores.
-                  </p>
-                </div>
-              </div>
-            )}
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      Enviada el {formatDate(offer.created_at)}
+                    </p>
+                    <Button asChild variant="outline">
+                      <Link to={`/buy-request/${offer.buy_request_id}`}>
+                        Ver solicitud
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </div>
+        )}
       </main>
 
       <Footer />

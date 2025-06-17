@@ -45,8 +45,16 @@ export const useBuyRequests = (searchQuery?: string) => {
       if (error) throw error;
       
       const transformedData: BuyRequest[] = (data || []).map(request => ({
-        ...request,
-        profiles: request.profiles || null
+        id: request.id,
+        title: request.title,
+        description: request.description,
+        min_price: request.min_price,
+        max_price: request.max_price,
+        reference_image: request.reference_image,
+        zone: request.zone,
+        status: request.status,
+        created_at: request.created_at,
+        profiles: request.profiles
       }));
       
       setBuyRequests(transformedData);

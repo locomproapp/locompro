@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,7 +44,18 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as BuyRequest[];
+      
+      return (data || []).map(request => ({
+        id: request.id,
+        title: request.title,
+        description: request.description,
+        min_price: request.min_price,
+        max_price: request.max_price,
+        reference_image: request.reference_image,
+        zone: request.zone,
+        created_at: request.created_at,
+        profiles: request.profiles
+      })) as BuyRequest[];
     }
   });
 
