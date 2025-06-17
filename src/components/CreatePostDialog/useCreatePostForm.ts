@@ -2,9 +2,13 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { editBuyRequestSchema, EditBuyRequestValues } from '@/components/edit-buy-request/schema';
-import { formatCurrency, parseCurrencyInput } from '@/components/edit-buy-request/utils';
 import { useFormSubmission } from './hooks/useFormSubmission';
 import { useState, useEffect } from 'react';
+
+function parseCurrencyInput(input: string) {
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned ? parseInt(cleaned, 10) : null;
+}
 
 export const useCreatePostForm = (onPostCreated?: () => void) => {
   const form = useForm<EditBuyRequestValues>({
@@ -21,25 +25,24 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     },
   });
 
-  // Usar EXACTAMENTE la misma lógica de price inputs que useEditBuyRequest
   const [minPriceInput, setMinPriceInput] = useState('');
   const [maxPriceInput, setMaxPriceInput] = useState('');
   const [priceError, setPriceError] = useState<string | null>(null);
 
   const { loading, handleSubmit: submitForm } = useFormSubmission(onPostCreated);
 
-  // Validación de precios igual que en useEditBuyRequest
+  // Validación de precios
   useEffect(() => {
     const min = parseCurrencyInput(minPriceInput);
     const max = parseCurrencyInput(maxPriceInput);
+    
     if (min !== null && max !== null && max < min) {
-      setPriceError('El máximo debe ser mayor al mínimo');
+      setPriceError('El precio máximo debe ser mayor al mínimo');
     } else {
       setPriceError(null);
     }
   }, [minPriceInput, maxPriceInput]);
 
-  // Handlers de precio iguales que en useEditBuyRequest
   const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setMinPriceInput(val);
@@ -52,14 +55,12 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     form.setValue("max_price", parseCurrencyInput(val));
   };
 
-  // Watch form values
   const watchedValues = form.watch();
 
   const handleSubmit = async (values: EditBuyRequestValues) => {
     console.log('=== SUBMIT DESDE useCreatePostForm ===');
     console.log('Values before processing:', JSON.stringify(values, null, 2));
     
-    // Validaciones adicionales antes de enviar
     if (!values.title || values.title.trim() === '') {
       console.error('Title is empty');
       return;

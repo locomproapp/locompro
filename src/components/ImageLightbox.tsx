@@ -30,24 +30,36 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!open) return;
+      
+      e.preventDefault();
+      e.stopPropagation();
+      
       if (e.key === 'ArrowLeft') {
-        e.preventDefault();
         goToPrevious();
       }
       if (e.key === 'ArrowRight') {
-        e.preventDefault();
         goToNext();
+      }
+      if (e.key === 'Escape') {
+        onOpenChange(false);
       }
     };
 
     if (open) {
-      window.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keydown', handleKeyDown, true);
     }
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, [open, goToPrevious, goToNext]);
+  }, [open, goToPrevious, goToNext, onOpenChange]);
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
 
   if (!images || images.length === 0) {
     return null;
@@ -55,13 +67,23 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-transparent border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]">
-        <div className="relative w-full h-full flex items-center justify-center">
+      <DialogContent 
+        className="bg-transparent border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
+        <div 
+          className="relative w-full h-full flex items-center justify-center cursor-pointer"
+          onClick={handleBackdropClick}
+        >
           {/* Close Button */}
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onOpenChange(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenChange(false);
+            }}
             className="absolute top-2 right-2 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full"
             aria-label="Cerrar"
           >
@@ -73,7 +95,10 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
             <Button
               variant="ghost"
               size="icon"
-              onClick={goToPrevious}
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrevious();
+              }}
               className="absolute left-2 sm:left-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full"
               aria-label="Anterior"
             >
@@ -86,7 +111,8 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
              <img
               src={images[currentIndex]}
               alt={`Imagen ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain select-none"
+              className="max-w-full max-h-full object-contain select-none cursor-default"
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
 
@@ -95,7 +121,10 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
             <Button
               variant="ghost"
               size="icon"
-              onClick={goToNext}
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNext();
+              }}
               className="absolute right-2 sm:right-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full"
               aria-label="Siguiente"
             >
@@ -105,7 +134,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           
           {/* Image Counter */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full select-none">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none">
               {currentIndex + 1} / {images.length}
             </div>
           )}

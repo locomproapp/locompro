@@ -20,6 +20,11 @@ function formatCurrency(value: string) {
   return "$" + number.toLocaleString("es-AR").replace(/,/g, ".");
 }
 
+function parseCurrencyInput(input: string) {
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned ? parseInt(cleaned, 10) : null;
+}
+
 interface CreatePostFormProps {
   control: Control<EditBuyRequestValues>;
   minPriceInput: string;
