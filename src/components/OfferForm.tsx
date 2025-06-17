@@ -16,20 +16,23 @@ const OfferForm = ({ buyRequestId }: OfferFormProps) => {
 
   if (!user) {
     return (
-      <Button disabled className="w-full flex items-center gap-2">
-        <Send className="h-4 w-4" />
-        Iniciar sesión para enviar oferta
-      </Button>
+      <div className="text-center py-4">
+        <p className="text-muted-foreground mb-4">
+          Inicia sesión para enviar una oferta
+        </p>
+        <Button asChild>
+          <Link to="/auth">Iniciar sesión</Link>
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Button asChild className="w-full flex items-center gap-2">
-      <Link to={`/buy-request/${buyRequestId}/send-offer`}>
-        <Send className="h-4 w-4" />
-        Enviar oferta
-      </Link>
-    </Button>
+    <div className="text-center py-4">
+      <p className="text-muted-foreground">
+        Usa el botón "Enviar Oferta" arriba para hacer tu propuesta.
+      </p>
+    </div>
   );
 };
 

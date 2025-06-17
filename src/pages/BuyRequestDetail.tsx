@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import OfferForm from '@/components/OfferForm';
-import CompareOffers from '@/components/CompareOffers';
+import SendBuyRequestOfferDialog from '@/components/SendBuyRequestOfferDialog';
+import BuyRequestOffersList from '@/components/BuyRequestOffersList';
 import { useBuyRequestDetail } from '@/hooks/useBuyRequestDetail';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -123,18 +123,32 @@ const BuyRequestDetail = () => {
           />
         </div>
 
-        {!isOwner && isActive && (
+        {!isOwner && isActive && user && (
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <OfferForm 
+            <SendBuyRequestOfferDialog 
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
+              onOfferSent={() => refetch()}
             />
           </div>
         )}
 
+        {!isOwner && !user && isActive && (
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm text-center">
+            <p className="text-muted-foreground mb-4">
+              Inicia sesión para enviar una oferta
+            </p>
+            <Button asChild>
+              <Link to="/auth">Iniciar sesión</Link>
+            </Button>
+          </div>
+        )}
+
         <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-          <h2 className="text-2xl font-bold text-foreground mb-6">Ofertas Recibidas</h2>
-          <CompareOffers buyRequestId={buyRequest.id} isOwner={isOwner} />
+          <BuyRequestOffersList 
+            buyRequestId={buyRequest.id}
+            buyRequestOwnerId={buyRequest.user_id}
+          />
         </div>
       </main>
 
