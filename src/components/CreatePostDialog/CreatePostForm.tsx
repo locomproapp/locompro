@@ -112,7 +112,7 @@ const CreatePostForm = ({
       />
 
       <div>
-        <FormLabel>Precio Mínimo *</FormLabel>
+        <FormLabel>Precio *</FormLabel>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <FormItem>
             <FormLabel>Mínimo</FormLabel>
@@ -143,7 +143,7 @@ const CreatePostForm = ({
             </FormControl>
             {priceError && (
               <p className="text-destructive text-sm font-medium mt-1">
-                Introduzca un precio mayor al precio mínimo.
+                {priceError}
               </p>
             )}
             <FormMessage />

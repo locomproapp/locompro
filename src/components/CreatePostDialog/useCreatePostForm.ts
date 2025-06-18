@@ -5,11 +5,6 @@ import { editBuyRequestSchema, EditBuyRequestValues } from '@/components/edit-bu
 import { useFormSubmission } from './hooks/useFormSubmission';
 import { useState, useEffect } from 'react';
 
-function parseCurrencyInput(input: string) {
-  const cleaned = input.replace(/\D/g, "");
-  return cleaned ? parseInt(cleaned, 10) : null;
-}
-
 export const useCreatePostForm = (onPostCreated?: () => void) => {
   const form = useForm<EditBuyRequestValues>({
     resolver: zodResolver(editBuyRequestSchema),
@@ -33,8 +28,8 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
 
   // Validación de precios
   useEffect(() => {
-    const min = parseCurrencyInput(minPriceInput);
-    const max = parseCurrencyInput(maxPriceInput);
+    const min = minPriceInput ? parseInt(minPriceInput, 10) : null;
+    const max = maxPriceInput ? parseInt(maxPriceInput, 10) : null;
     
     if (min !== null && max !== null && max < min) {
       setPriceError('Introduzca un precio mayor al precio mínimo.');
@@ -44,15 +39,15 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
   }, [minPriceInput, maxPriceInput]);
 
   const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+    const val = e.target.value.replace(/\D/g, ''); // Only keep digits
     setMinPriceInput(val);
-    form.setValue("min_price", parseCurrencyInput(val));
+    form.setValue("min_price", val ? parseInt(val, 10) : null);
   };
   
   const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+    const val = e.target.value.replace(/\D/g, ''); // Only keep digits
     setMaxPriceInput(val);
-    form.setValue("max_price", parseCurrencyInput(val));
+    form.setValue("max_price", val ? parseInt(val, 10) : null);
   };
 
   const watchedValues = form.watch();
