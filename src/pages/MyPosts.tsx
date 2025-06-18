@@ -2,14 +2,22 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import CreatePostDialog from '@/components/CreatePostDialog';
-import PostCard from '@/components/PostCard';
+import BuyRequestCard from '@/components/BuyRequestCard';
 import { useUserPosts } from '@/hooks/useUserPosts';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, FileText } from 'lucide-react';
 
 const MyPosts = () => {
   const { user } = useAuth();
-  const { posts, loading, refetch } = useUserPosts();
+  const { posts, loading, refetch, deletePost } = useUserPosts();
+
+  const handleDelete = async (id: string) => {
+    return await deletePost(id);
+  };
+
+  const handleUpdate = () => {
+    refetch();
+  };
 
   if (!user) {
     return (
@@ -66,7 +74,14 @@ const MyPosts = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <BuyRequestCard 
+                  key={post.id} 
+                  buyRequest={post}
+                  showActions={true}
+                  onDelete={handleDelete}
+                  onUpdate={handleUpdate}
+                  hideBuscoTag={true}
+                />
               ))}
             </div>
           </>
