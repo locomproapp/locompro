@@ -37,7 +37,7 @@ export const useCreatePostForm = (onPostCreated?: () => void) => {
     const max = parseCurrencyInput(maxPriceInput);
     
     if (min !== null && max !== null && max < min) {
-      setPriceError('El precio máximo debe ser mayor al mínimo');
+      setPriceError('Introduzca un precio mayor al precio mínimo.');
     } else {
       setPriceError(null);
     }

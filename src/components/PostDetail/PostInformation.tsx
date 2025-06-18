@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 
@@ -24,15 +25,6 @@ const PostInformation = ({ post }: PostInformationProps) => {
     if (min) return format(min);
     if (max) return format(max);
     return 'Precio a consultar';
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
   };
 
   let formattedCharacteristics = null;
@@ -67,18 +59,6 @@ const PostInformation = ({ post }: PostInformationProps) => {
           <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
             <p className="text-base text-foreground whitespace-pre-wrap">{formattedCharacteristics}</p>
-          </div>
-        )}
-
-        <div>
-          <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha</h3>
-          <p className="text-base text-foreground">{formatDate(post.created_at)}</p>
-        </div>
-        
-        {post.profiles?.full_name && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
-            <p className="text-base text-foreground">{post.profiles.full_name}</p>
           </div>
         )}
 

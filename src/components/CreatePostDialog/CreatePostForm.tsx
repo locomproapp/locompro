@@ -15,7 +15,7 @@ function formatCurrency(value: string) {
   // Remove all non-digit characters
   const numericValue = value.replace(/\D/g, "");
   if (numericValue === "") return "$";
-  // Format with thousands separator
+  // Format with thousands separator using dots
   const number = parseInt(numericValue);
   return "$" + number.toLocaleString("es-AR").replace(/,/g, ".");
 }
@@ -138,7 +138,7 @@ const CreatePostForm = ({
                 type="text"
                 inputMode="numeric"
                 value={formatCurrency(minPriceInput)}
-                placeholder="$10"
+                placeholder="$"
                 autoComplete="off"
                 onChange={handleMinPriceInput}
               />
@@ -152,7 +152,7 @@ const CreatePostForm = ({
                 type="text"
                 inputMode="numeric"
                 value={formatCurrency(maxPriceInput)}
-                placeholder="$15"
+                placeholder="$"
                 autoComplete="off"
                 onChange={handleMaxPriceInput}
                 className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''}
@@ -160,7 +160,7 @@ const CreatePostForm = ({
             </FormControl>
             {priceError && (
               <p className="text-destructive text-sm font-medium mt-1">
-                {priceError}
+                Introduzca un precio mayor al precio mínimo.
               </p>
             )}
             <FormMessage />
