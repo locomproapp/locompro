@@ -79,9 +79,86 @@ const CreatePostForm = ({
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>¿Qué estás buscando?</FormLabel>
+            <FormLabel>¿Qué estás buscando? *</FormLabel>
             <FormControl>
-              <Input placeholder="Prueba" {...field} />
+              <Input placeholder="Ej: iPhone 14 Pro Max 256GB" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descripción (opcional)</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Describe con más detalle lo que buscas..."
+                rows={4}
+                {...field}
+                value={field.value || ''}
+                onChange={(e) => {
+                  console.log('Description changed to:', e.target.value);
+                  field.onChange(e.target.value || '');
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div>
+        <FormLabel>Precio Mínimo *</FormLabel>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <FormItem>
+            <FormLabel>Mínimo</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={minPriceInput ? formatCurrency(minPriceInput) : ""}
+                placeholder="$"
+                autoComplete="off"
+                onChange={handleMinPriceInput}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+          <FormItem>
+            <FormLabel>Máximo *</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={maxPriceInput ? formatCurrency(maxPriceInput) : ""}
+                placeholder="$"
+                autoComplete="off"
+                onChange={handleMaxPriceInput}
+                className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''}
+              />
+            </FormControl>
+            {priceError && (
+              <p className="text-destructive text-sm font-medium mt-1">
+                Introduzca un precio mayor al precio mínimo.
+              </p>
+            )}
+            <FormMessage />
+          </FormItem>
+        </div>
+      </div>
+
+      <FormField
+        control={control}
+        name="zone"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Zona *</FormLabel>
+            <FormControl>
+              <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -128,103 +205,6 @@ const CreatePostForm = ({
         )}
       />
 
-      <div>
-        <FormLabel>Presupuesto estimado</FormLabel>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-          <FormItem>
-            <FormLabel>Mínimo</FormLabel>
-            <FormControl>
-              <Input
-                type="text"
-                inputMode="numeric"
-                value={formatCurrency(minPriceInput)}
-                placeholder="$"
-                autoComplete="off"
-                onChange={handleMinPriceInput}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-          <FormItem>
-            <FormLabel>Máximo</FormLabel>
-            <FormControl>
-              <Input
-                type="text"
-                inputMode="numeric"
-                value={formatCurrency(maxPriceInput)}
-                placeholder="$"
-                autoComplete="off"
-                onChange={handleMaxPriceInput}
-                className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''}
-              />
-            </FormControl>
-            {priceError && (
-              <p className="text-destructive text-sm font-medium mt-1">
-                Introduzca un precio mayor al precio mínimo.
-              </p>
-            )}
-            <FormMessage />
-          </FormItem>
-        </div>
-      </div>
-
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Características</FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Prueba características"
-                rows={4}
-                {...field}
-                value={field.value || ''}
-                onChange={(e) => {
-                  console.log('Description changed to:', e.target.value);
-                  field.onChange(e.target.value || '');
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={control}
-        name="zone"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>¿De dónde sos?</FormLabel>
-            <FormControl>
-              <Input placeholder="Prueba zona" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={control}
-        name="images"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Fotos de Referencia</FormLabel>
-            <FormControl>
-              <BuyRequestImageUpload
-                images={field.value || []}
-                setImages={(images) => {
-                  console.log('Images changed to:', images);
-                  field.onChange(images);
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
       <FormField
         control={control}
         name="reference_url"
@@ -238,12 +218,32 @@ const CreatePostForm = ({
             </div>
             <FormControl>
               <Input 
-                placeholder="https://www.mercadolibre.com.ar/pelota-adidas-futbol-ucl-2425-knockout-unisex-blanco-jh1292/p/MLA1323646063#wid=MLA1323646063&sid=unknown" 
+                placeholder="https://ejemplo.com/producto" 
                 {...field} 
                 value={field.value || ''} 
                 onChange={(e) => {
                   console.log('Reference URL changed to:', e.target.value);
                   field.onChange(e.target.value || '');
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="images"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Fotos de Referencia *</FormLabel>
+            <FormControl>
+              <BuyRequestImageUpload
+                images={field.value || []}
+                setImages={(images) => {
+                  console.log('Images changed to:', images);
+                  field.onChange(images);
                 }}
               />
             </FormControl>
@@ -267,7 +267,7 @@ const CreatePostForm = ({
           disabled={loading || !!priceError || !watchedValues.images || watchedValues.images.length === 0}
           className="flex-1"
         >
-          {loading ? 'Creando...' : 'Crear Publicación'}
+          {loading ? 'Creando...' : 'Crear Solicitud'}
         </Button>
       </div>
     </form>
