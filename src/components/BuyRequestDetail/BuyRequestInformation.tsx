@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-
 interface BuyRequest {
   id: string;
   title: string;
@@ -18,18 +16,17 @@ interface BuyRequest {
     full_name: string | null;
   } | null;
 }
-
 interface BuyRequestInformationProps {
   buyRequest: BuyRequest;
 }
-
-const BuyRequestInformation = ({ buyRequest }: BuyRequestInformationProps) => {
+const BuyRequestInformation = ({
+  buyRequest
+}: BuyRequestInformationProps) => {
   const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (min === max) return format(min);
     return `${format(min)} - ${format(max)}`;
   };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-AR', {
@@ -38,20 +35,18 @@ const BuyRequestInformation = ({ buyRequest }: BuyRequestInformationProps) => {
       year: 'numeric'
     });
   };
-
   const formatCondition = (condition: string) => {
-    const conditionMap: { [key: string]: string } = {
+    const conditionMap: {
+      [key: string]: string;
+    } = {
       'nuevo': 'Nuevo',
       'usado': 'Usado',
       'cualquiera': 'Cualquier estado'
     };
     return conditionMap[condition] || condition;
   };
-
   const isActive = buyRequest.status === 'active';
-
-  return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+  return <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
         <Badge variant={isActive ? "default" : "secondary"}>
           {isActive ? 'ACTIVA' : 'CERRADA'}
@@ -80,27 +75,21 @@ const BuyRequestInformation = ({ buyRequest }: BuyRequestInformationProps) => {
           <p className="text-base text-foreground">{formatCondition(buyRequest.condition)}</p>
         </div>
 
-        {buyRequest.description && (
-          <div>
+        {buyRequest.description && <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-1">Descripción</h3>
             <p className="text-base text-foreground whitespace-pre-wrap">{buyRequest.description}</p>
-          </div>
-        )}
+          </div>}
 
         <div>
-          <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha</h3>
-          <p className="text-base text-foreground">{formatDate(buyRequest.created_at)}</p>
+          
+          
         </div>
         
-        {buyRequest.profiles?.full_name && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
-            <p className="text-base text-foreground">{buyRequest.profiles.full_name}</p>
-          </div>
-        )}
+        {buyRequest.profiles?.full_name && <div>
+            
+            
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BuyRequestInformation;
