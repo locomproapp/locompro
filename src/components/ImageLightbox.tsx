@@ -84,13 +84,14 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-zinc-800/70 border-none shadow-none p-0 w-full h-full max-w-[95vw] max-h-[95vh]"
+        className="bg-black/90 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center cursor-default"
+          className="relative w-full h-full flex items-center justify-center cursor-pointer focus:outline-none"
           onClick={handleOverlayClick}
+          tabIndex={-1}
         >
           {/* Close Button */}
           <Button
@@ -100,8 +101,9 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
               e.stopPropagation();
               onOpenChange(false);
             }}
-            className="absolute top-2 right-2 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full"
+            className="absolute top-4 right-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full focus:outline-none focus:ring-0"
             aria-label="Cerrar"
+            tabIndex={-1}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -115,8 +117,9 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToPrevious();
               }}
-              className="absolute left-2 sm:left-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full"
+              className="absolute left-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full focus:outline-none focus:ring-0"
               aria-label="Anterior"
+              tabIndex={-1}
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
@@ -124,14 +127,16 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
 
           {/* Image Container */}
           <div 
-            className="w-full h-full flex items-center justify-center p-4 sm:p-8"
+            className="w-full h-full flex items-center justify-center p-8 cursor-default focus:outline-none"
             onClick={handleImageContainerClick}
+            tabIndex={-1}
           >
              <img
               src={images[currentIndex]}
               alt={`Imagen ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain select-none cursor-default"
+              className="max-w-full max-h-full object-contain select-none cursor-default focus:outline-none"
               onClick={(e) => e.stopPropagation()}
+              tabIndex={-1}
             />
           </div>
 
@@ -144,8 +149,9 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToNext();
               }}
-              className="absolute right-2 sm:right-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full"
+              className="absolute right-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full focus:outline-none focus:ring-0"
               aria-label="Siguiente"
+              tabIndex={-1}
             >
               <ArrowRight className="h-6 w-6" />
             </Button>
@@ -153,7 +159,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           
           {/* Image Counter */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none focus:outline-none">
               {currentIndex + 1} / {images.length}
             </div>
           )}
