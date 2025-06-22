@@ -41,25 +41,38 @@ const ImageAndActionsCard = ({
   const handleDeleteRequest = async () => {
     setDeleting(true);
     try {
+      console.log('Deleting buy request:', buyRequest.id);
+      
       const { error } = await supabase
         .from('buy_requests')
         .delete()
         .eq('id', buyRequest.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase delete error:', error);
+        throw error;
+      }
+      
+      console.log('Buy request deleted successfully');
       
       toast({
         title: '¡Publicación eliminada!',
         description: 'La publicación fue borrada exitosamente.'
       });
       
-      // Dispatch global event to update marketplace and other views
-      window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
-        detail: { buyRequestId: buyRequest.id } 
-      }));
-      
       setDeleteDialogOpen(false);
+      
+      // Navigate first, then dispatch the event with a slight delay
       navigate('/marketplace');
+      
+      // Dispatch event after navigation with a small delay to ensure the marketplace component is ready
+      setTimeout(() => {
+        console.log('Dispatching buyRequestDeleted event');
+        window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
+          detail: { buyRequestId: buyRequest.id } 
+        }));
+      }, 100);
+      
     } catch (error) {
       console.error('Error deleting buy request:', error);
       toast({
