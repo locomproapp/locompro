@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -70,8 +71,10 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         profiles: request.profiles
       })) as BuyRequest[];
     },
-    staleTime: 0, // Always consider data stale
-    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes but refetch
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Remove from cache immediately when unused
+    refetchOnMount: 'always', // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   // Handle refresh when coming from a deletion
@@ -81,7 +84,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       console.log('🗑️ Deletion detected, forcing complete data refresh...', { deletedId });
       
       // Force a complete cache invalidation and refetch
-      queryClient.removeQueries({ queryKey: ['buy-requests'] });
+      queryClient.clear(); // Clear entire cache
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       
       // Force immediate refetch
@@ -90,6 +93,12 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
           const stillExists = result.data.some(req => req.id === deletedId);
           if (stillExists) {
             console.error('⚠️ WARNING: Deleted request still appears in results!', deletedId);
+            // Force another refetch after a short delay
+            setTimeout(() => {
+              console.log('🔄 Forcing additional refetch due to stale data...');
+              queryClient.clear();
+              refetch();
+            }, 500);
           } else {
             console.log('✅ Deleted request successfully removed from results');
           }
@@ -109,10 +118,10 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   React.useEffect(() => {
     const handleBuyRequestDeleted = (event: any) => {
       const deletedId = event.detail?.buyRequestId;
-      console.log('🗑️ Buy request deleted event received, forcing refresh...', { deletedId });
+      console.log('🗑️ Buy request deleted event received, forcing complete refresh...', { deletedId });
       
-      // Remove from cache immediately
-      queryClient.removeQueries({ queryKey: ['buy-requests'] });
+      // Clear entire cache and force refetch
+      queryClient.clear();
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       
       // Force refetch and verify deletion
@@ -121,6 +130,12 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
           const stillExists = result.data.some(req => req.id === deletedId);
           if (stillExists) {
             console.error('⚠️ WARNING: Deleted request still appears after event!', deletedId);
+            // Try one more time with a delay
+            setTimeout(() => {
+              console.log('🔄 Final refetch attempt...');
+              queryClient.clear();
+              refetch();
+            }, 1000);
           } else {
             console.log('✅ Event-triggered refresh successful - deleted request removed');
           }

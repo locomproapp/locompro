@@ -41,34 +41,44 @@ const ImageAndActionsCard = ({
   const handleDeleteRequest = async () => {
     setDeleting(true);
     try {
-      console.log('Starting deletion process for buy request:', buyRequest.id);
-      console.log('User ID:', user?.id);
-      console.log('Buy request user ID:', buyRequest.user_id);
+      console.log('=== STARTING DELETION PROCESS ===');
+      console.log('Buy request ID:', buyRequest.id);
+      console.log('Current user ID:', user?.id);
+      console.log('Buy request owner ID:', buyRequest.user_id);
       
-      // Verify user owns the request
-      if (user?.id !== buyRequest.user_id) {
-        throw new Error('User does not own this buy request');
+      if (!user?.id) {
+        throw new Error('Usuario no autenticado');
       }
 
-      // First, verify the buy request exists before deletion
+      if (user.id !== buyRequest.user_id) {
+        throw new Error('No tienes permisos para eliminar esta publicación');
+      }
+
+      // First, check if the buy request still exists and verify ownership
+      console.log('=== VERIFYING BUY REQUEST EXISTS ===');
       const { data: existingRequest, error: checkError } = await supabase
         .from('buy_requests')
-        .select('id, user_id')
+        .select('id, user_id, title')
         .eq('id', buyRequest.id)
+        .eq('user_id', user.id) // Double check ownership in query
         .single();
 
       if (checkError) {
-        console.error('Error checking buy request existence:', checkError);
-        throw new Error(`Cannot verify buy request exists: ${checkError.message}`);
+        console.error('Error checking buy request:', checkError);
+        if (checkError.code === 'PGRST116') {
+          throw new Error('La publicación ya fue eliminada o no existe');
+        }
+        throw new Error(`Error al verificar la publicación: ${checkError.message}`);
       }
 
       if (!existingRequest) {
-        throw new Error('Buy request not found in database');
+        throw new Error('La publicación ya fue eliminada o no tienes permisos para eliminarla');
       }
 
-      console.log('Buy request exists, proceeding with deletion...');
+      console.log('✅ Buy request verified, proceeding with deletion...');
 
-      // Delete related offers first
+      // Delete related offers first (if any)
+      console.log('=== DELETING RELATED OFFERS ===');
       const { error: offersError, count: deletedOffersCount } = await supabase
         .from('buy_request_offers')
         .delete({ count: 'exact' })
@@ -76,30 +86,32 @@ const ImageAndActionsCard = ({
 
       if (offersError) {
         console.error('Error deleting related offers:', offersError);
-        // Continue with buy request deletion even if offers deletion fails
+        // Continue with deletion even if offers deletion fails
       } else {
         console.log(`Deleted ${deletedOffersCount || 0} related offers`);
       }
 
-      // Then delete the buy request
+      // Now delete the buy request with explicit ownership check
+      console.log('=== DELETING BUY REQUEST ===');
       const { error: deleteError, count: deletedCount } = await supabase
         .from('buy_requests')
         .delete({ count: 'exact' })
         .eq('id', buyRequest.id)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id); // Ensure user owns the request
 
       if (deleteError) {
         console.error('Supabase delete error:', deleteError);
-        throw new Error(`Delete failed: ${deleteError.message}`);
+        throw new Error(`Error al eliminar: ${deleteError.message}`);
       }
 
-      console.log(`Deleted ${deletedCount || 0} buy request(s)`);
+      console.log(`Delete operation result: ${deletedCount} row(s) affected`);
 
-      if (deletedCount === 0) {
-        throw new Error('No buy request was deleted - possibly already deleted or permission denied');
+      if (!deletedCount || deletedCount === 0) {
+        throw new Error('No se pudo eliminar la publicación - posiblemente ya fue eliminada o no tienes permisos');
       }
 
       // Verify deletion by trying to fetch the deleted request
+      console.log('=== VERIFYING DELETION ===');
       const { data: verifyDeleted, error: verifyError } = await supabase
         .from('buy_requests')
         .select('id')
@@ -108,9 +120,10 @@ const ImageAndActionsCard = ({
 
       if (verifyError) {
         console.error('Error verifying deletion:', verifyError);
+        // Don't throw here, deletion might have succeeded
       } else if (verifyDeleted) {
-        console.error('WARNING: Buy request still exists after deletion!', verifyDeleted);
-        throw new Error('Deletion verification failed - request still exists');
+        console.error('⚠️ WARNING: Buy request still exists after deletion!', verifyDeleted);
+        throw new Error('La eliminación no se completó correctamente');
       } else {
         console.log('✅ Deletion verified - buy request no longer exists in database');
       }
@@ -122,8 +135,8 @@ const ImageAndActionsCard = ({
       
       setDeleteDialogOpen(false);
 
-      // Dispatch global deletion event before navigation
-      console.log('Dispatching buyRequestDeleted event...');
+      // Dispatch global deletion event
+      console.log('=== DISPATCHING DELETION EVENT ===');
       window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
         detail: { buyRequestId: buyRequest.id } 
       }));
@@ -131,8 +144,8 @@ const ImageAndActionsCard = ({
       // Small delay to ensure event is processed
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Navigate with deletion flag and immediate cache invalidation
-      console.log('Navigating to marketplace with deletion state...');
+      // Navigate with deletion flag
+      console.log('=== NAVIGATING TO MARKETPLACE ===');
       navigate('/marketplace', { 
         state: { 
           deletedRequestId: buyRequest.id,
@@ -143,7 +156,7 @@ const ImageAndActionsCard = ({
       });
       
     } catch (error) {
-      console.error('Error deleting buy request:', error);
+      console.error('=== DELETION ERROR ===', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'No se pudo eliminar la publicación. Por favor, intenta nuevamente.',
