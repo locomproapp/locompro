@@ -101,7 +101,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
               e.stopPropagation();
               onOpenChange(false);
             }}
-            className="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50"
+            className="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0"
             aria-label="Cerrar"
             tabIndex={-1}
           >
@@ -117,7 +117,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToPrevious();
               }}
-              className="absolute left-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50"
+              className="absolute left-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0"
               aria-label="Anterior"
               tabIndex={-1}
             >
@@ -149,7 +149,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToNext();
               }}
-              className="absolute right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50"
+              className="absolute right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0"
               aria-label="Siguiente"
               tabIndex={-1}
             >
