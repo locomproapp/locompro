@@ -120,7 +120,7 @@ const CreatePostForm = ({
               <Input
                 type="text"
                 inputMode="numeric"
-                value={minPriceInput ? formatCurrency(minPriceInput) : ""}
+                value={minPriceInput ? formatCurrency(minPriceInput) : "$"}
                 placeholder="$"
                 autoComplete="off"
                 onChange={handleMinPriceInput}
@@ -134,7 +134,7 @@ const CreatePostForm = ({
               <Input
                 type="text"
                 inputMode="numeric"
-                value={maxPriceInput ? formatCurrency(maxPriceInput) : ""}
+                value={maxPriceInput ? formatCurrency(maxPriceInput) : "$"}
                 placeholder="$"
                 autoComplete="off"
                 onChange={handleMaxPriceInput}
