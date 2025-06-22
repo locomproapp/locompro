@@ -33,10 +33,10 @@ const CreateBuyRequest = () => {
           
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              Crear Nueva Solicitud
+              Crear Publicación
             </h1>
             <p className="text-muted-foreground">
-              Describe lo que estás buscando y recibe ofertas de vendedores
+              Describí el producto que quieras comprar
             </p>
           </div>
 

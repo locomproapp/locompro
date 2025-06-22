@@ -51,9 +51,9 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>¿Qué estás buscando? *</FormLabel>
+              <FormLabel>¿Qué estás buscando?</FormLabel>
               <FormControl>
-                <Input placeholder="Ej: iPhone 14 Pro Max 256GB" {...field} />
+                <Input placeholder="Ej: Licuadora, Pelota, Computadora, etc." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -65,10 +65,10 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Descripción (opcional)</FormLabel>
+              <FormLabel>Descripción</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Describe con más detalle lo que buscas..."
+                  placeholder="Describí las carácteristicas de lo que buscás"
                   rows={4}
                   {...field}
                 />
@@ -90,7 +90,7 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
           name="zone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Zona *</FormLabel>
+              <FormLabel>Zona</FormLabel>
               <FormControl>
                 <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
               </FormControl>
@@ -158,7 +158,7 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
           name="images"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Fotos de Referencia *</FormLabel>
+              <FormLabel>Fotos de Referencia</FormLabel>
               <FormControl>
                 <BuyRequestImageUpload
                   images={field.value}
@@ -185,7 +185,7 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
             type="submit" 
             disabled={loading || !!priceError}
           >
-            {loading ? 'Creando...' : 'Crear Solicitud'}
+            {loading ? 'Creando...' : 'Crear Publicación'}
           </Button>
         </div>
       </form>

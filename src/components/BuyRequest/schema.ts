@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const buyRequestSchema = z.object({
   title: z.string().min(1, 'El título es requerido'),
-  description: z.string().optional(),
+  description: z.string().min(1, 'La descripción es requerida'),
   min_price: z.number().min(0, 'El precio mínimo debe ser mayor a 0'),
   max_price: z.number().min(0, 'El precio máximo debe ser mayor a 0'),
   zone: z.string().min(1, 'La zona es requerida'),
