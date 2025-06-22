@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Calendar, Eye } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface BuyRequest {
   id: string;
@@ -28,6 +28,7 @@ interface SearchBuyRequestsProps {
 
 const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' }) => {
   const queryClient = useQueryClient();
+  const location = useLocation();
 
   const { data: buyRequests, isLoading, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
@@ -62,11 +63,24 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
     }
   });
 
+  // Handle refresh when coming from a deletion
+  React.useEffect(() => {
+    if (location.state?.refresh || location.state?.deletedRequestId) {
+      console.log('Refreshing marketplace after deletion...');
+      queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
+      refetch();
+      
+      // Clear the state to prevent unnecessary refetches
+      if (location.state && 'replace' in window.history) {
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [location.state, queryClient, refetch]);
+
   // Listen for global events to refresh the data
   React.useEffect(() => {
     const handleBuyRequestDeleted = (event: any) => {
       console.log('Buy request deleted event received, refreshing data...', event.detail);
-      // Force immediate refetch and cache invalidation
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       refetch();
     };
@@ -85,12 +99,6 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       window.removeEventListener('buyRequestUpdated', handleBuyRequestUpdated);
     };
   }, [queryClient, refetch]);
-
-  // Force refresh when component mounts (for navigation after deletion)
-  React.useEffect(() => {
-    console.log('SearchBuyRequests component mounted, invalidating cache...');
-    queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
-  }, [queryClient]);
 
   const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');

@@ -54,12 +54,6 @@ const ImageAndActionsCard = ({
       
       console.log('Buy request deleted successfully');
       
-      // Immediately dispatch the deletion event before navigation
-      console.log('Dispatching buyRequestDeleted event immediately');
-      window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
-        detail: { buyRequestId: buyRequest.id } 
-      }));
-      
       toast({
         title: '¡Publicación eliminada!',
         description: 'La publicación fue borrada exitosamente.'
@@ -67,8 +61,13 @@ const ImageAndActionsCard = ({
       
       setDeleteDialogOpen(false);
       
-      // Navigate after dispatching the event
-      navigate('/marketplace');
+      // Navigate to marketplace and let the component handle the refresh
+      navigate('/marketplace', { 
+        state: { 
+          deletedRequestId: buyRequest.id,
+          refresh: true 
+        } 
+      });
       
     } catch (error) {
       console.error('Error deleting buy request:', error);

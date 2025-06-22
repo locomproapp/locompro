@@ -10,8 +10,6 @@ import SearchBar from '@/components/SearchBar';
 
 const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Tomar el search param de la URL en el montaje
   const location = useLocation();
 
   useEffect(() => {
@@ -22,7 +20,6 @@ const Marketplace = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Quitamos activePage porque Navigation no lo acepta */}
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
