@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +27,9 @@ interface SearchBuyRequestsProps {
 }
 
 const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' }) => {
-  const { data: buyRequests, isLoading } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: buyRequests, isLoading, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
       let query = supabase
@@ -58,6 +61,29 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       })) as BuyRequest[];
     }
   });
+
+  // Listen for global events to refresh the data
+  React.useEffect(() => {
+    const handleBuyRequestDeleted = () => {
+      // Invalidate and refetch the buy requests
+      queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
+      refetch();
+    };
+
+    const handleBuyRequestUpdated = () => {
+      // Invalidate and refetch the buy requests
+      queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
+      refetch();
+    };
+
+    window.addEventListener('buyRequestDeleted', handleBuyRequestDeleted);
+    window.addEventListener('buyRequestUpdated', handleBuyRequestUpdated);
+
+    return () => {
+      window.removeEventListener('buyRequestDeleted', handleBuyRequestDeleted);
+      window.removeEventListener('buyRequestUpdated', handleBuyRequestUpdated);
+    };
+  }, [queryClient, refetch]);
 
   const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');

@@ -28,6 +28,11 @@ const BuyRequestActions = ({ buyRequestId, buyRequestTitle, onDelete, onUpdate }
           title: "Solicitud eliminada",
           description: "La solicitud ha sido eliminada exitosamente"
         });
+        
+        // Dispatch global event to update marketplace and other views
+        window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
+          detail: { buyRequestId } 
+        }));
       } else {
         toast({
           title: "Error",
@@ -44,6 +49,14 @@ const BuyRequestActions = ({ buyRequestId, buyRequestTitle, onDelete, onUpdate }
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleEditUpdate = () => {
+    onUpdate();
+    // Dispatch global event to update marketplace and other views
+    window.dispatchEvent(new CustomEvent('buyRequestUpdated', { 
+      detail: { buyRequestId } 
+    }));
   };
 
   return (
@@ -93,7 +106,7 @@ const BuyRequestActions = ({ buyRequestId, buyRequestTitle, onDelete, onUpdate }
         buyRequestId={buyRequestId}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
-        onUpdate={onUpdate}
+        onUpdate={handleEditUpdate}
       />
     </>
   );

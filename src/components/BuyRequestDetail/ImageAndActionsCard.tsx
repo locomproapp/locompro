@@ -47,13 +47,21 @@ const ImageAndActionsCard = ({
         .eq('id', buyRequest.id);
 
       if (error) throw error;
+      
       toast({
         title: '¡Publicación eliminada!',
         description: 'La publicación fue borrada exitosamente.'
       });
+      
+      // Dispatch global event to update marketplace and other views
+      window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
+        detail: { buyRequestId: buyRequest.id } 
+      }));
+      
       setDeleteDialogOpen(false);
       navigate('/marketplace');
     } catch (error) {
+      console.error('Error deleting buy request:', error);
       toast({
         title: 'Error',
         description: 'No se pudo eliminar la publicación.',
@@ -62,6 +70,16 @@ const ImageAndActionsCard = ({
     } finally {
       setDeleting(false);
     }
+  };
+
+  const handleEditUpdate = () => {
+    if (onUpdate) {
+      onUpdate();
+    }
+    // Dispatch global event to update marketplace and other views
+    window.dispatchEvent(new CustomEvent('buyRequestUpdated', { 
+      detail: { buyRequestId: buyRequest.id } 
+    }));
   };
 
   return (
@@ -115,7 +133,7 @@ const ImageAndActionsCard = ({
           buyRequestId={buyRequest.id}
           open={editOpen}
           onOpenChange={setEditOpen}
-          onUpdate={onUpdate || (() => window.location.reload())}
+          onUpdate={handleEditUpdate}
         />
       )}
 
