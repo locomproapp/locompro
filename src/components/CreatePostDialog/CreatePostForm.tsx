@@ -11,10 +11,10 @@ import { EditBuyRequestValues } from '@/components/edit-buy-request/schema';
 import { useToast } from '@/hooks/use-toast';
 
 function formatCurrency(value: string) {
-  if (!value || value === "") return "$";
+  if (!value || value === "" || value === "0") return "";
   // Remove all non-digit characters
   const numericValue = value.replace(/\D/g, "");
-  if (numericValue === "") return "$";
+  if (numericValue === "" || numericValue === "0") return "";
   // Format with thousands separator using dots
   const number = parseInt(numericValue);
   return "$" + number.toLocaleString("es-AR").replace(/,/g, ".");
@@ -120,7 +120,7 @@ const CreatePostForm = ({
               <Input
                 type="text"
                 inputMode="numeric"
-                value={minPriceInput ? formatCurrency(minPriceInput) : "$"}
+                value={formatCurrency(minPriceInput)}
                 placeholder="$"
                 autoComplete="off"
                 onChange={handleMinPriceInput}
@@ -134,7 +134,7 @@ const CreatePostForm = ({
               <Input
                 type="text"
                 inputMode="numeric"
-                value={maxPriceInput ? formatCurrency(maxPriceInput) : "$"}
+                value={formatCurrency(maxPriceInput)}
                 placeholder="$"
                 autoComplete="off"
                 onChange={handleMaxPriceInput}
