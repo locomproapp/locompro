@@ -72,8 +72,8 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
     onOpenChange(false);
   };
 
-  const handleImageContainerClick = (e: React.MouseEvent) => {
-    // Prevenir que el click en la imagen o sus controles cierre el modal
+  const handleImageClick = (e: React.MouseEvent) => {
+    // Prevenir que el click en la imagen cierre el modal
     e.stopPropagation();
   };
 
@@ -89,7 +89,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center cursor-pointer focus:outline-none"
+          className="relative w-full h-full flex items-center justify-center cursor-default focus:outline-none"
           onClick={handleOverlayClick}
           tabIndex={-1}
         >
@@ -125,21 +125,20 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
             </Button>
           )}
 
-          {/* Image Container with fixed dimensions */}
-          <div 
-            className="flex items-center justify-center p-8 cursor-default focus:outline-none"
-            onClick={handleImageContainerClick}
+          {/* Image with uniform dimensions */}
+          <img
+            src={images[currentIndex]}
+            alt={`Imagen ${currentIndex + 1}`}
+            className="select-none cursor-default focus:outline-none"
+            onClick={handleImageClick}
             tabIndex={-1}
-            style={{ width: '80vw', height: '80vh', maxWidth: '800px', maxHeight: '600px' }}
-          >
-             <img
-              src={images[currentIndex]}
-              alt={`Imagen ${currentIndex + 1}`}
-              className="w-full h-full object-contain select-none cursor-default focus:outline-none"
-              onClick={(e) => e.stopPropagation()}
-              tabIndex={-1}
-            />
-          </div>
+            style={{ 
+              width: '500px', 
+              height: '500px', 
+              objectFit: 'contain',
+              backgroundColor: 'transparent'
+            }}
+          />
 
           {/* Next Button */}
           {images.length > 1 && (
