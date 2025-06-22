@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ImageGallery from '@/components/ImageGallery';
@@ -42,17 +43,30 @@ const ImageAndActionsCard = ({
     try {
       console.log('Deleting buy request:', buyRequest.id);
       
-      const { error } = await supabase
+      // First, delete related offers to maintain referential integrity
+      const { error: offersError } = await supabase
+        .from('buy_request_offers')
+        .delete()
+        .eq('buy_request_id', buyRequest.id);
+
+      if (offersError) {
+        console.error('Error deleting related offers:', offersError);
+        // Continue with buy request deletion even if offers deletion fails
+      }
+
+      // Then delete the buy request
+      const { error, data } = await supabase
         .from('buy_requests')
         .delete()
-        .eq('id', buyRequest.id);
+        .eq('id', buyRequest.id)
+        .eq('user_id', user?.id); // Extra security check
 
       if (error) {
         console.error('Supabase delete error:', error);
-        throw error;
+        throw new Error(`Delete failed: ${error.message}`);
       }
       
-      console.log('Buy request deleted successfully');
+      console.log('Buy request deleted successfully:', data);
       
       toast({
         title: '¡Publicación eliminada!',
@@ -61,19 +75,21 @@ const ImageAndActionsCard = ({
       
       setDeleteDialogOpen(false);
       
-      // Navigate to marketplace and let the component handle the refresh
+      // Navigate with deletion flag and immediate cache invalidation
       navigate('/marketplace', { 
         state: { 
           deletedRequestId: buyRequest.id,
-          refresh: true 
-        } 
+          refresh: true,
+          timestamp: Date.now() // Force unique state
+        },
+        replace: true // Replace current history entry
       });
       
     } catch (error) {
       console.error('Error deleting buy request:', error);
       toast({
         title: 'Error',
-        description: 'No se pudo eliminar la publicación.',
+        description: 'No se pudo eliminar la publicación. Por favor, intenta nuevamente.',
         variant: 'destructive'
       });
     } finally {

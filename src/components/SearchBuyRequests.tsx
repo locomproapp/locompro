@@ -33,6 +33,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   const { data: buyRequests, isLoading, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
+      console.log('Fetching buy requests from database...');
       let query = supabase
         .from('buy_requests')
         .select(`
@@ -47,7 +48,12 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching buy requests:', error);
+        throw error;
+      }
+      
+      console.log(`Fetched ${data?.length || 0} buy requests from database`);
       
       return (data || []).map(request => ({
         id: request.id,
@@ -60,27 +66,37 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         created_at: request.created_at,
         profiles: request.profiles
       })) as BuyRequest[];
-    }
+    },
+    staleTime: 0, // Always refetch to ensure fresh data
+    gcTime: 0, // Don't cache data
   });
 
   // Handle refresh when coming from a deletion
   React.useEffect(() => {
     if (location.state?.refresh || location.state?.deletedRequestId) {
-      console.log('Refreshing marketplace after deletion...');
+      console.log('Deletion detected, forcing complete data refresh...');
+      
+      // Force a complete cache invalidation and refetch
+      queryClient.removeQueries({ queryKey: ['buy-requests'] });
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
+      
+      // Force immediate refetch
       refetch();
       
-      // Clear the state to prevent unnecessary refetches
-      if (location.state && 'replace' in window.history) {
-        window.history.replaceState({}, document.title);
-      }
+      // Clear the state after handling
+      setTimeout(() => {
+        if (window.history.replaceState) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }, 100);
     }
   }, [location.state, queryClient, refetch]);
 
   // Listen for global events to refresh the data
   React.useEffect(() => {
     const handleBuyRequestDeleted = (event: any) => {
-      console.log('Buy request deleted event received, refreshing data...', event.detail);
+      console.log('Buy request deleted event received, forcing refresh...', event.detail);
+      queryClient.removeQueries({ queryKey: ['buy-requests'] });
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       refetch();
     };
