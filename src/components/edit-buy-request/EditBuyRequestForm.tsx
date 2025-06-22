@@ -137,7 +137,7 @@ export const EditBuyRequestForm = ({
       <FormField control={control} name="images" render={({
       field
     }) => <FormItem>
-            <FormLabel>Fotos</FormLabel>
+            <FormLabel>Imágenes</FormLabel>
             <FormControl>
               <BuyRequestImageUpload images={field.value || []} setImages={field.onChange} />
             </FormControl>
