@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -83,13 +82,13 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
 
       form.reset(formData);
 
-      // Actualizar los inputs de precio formateados
-      setMinPriceInput(formatCurrency(data.min_price));
-      setMaxPriceInput(formatCurrency(data.max_price));
+      // Set raw numeric values for price inputs (without formatting)
+      setMinPriceInput(data.min_price ? data.min_price.toString() : '');
+      setMaxPriceInput(data.max_price ? data.max_price.toString() : '');
       
-      console.log('=== PRECIOS FORMATEADOS ===');
-      console.log('Min price input:', formatCurrency(data.min_price));
-      console.log('Max price input:', formatCurrency(data.max_price));
+      console.log('=== PRECIOS SIN FORMATO ===');
+      console.log('Min price input:', data.min_price ? data.min_price.toString() : '');
+      console.log('Max price input:', data.max_price ? data.max_price.toString() : '');
       
     } catch (error) {
       console.error('Error fetching buy request:', error);
@@ -111,8 +110,9 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
   }, [open, buyRequestId, fetchBuyRequest]);
 
   useEffect(() => {
-    const min = parseCurrencyInput(minPriceInput);
-    const max = parseCurrencyInput(maxPriceInput);
+    const min = minPriceInput ? parseInt(minPriceInput.replace(/\D/g, ''), 10) : null;
+    const max = maxPriceInput ? parseInt(maxPriceInput.replace(/\D/g, ''), 10) : null;
+    
     if (min !== null && max !== null && max < min) {
       setPriceError('El máximo debe ser mayor al mínimo');
     } else {
@@ -121,15 +121,17 @@ export const useEditBuyRequest = ({ buyRequestId, open, onSuccess }: UseEditBuyR
   }, [minPriceInput, maxPriceInput]);
 
   const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setMinPriceInput(val);
-    form.setValue("min_price", parseCurrencyInput(val));
+    // Extract only numeric value
+    const numericValue = e.target.value.replace(/\D/g, '');
+    setMinPriceInput(numericValue);
+    form.setValue("min_price", numericValue ? parseInt(numericValue, 10) : null);
   };
   
   const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setMaxPriceInput(val);
-    form.setValue("max_price", parseCurrencyInput(val));
+    // Extract only numeric value
+    const numericValue = e.target.value.replace(/\D/g, '');
+    setMaxPriceInput(numericValue);
+    form.setValue("max_price", numericValue ? parseInt(numericValue, 10) : null);
   };
   
   const onSubmit = async (values: EditBuyRequestValues) => {

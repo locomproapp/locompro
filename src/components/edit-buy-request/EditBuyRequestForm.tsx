@@ -18,6 +18,18 @@ interface EditBuyRequestFormProps {
   isFetching: boolean;
 }
 
+const formatCurrencyForDisplay = (value: string) => {
+  if (!value || value === '') return '';
+  
+  // Remove all non-digit characters
+  const numericValue = value.replace(/\D/g, '');
+  if (numericValue === '') return '$';
+  
+  // Format with thousands separator using dots
+  const number = parseInt(numericValue, 10);
+  return '$' + number.toLocaleString('es-AR').replace(/,/g, '.');
+};
+
 export const EditBuyRequestForm = ({
   control,
   minPriceInput,
@@ -82,7 +94,7 @@ export const EditBuyRequestForm = ({
             <Input
               type="text"
               inputMode="numeric"
-              value={minPriceInput}
+              value={formatCurrencyForDisplay(minPriceInput)}
               placeholder="$"
               autoComplete="off"
               onChange={handleMinPriceInput}
@@ -96,7 +108,7 @@ export const EditBuyRequestForm = ({
             <Input
               type="text"
               inputMode="numeric"
-              value={maxPriceInput}
+              value={formatCurrencyForDisplay(maxPriceInput)}
               placeholder="$"
               autoComplete="off"
               onChange={handleMaxPriceInput}
