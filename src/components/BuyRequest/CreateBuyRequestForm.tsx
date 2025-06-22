@@ -11,14 +11,16 @@ import PriceInputFields from './PriceInputFields';
 import { buyRequestSchema, BuyRequestFormData } from './schema';
 import { useCreateBuyRequest } from '@/hooks/useCreateBuyRequest';
 import { useFormValidation } from './useFormValidation';
-
 interface CreateBuyRequestFormProps {
   onCancel?: () => void;
 }
-
-const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
-  const { createBuyRequest, loading } = useCreateBuyRequest();
-
+const CreateBuyRequestForm = ({
+  onCancel
+}: CreateBuyRequestFormProps) => {
+  const {
+    createBuyRequest,
+    loading
+  } = useCreateBuyRequest();
   const form = useForm<BuyRequestFormData>({
     resolver: zodResolver(buyRequestSchema),
     defaultValues: {
@@ -29,88 +31,58 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
       zone: '',
       condition: 'cualquiera',
       reference_url: '',
-      images: [],
-    },
+      images: []
+    }
   });
-
   const minPrice = form.watch('min_price');
   const maxPrice = form.watch('max_price');
-  const { priceError } = useFormValidation(minPrice, maxPrice);
-
+  const {
+    priceError
+  } = useFormValidation(minPrice, maxPrice);
   const onSubmit = async (data: BuyRequestFormData) => {
     if (priceError) return;
     await createBuyRequest(data);
   };
-
-  return (
-    <Form {...form}>
+  return <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
+        <FormField control={form.control} name="title" render={({
+        field
+      }) => <FormItem>
               <FormLabel>¿Qué estás buscando?</FormLabel>
               <FormControl>
                 <Input placeholder="Ej: Licuadora, Pelota, Computadora, etc." {...field} />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
+            </FormItem>} />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
+        <FormField control={form.control} name="description" render={({
+        field
+      }) => <FormItem>
               <FormLabel>Descripción</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Describí las carácteristicas de lo que buscás"
-                  rows={4}
-                  {...field}
-                />
+                <Textarea placeholder="Describí las carácteristicas de lo que buscás" rows={4} {...field} />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
+            </FormItem>} />
 
-        <PriceInputFields
-          minPriceValue={minPrice}
-          maxPriceValue={maxPrice}
-          onMinPriceChange={(value) => form.setValue('min_price', value)}
-          onMaxPriceChange={(value) => form.setValue('max_price', value)}
-          priceError={priceError}
-        />
+        <PriceInputFields minPriceValue={minPrice} maxPriceValue={maxPrice} onMinPriceChange={value => form.setValue('min_price', value)} onMaxPriceChange={value => form.setValue('max_price', value)} priceError={priceError} />
 
-        <FormField
-          control={form.control}
-          name="zone"
-          render={({ field }) => (
-            <FormItem>
+        <FormField control={form.control} name="zone" render={({
+        field
+      }) => <FormItem>
               <FormLabel>Zona</FormLabel>
               <FormControl>
                 <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
+            </FormItem>} />
 
-        <FormField
-          control={form.control}
-          name="condition"
-          render={({ field }) => (
-            <FormItem>
+        <FormField control={form.control} name="condition" render={({
+        field
+      }) => <FormItem>
               <FormLabel>Condición del producto</FormLabel>
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  className="flex gap-6 mt-2"
-                >
+                <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-6 mt-2">
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <RadioGroupItem value="nuevo" />
@@ -132,65 +104,37 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
                 </RadioGroup>
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
+            </FormItem>} />
 
-        <FormField
-          control={form.control}
-          name="reference_url"
-          render={({ field }) => (
-            <FormItem>
+        <FormField control={form.control} name="reference_url" render={({
+        field
+      }) => <FormItem>
               <FormLabel>Enlace de referencia (opcional)</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="https://ejemplo.com/producto" 
-                  {...field} 
-                />
+                <Input placeholder="https://ejemplo.com/producto" {...field} />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
+            </FormItem>} />
 
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Fotos de Referencia</FormLabel>
+        <FormField control={form.control} name="images" render={({
+        field
+      }) => <FormItem>
+              <FormLabel>Imágenes</FormLabel>
               <FormControl>
-                <BuyRequestImageUpload
-                  images={field.value}
-                  setImages={field.onChange}
-                />
+                <BuyRequestImageUpload images={field.value} setImages={field.onChange} />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
+            </FormItem>} />
 
         <div className="flex gap-2 pt-4">
-          {onCancel && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={loading}
-            >
+          {onCancel && <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
               Cancelar
-            </Button>
-          )}
-          <Button 
-            type="submit" 
-            disabled={loading || !!priceError}
-          >
+            </Button>}
+          <Button type="submit" disabled={loading || !!priceError}>
             {loading ? 'Creando...' : 'Crear Publicación'}
           </Button>
         </div>
       </form>
-    </Form>
-  );
+    </Form>;
 };
-
 export default CreateBuyRequestForm;

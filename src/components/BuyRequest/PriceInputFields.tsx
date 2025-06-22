@@ -27,14 +27,14 @@ const PriceInputFields = ({
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
         <FormItem>
-          <FormLabel>Precio Mínimo</FormLabel>
+          <FormLabel>Precio mínimo</FormLabel>
           <FormControl>
             <Input type="text" inputMode="numeric" value={formatCurrency(minPriceValue)} onChange={e => onMinPriceChange(parseCurrency(e.target.value))} placeholder="$0" autoComplete="off" />
           </FormControl>
           <FormMessage />
         </FormItem>
         <FormItem>
-          <FormLabel>Precio Máximo</FormLabel>
+          <FormLabel>Precio máximo</FormLabel>
           <FormControl>
             <Input type="text" inputMode="numeric" value={formatCurrency(maxPriceValue)} onChange={e => onMaxPriceChange(parseCurrency(e.target.value))} placeholder="$0" autoComplete="off" className={priceError ? "border-destructive focus-visible:ring-destructive" : ""} />
           </FormControl>
