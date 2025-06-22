@@ -8,13 +8,15 @@ interface PriceInputFieldsProps {
   maxPriceValue: number;
   onMinPriceChange: (value: number) => void;
   onMaxPriceChange: (value: number) => void;
+  priceError?: string | null;
 }
 
 const PriceInputFields = ({ 
   minPriceValue, 
   maxPriceValue, 
   onMinPriceChange, 
-  onMaxPriceChange 
+  onMaxPriceChange,
+  priceError
 }: PriceInputFieldsProps) => {
   const formatCurrency = (value: number) => {
     if (value === 0) return '';
@@ -54,8 +56,14 @@ const PriceInputFields = ({
               onChange={(e) => onMaxPriceChange(parseCurrency(e.target.value))}
               placeholder="$0"
               autoComplete="off"
+              className={priceError ? "border-destructive focus-visible:ring-destructive" : ""}
             />
           </FormControl>
+          {priceError && (
+            <p className="text-sm font-medium text-destructive mt-1">
+              {priceError}
+            </p>
+          )}
           <FormMessage />
         </FormItem>
       </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -83,6 +82,7 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
           maxPriceValue={maxPrice}
           onMinPriceChange={(value) => form.setValue('min_price', value)}
           onMaxPriceChange={(value) => form.setValue('max_price', value)}
+          priceError={priceError}
         />
 
         <FormField
