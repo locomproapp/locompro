@@ -48,7 +48,7 @@ export const EditBuyRequestForm = ({
       <FormField control={control} name="title" render={({
       field
     }) => <FormItem>
-            <FormLabel>¿Qué Estás Buscando?</FormLabel>
+            <FormLabel>¿Qué estás buscando?</FormLabel>
             <FormControl>
               <Input placeholder="Ej: Licuadora, Pelota, Computadora, etc." {...field} />
             </FormControl>
@@ -67,14 +67,14 @@ export const EditBuyRequestForm = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormItem>
-          <FormLabel>Precio Mínimo</FormLabel>
+          <FormLabel>Precio mínimo</FormLabel>
           <FormControl>
             <Input type="text" inputMode="numeric" value={formatCurrencyForDisplay(minPriceInput)} placeholder="$" autoComplete="off" onChange={handleMinPriceInput} />
           </FormControl>
           <FormMessage />
         </FormItem>
         <FormItem>
-          <FormLabel>Precio Máximo</FormLabel>
+          <FormLabel>Precio máximo</FormLabel>
           <FormControl>
             <Input type="text" inputMode="numeric" value={formatCurrencyForDisplay(maxPriceInput)} placeholder="$" autoComplete="off" onChange={handleMaxPriceInput} className={priceError ? 'border-destructive focus-visible:ring-destructive' : ''} />
           </FormControl>
@@ -98,7 +98,7 @@ export const EditBuyRequestForm = ({
       <FormField control={control} name="condition" render={({
       field
     }) => <FormItem>
-            <FormLabel>Condición del Producto</FormLabel>
+            <FormLabel>Condición del producto</FormLabel>
             <FormControl>
               <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-6 mt-2">
                 <FormItem className="flex items-center space-x-2">
@@ -127,7 +127,7 @@ export const EditBuyRequestForm = ({
       <FormField control={control} name="reference_url" render={({
       field
     }) => <FormItem>
-            <FormLabel>Enlace de Referencia (Opcional)</FormLabel>
+            <FormLabel>Enlace de referencia (opcional)</FormLabel>
             <FormControl>
               <Input placeholder="https://ejemplo.com/producto" {...field} value={field.value || ''} />
             </FormControl>
