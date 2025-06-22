@@ -85,7 +85,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        <DialogOverlay className="fixed inset-0 z-50 bg-black/20" />
+        <DialogOverlay className="fixed inset-0 z-50 bg-black/70" />
         <DialogPrimitive.Content
           className="fixed left-0 top-0 z-50 w-full h-full focus:outline-none focus-visible:outline-none focus-visible:ring-0 outline-none ring-0"
           onPointerDownOutside={(e) => e.preventDefault()}
