@@ -48,7 +48,7 @@ export const EditBuyRequestForm = ({
       <FormField control={control} name="title" render={({
       field
     }) => <FormItem>
-            <FormLabel>¿Qué estás buscando?</FormLabel>
+            <FormLabel>¿Qué Estás Buscando?</FormLabel>
             <FormControl>
               <Input placeholder="Ej: Licuadora, Pelota, Computadora, etc." {...field} />
             </FormControl>
@@ -127,7 +127,7 @@ export const EditBuyRequestForm = ({
       <FormField control={control} name="reference_url" render={({
       field
     }) => <FormItem>
-            <FormLabel>Enlace de Referencia (opcional)</FormLabel>
+            <FormLabel>Enlace de Referencia (Opcional)</FormLabel>
             <FormControl>
               <Input placeholder="https://ejemplo.com/producto" {...field} value={field.value || ''} />
             </FormControl>
