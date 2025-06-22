@@ -84,14 +84,16 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-black/20 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none"
+        className="bg-black/20 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none focus-visible:outline-none focus-visible:ring-0 outline-none ring-0"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
+        style={{ outline: 'none', boxShadow: 'none' }}
       >
         <div 
-          className="relative w-full h-full flex items-center justify-center cursor-default focus:outline-none"
+          className="relative w-full h-full flex items-center justify-center cursor-default focus:outline-none focus-visible:outline-none outline-none"
           onClick={handleOverlayClick}
           tabIndex={-1}
+          style={{ outline: 'none' }}
         >
           {/* Close Button */}
           <Button
@@ -101,9 +103,10 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
               e.stopPropagation();
               onOpenChange(false);
             }}
-            className="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0"
+            className="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full outline-none border-none shadow-none focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
             aria-label="Cerrar"
             tabIndex={-1}
+            style={{ outline: 'none', boxShadow: 'none', border: 'none' }}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -117,9 +120,10 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToPrevious();
               }}
-              className="absolute left-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0"
+              className="absolute left-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full outline-none border-none shadow-none focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               aria-label="Anterior"
               tabIndex={-1}
+              style={{ outline: 'none', boxShadow: 'none', border: 'none' }}
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
@@ -129,14 +133,15 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           <img
             src={images[currentIndex]}
             alt={`Imagen ${currentIndex + 1}`}
-            className="select-none cursor-default focus:outline-none"
+            className="select-none cursor-default focus:outline-none focus-visible:outline-none outline-none"
             onClick={handleImageClick}
             tabIndex={-1}
             style={{ 
               width: '500px', 
               height: '500px', 
               objectFit: 'contain',
-              backgroundColor: 'transparent'
+              backgroundColor: 'transparent',
+              outline: 'none'
             }}
           />
 
@@ -149,9 +154,10 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToNext();
               }}
-              className="absolute right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0"
+              className="absolute right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full outline-none border-none shadow-none focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               aria-label="Siguiente"
               tabIndex={-1}
+              style={{ outline: 'none', boxShadow: 'none', border: 'none' }}
             >
               <ArrowRight className="h-6 w-6" />
             </Button>
@@ -159,7 +165,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           
           {/* Image Counter */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/30 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none focus:outline-none">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/30 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none focus:outline-none outline-none">
               {currentIndex + 1} / {images.length}
             </div>
           )}
