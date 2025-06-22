@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -10,13 +10,37 @@ import { Button } from '@/components/ui/button';
 import BuyRequestImageUpload from '@/components/BuyRequestDialog/BuyRequestImageUpload';
 import { buyRequestSchema, BuyRequestFormData } from './schema';
 import { useCreateBuyRequest } from '@/hooks/useCreateBuyRequest';
+import { cn } from '@/lib/utils';
 
 interface CreateBuyRequestFormProps {
   onCancel?: () => void;
 }
 
+// Currency formatting functions
+function formatCurrency(value: number | null | undefined) {
+  if (typeof value !== "number" || isNaN(value) || value === 0) return "$";
+  return (
+    "$" +
+    value
+      .toLocaleString("es-AR", {
+        maximumFractionDigits: 0,
+        useGrouping: true,
+      })
+      .replace(/,/g, ".")
+  );
+}
+
+function parseCurrencyInput(input: string) {
+  if (!input || input === "$") return 0;
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned ? parseInt(cleaned, 10) : 0;
+}
+
 const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
   const { createBuyRequest, loading } = useCreateBuyRequest();
+  const [minPriceInput, setMinPriceInput] = useState("$");
+  const [maxPriceInput, setMaxPriceInput] = useState("$");
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   const form = useForm<BuyRequestFormData>({
     resolver: zodResolver(buyRequestSchema),
@@ -32,7 +56,32 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
     },
   });
 
+  const handleMinPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseCurrencyInput(e.target.value);
+    setMinPriceInput(formatCurrency(value));
+    form.setValue('min_price', value);
+  };
+
+  const handleMaxPriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseCurrencyInput(e.target.value);
+    setMaxPriceInput(formatCurrency(value));
+    form.setValue('max_price', value);
+  };
+
+  // Validation effect
+  useEffect(() => {
+    const minPrice = parseCurrencyInput(minPriceInput);
+    const maxPrice = parseCurrencyInput(maxPriceInput);
+    
+    if (minPrice > 0 && maxPrice > 0 && minPrice > maxPrice) {
+      setPriceError("Introduzca un precio mayor al precio mínimo");
+    } else {
+      setPriceError(null);
+    }
+  }, [minPriceInput, maxPriceInput]);
+
   const onSubmit = async (data: BuyRequestFormData) => {
+    if (priceError) return;
     await createBuyRequest(data);
   };
 
@@ -72,42 +121,42 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="min_price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Precio Mínimo *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          <FormItem>
+            <FormLabel>Precio Mínimo *</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={minPriceInput}
+                placeholder="$"
+                autoComplete="off"
+                onChange={handleMinPriceInput}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+          <FormItem>
+            <FormLabel>Precio Máximo *</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={maxPriceInput}
+                placeholder="$"
+                autoComplete="off"
+                onChange={handleMaxPriceInput}
+                className={cn(
+                  priceError && "border-destructive focus-visible:ring-destructive"
+                )}
+              />
+            </FormControl>
+            {priceError && (
+              <p className="text-destructive text-sm font-medium mt-1">
+                {priceError}
+              </p>
             )}
-          />
-          <FormField
-            control={form.control}
-            name="max_price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Precio Máximo *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormMessage />
+          </FormItem>
         </div>
 
         <FormField
@@ -208,7 +257,7 @@ const CreateBuyRequestForm = ({ onCancel }: CreateBuyRequestFormProps) => {
           )}
           <Button 
             type="submit" 
-            disabled={loading}
+            disabled={loading || !!priceError}
           >
             {loading ? 'Creando...' : 'Crear Solicitud'}
           </Button>
