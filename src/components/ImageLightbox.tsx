@@ -84,7 +84,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-black/90 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none"
+        className="bg-black/60 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -125,16 +125,17 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
             </Button>
           )}
 
-          {/* Image Container */}
+          {/* Image Container with fixed dimensions */}
           <div 
-            className="w-full h-full flex items-center justify-center p-8 cursor-default focus:outline-none"
+            className="flex items-center justify-center p-8 cursor-default focus:outline-none"
             onClick={handleImageContainerClick}
             tabIndex={-1}
+            style={{ width: '80vw', height: '80vh', maxWidth: '800px', maxHeight: '600px' }}
           >
              <img
               src={images[currentIndex]}
               alt={`Imagen ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain select-none cursor-default focus:outline-none"
+              className="w-full h-full object-contain select-none cursor-default focus:outline-none"
               onClick={(e) => e.stopPropagation()}
               tabIndex={-1}
             />
