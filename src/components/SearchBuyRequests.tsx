@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -63,16 +64,15 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
 
   // Listen for global events to refresh the data
   React.useEffect(() => {
-    const handleBuyRequestDeleted = () => {
-      console.log('Buy request deleted event received, refreshing data...');
-      // Invalidate and refetch the buy requests
+    const handleBuyRequestDeleted = (event: any) => {
+      console.log('Buy request deleted event received, refreshing data...', event.detail);
+      // Force immediate refetch and cache invalidation
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       refetch();
     };
 
     const handleBuyRequestUpdated = () => {
       console.log('Buy request updated event received, refreshing data...');
-      // Invalidate and refetch the buy requests
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       refetch();
     };
@@ -86,9 +86,9 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
     };
   }, [queryClient, refetch]);
 
-  // Also refresh data when component mounts to handle navigation after deletion
+  // Force refresh when component mounts (for navigation after deletion)
   React.useEffect(() => {
-    console.log('SearchBuyRequests component mounted, fetching fresh data...');
+    console.log('SearchBuyRequests component mounted, invalidating cache...');
     queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
   }, [queryClient]);
 

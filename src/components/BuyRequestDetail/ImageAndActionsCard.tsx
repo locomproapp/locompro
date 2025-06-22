@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ImageGallery from '@/components/ImageGallery';
@@ -55,6 +54,12 @@ const ImageAndActionsCard = ({
       
       console.log('Buy request deleted successfully');
       
+      // Immediately dispatch the deletion event before navigation
+      console.log('Dispatching buyRequestDeleted event immediately');
+      window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
+        detail: { buyRequestId: buyRequest.id } 
+      }));
+      
       toast({
         title: '¡Publicación eliminada!',
         description: 'La publicación fue borrada exitosamente.'
@@ -62,16 +67,8 @@ const ImageAndActionsCard = ({
       
       setDeleteDialogOpen(false);
       
-      // Navigate first, then dispatch the event with a slight delay
+      // Navigate after dispatching the event
       navigate('/marketplace');
-      
-      // Dispatch event after navigation with a small delay to ensure the marketplace component is ready
-      setTimeout(() => {
-        console.log('Dispatching buyRequestDeleted event');
-        window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
-          detail: { buyRequestId: buyRequest.id } 
-        }));
-      }, 100);
       
     } catch (error) {
       console.error('Error deleting buy request:', error);
