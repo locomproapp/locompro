@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ImageGallery from '@/components/ImageGallery';
@@ -54,79 +53,57 @@ const ImageAndActionsCard = ({
         throw new Error('No tienes permisos para eliminar esta publicación');
       }
 
-      // First, check if the buy request still exists and verify ownership
+      // First, verify the buy request exists and user owns it
       console.log('=== VERIFYING BUY REQUEST EXISTS ===');
       const { data: existingRequest, error: checkError } = await supabase
         .from('buy_requests')
-        .select('id, user_id, title')
+        .select('id, user_id, title, status')
         .eq('id', buyRequest.id)
-        .eq('user_id', user.id) // Double check ownership in query
         .single();
 
       if (checkError) {
         console.error('Error checking buy request:', checkError);
-        if (checkError.code === 'PGRST116') {
-          throw new Error('La publicación ya fue eliminada o no existe');
-        }
-        throw new Error(`Error al verificar la publicación: ${checkError.message}`);
+        throw new Error('Error al verificar la publicación');
       }
 
       if (!existingRequest) {
-        throw new Error('La publicación ya fue eliminada o no tienes permisos para eliminarla');
+        throw new Error('La publicación no existe o ya fue eliminada');
       }
 
-      console.log('✅ Buy request verified, proceeding with deletion...');
+      console.log('✅ Buy request verified:', existingRequest);
 
       // Delete related offers first (if any)
       console.log('=== DELETING RELATED OFFERS ===');
-      const { error: offersError, count: deletedOffersCount } = await supabase
+      const { error: offersError } = await supabase
         .from('buy_request_offers')
-        .delete({ count: 'exact' })
+        .delete()
         .eq('buy_request_id', buyRequest.id);
 
       if (offersError) {
         console.error('Error deleting related offers:', offersError);
         // Continue with deletion even if offers deletion fails
-      } else {
-        console.log(`Deleted ${deletedOffersCount || 0} related offers`);
       }
 
-      // Now delete the buy request with explicit ownership check
+      // Now delete the buy request - the RLS policy will ensure only the owner can delete
       console.log('=== DELETING BUY REQUEST ===');
-      const { error: deleteError, count: deletedCount } = await supabase
+      const { data: deletedData, error: deleteError } = await supabase
         .from('buy_requests')
-        .delete({ count: 'exact' })
+        .delete()
         .eq('id', buyRequest.id)
-        .eq('user_id', user.id); // Ensure user owns the request
+        .select(); // This will return the deleted row if successful
 
       if (deleteError) {
         console.error('Supabase delete error:', deleteError);
         throw new Error(`Error al eliminar: ${deleteError.message}`);
       }
 
-      console.log(`Delete operation result: ${deletedCount} row(s) affected`);
+      console.log('Delete operation result:', deletedData);
 
-      if (!deletedCount || deletedCount === 0) {
+      if (!deletedData || deletedData.length === 0) {
         throw new Error('No se pudo eliminar la publicación - posiblemente ya fue eliminada o no tienes permisos');
       }
 
-      // Verify deletion by trying to fetch the deleted request
-      console.log('=== VERIFYING DELETION ===');
-      const { data: verifyDeleted, error: verifyError } = await supabase
-        .from('buy_requests')
-        .select('id')
-        .eq('id', buyRequest.id)
-        .maybeSingle();
-
-      if (verifyError) {
-        console.error('Error verifying deletion:', verifyError);
-        // Don't throw here, deletion might have succeeded
-      } else if (verifyDeleted) {
-        console.error('⚠️ WARNING: Buy request still exists after deletion!', verifyDeleted);
-        throw new Error('La eliminación no se completó correctamente');
-      } else {
-        console.log('✅ Deletion verified - buy request no longer exists in database');
-      }
+      console.log('✅ Deletion successful - deleted:', deletedData.length, 'row(s)');
       
       toast({
         title: '¡Publicación eliminada!',
