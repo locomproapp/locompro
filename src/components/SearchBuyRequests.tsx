@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,7 +32,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   const { data: buyRequests, isLoading, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
-      console.log('Fetching buy requests from database...');
+      console.log('🔄 Fetching buy requests from database...');
       let query = supabase
         .from('buy_requests')
         .select(`
@@ -49,11 +48,15 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
 
       const { data, error } = await query;
       if (error) {
-        console.error('Error fetching buy requests:', error);
+        console.error('❌ Error fetching buy requests:', error);
         throw error;
       }
       
-      console.log(`Fetched ${data?.length || 0} buy requests from database`);
+      console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
+      
+      // Log the IDs of fetched requests for debugging
+      const requestIds = data?.map(r => r.id) || [];
+      console.log('📋 Current request IDs:', requestIds);
       
       return (data || []).map(request => ({
         id: request.id,
@@ -67,21 +70,31 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         profiles: request.profiles
       })) as BuyRequest[];
     },
-    staleTime: 0, // Always refetch to ensure fresh data
-    gcTime: 0, // Don't cache data
+    staleTime: 0, // Always consider data stale
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes but refetch
   });
 
   // Handle refresh when coming from a deletion
   React.useEffect(() => {
     if (location.state?.refresh || location.state?.deletedRequestId) {
-      console.log('Deletion detected, forcing complete data refresh...');
+      const deletedId = location.state?.deletedRequestId;
+      console.log('🗑️ Deletion detected, forcing complete data refresh...', { deletedId });
       
       // Force a complete cache invalidation and refetch
       queryClient.removeQueries({ queryKey: ['buy-requests'] });
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       
       // Force immediate refetch
-      refetch();
+      refetch().then((result) => {
+        if (result.data && deletedId) {
+          const stillExists = result.data.some(req => req.id === deletedId);
+          if (stillExists) {
+            console.error('⚠️ WARNING: Deleted request still appears in results!', deletedId);
+          } else {
+            console.log('✅ Deleted request successfully removed from results');
+          }
+        }
+      });
       
       // Clear the state after handling
       setTimeout(() => {
@@ -95,14 +108,28 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   // Listen for global events to refresh the data
   React.useEffect(() => {
     const handleBuyRequestDeleted = (event: any) => {
-      console.log('Buy request deleted event received, forcing refresh...', event.detail);
+      const deletedId = event.detail?.buyRequestId;
+      console.log('🗑️ Buy request deleted event received, forcing refresh...', { deletedId });
+      
+      // Remove from cache immediately
       queryClient.removeQueries({ queryKey: ['buy-requests'] });
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
-      refetch();
+      
+      // Force refetch and verify deletion
+      refetch().then((result) => {
+        if (result.data && deletedId) {
+          const stillExists = result.data.some(req => req.id === deletedId);
+          if (stillExists) {
+            console.error('⚠️ WARNING: Deleted request still appears after event!', deletedId);
+          } else {
+            console.log('✅ Event-triggered refresh successful - deleted request removed');
+          }
+        }
+      });
     };
 
     const handleBuyRequestUpdated = () => {
-      console.log('Buy request updated event received, refreshing data...');
+      console.log('📝 Buy request updated event received, refreshing data...');
       queryClient.invalidateQueries({ queryKey: ['buy-requests'] });
       refetch();
     };

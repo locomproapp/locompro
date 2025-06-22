@@ -41,32 +41,79 @@ const ImageAndActionsCard = ({
   const handleDeleteRequest = async () => {
     setDeleting(true);
     try {
-      console.log('Deleting buy request:', buyRequest.id);
+      console.log('Starting deletion process for buy request:', buyRequest.id);
+      console.log('User ID:', user?.id);
+      console.log('Buy request user ID:', buyRequest.user_id);
       
-      // First, delete related offers to maintain referential integrity
-      const { error: offersError } = await supabase
+      // Verify user owns the request
+      if (user?.id !== buyRequest.user_id) {
+        throw new Error('User does not own this buy request');
+      }
+
+      // First, verify the buy request exists before deletion
+      const { data: existingRequest, error: checkError } = await supabase
+        .from('buy_requests')
+        .select('id, user_id')
+        .eq('id', buyRequest.id)
+        .single();
+
+      if (checkError) {
+        console.error('Error checking buy request existence:', checkError);
+        throw new Error(`Cannot verify buy request exists: ${checkError.message}`);
+      }
+
+      if (!existingRequest) {
+        throw new Error('Buy request not found in database');
+      }
+
+      console.log('Buy request exists, proceeding with deletion...');
+
+      // Delete related offers first
+      const { error: offersError, count: deletedOffersCount } = await supabase
         .from('buy_request_offers')
-        .delete()
+        .delete({ count: 'exact' })
         .eq('buy_request_id', buyRequest.id);
 
       if (offersError) {
         console.error('Error deleting related offers:', offersError);
         // Continue with buy request deletion even if offers deletion fails
+      } else {
+        console.log(`Deleted ${deletedOffersCount || 0} related offers`);
       }
 
       // Then delete the buy request
-      const { error, data } = await supabase
+      const { error: deleteError, count: deletedCount } = await supabase
         .from('buy_requests')
-        .delete()
+        .delete({ count: 'exact' })
         .eq('id', buyRequest.id)
-        .eq('user_id', user?.id); // Extra security check
+        .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Supabase delete error:', error);
-        throw new Error(`Delete failed: ${error.message}`);
+      if (deleteError) {
+        console.error('Supabase delete error:', deleteError);
+        throw new Error(`Delete failed: ${deleteError.message}`);
       }
-      
-      console.log('Buy request deleted successfully:', data);
+
+      console.log(`Deleted ${deletedCount || 0} buy request(s)`);
+
+      if (deletedCount === 0) {
+        throw new Error('No buy request was deleted - possibly already deleted or permission denied');
+      }
+
+      // Verify deletion by trying to fetch the deleted request
+      const { data: verifyDeleted, error: verifyError } = await supabase
+        .from('buy_requests')
+        .select('id')
+        .eq('id', buyRequest.id)
+        .maybeSingle();
+
+      if (verifyError) {
+        console.error('Error verifying deletion:', verifyError);
+      } else if (verifyDeleted) {
+        console.error('WARNING: Buy request still exists after deletion!', verifyDeleted);
+        throw new Error('Deletion verification failed - request still exists');
+      } else {
+        console.log('✅ Deletion verified - buy request no longer exists in database');
+      }
       
       toast({
         title: '¡Publicación eliminada!',
@@ -74,22 +121,32 @@ const ImageAndActionsCard = ({
       });
       
       setDeleteDialogOpen(false);
+
+      // Dispatch global deletion event before navigation
+      console.log('Dispatching buyRequestDeleted event...');
+      window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
+        detail: { buyRequestId: buyRequest.id } 
+      }));
+      
+      // Small delay to ensure event is processed
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // Navigate with deletion flag and immediate cache invalidation
+      console.log('Navigating to marketplace with deletion state...');
       navigate('/marketplace', { 
         state: { 
           deletedRequestId: buyRequest.id,
           refresh: true,
-          timestamp: Date.now() // Force unique state
+          timestamp: Date.now()
         },
-        replace: true // Replace current history entry
+        replace: true
       });
       
     } catch (error) {
       console.error('Error deleting buy request:', error);
       toast({
         title: 'Error',
-        description: 'No se pudo eliminar la publicación. Por favor, intenta nuevamente.',
+        description: error instanceof Error ? error.message : 'No se pudo eliminar la publicación. Por favor, intenta nuevamente.',
         variant: 'destructive'
       });
     } finally {
