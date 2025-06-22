@@ -1,26 +1,22 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { CreateBuyRequestForm } from '@/components/BuyRequest';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-
 const CreateBuyRequest = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from === "/marketplace" ? "/marketplace" : "/";
-
   const backLinkHref = from === "/marketplace" ? "/marketplace" : "/";
   const backLinkText = from === "/marketplace" ? "← Volver al mercado" : "← Volver al inicio";
-
   const handleCancel = () => {
-    navigate(backLinkHref, { replace: true });
+    navigate(backLinkHref, {
+      replace: true
+    });
     window.scrollTo(0, 0);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+  return <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -35,9 +31,7 @@ const CreateBuyRequest = () => {
             <h1 className="text-2xl font-bold text-foreground mb-2">
               Crear Publicación
             </h1>
-            <p className="text-muted-foreground">
-              Describí el producto que quieras comprar
-            </p>
+            <p className="text-muted-foreground">Describí el producto que querés comprar</p>
           </div>
 
           <CreateBuyRequestForm onCancel={handleCancel} />
@@ -45,8 +39,6 @@ const CreateBuyRequest = () => {
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default CreateBuyRequest;
