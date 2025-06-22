@@ -84,7 +84,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-black/60 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none"
+        className="bg-black/20 border-none shadow-none p-0 w-full h-full max-w-[100vw] max-h-[100vh] focus:outline-none"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -101,7 +101,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
               e.stopPropagation();
               onOpenChange(false);
             }}
-            className="absolute top-4 right-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full focus:outline-none focus:ring-0"
+            className="absolute top-4 right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50"
             aria-label="Cerrar"
             tabIndex={-1}
           >
@@ -117,7 +117,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToPrevious();
               }}
-              className="absolute left-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full focus:outline-none focus:ring-0"
+              className="absolute left-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50"
               aria-label="Anterior"
               tabIndex={-1}
             >
@@ -149,7 +149,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
                 e.stopPropagation();
                 goToNext();
               }}
-              className="absolute right-4 z-50 text-white bg-black/50 hover:bg-black/80 hover:text-white rounded-full focus:outline-none focus:ring-0"
+              className="absolute right-4 z-50 text-white bg-black/30 hover:bg-black/50 hover:text-white rounded-full focus:outline-none focus:ring-0 focus:bg-black/50 active:bg-black/50"
               aria-label="Siguiente"
               tabIndex={-1}
             >
@@ -159,7 +159,7 @@ const ImageLightbox = ({ images, startIndex = 0, open, onOpenChange }: ImageLigh
           
           {/* Image Counter */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none focus:outline-none">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/30 text-white text-sm px-3 py-1.5 rounded-full select-none pointer-events-none focus:outline-none">
               {currentIndex + 1} / {images.length}
             </div>
           )}
