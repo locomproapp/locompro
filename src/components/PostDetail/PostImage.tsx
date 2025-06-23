@@ -23,7 +23,7 @@ const PostImage = ({ images }: PostImageProps) => {
 
   const mainImage = images[selectedIndex];
   const hasMoreThan6 = images.length > 6;
-  const remainingCount = images.length - 6;
+  const remainingCount = images.length - 4; // Count from 5th image onwards
 
   const handleMorePhotosClick = () => {
     setSelectedIndex(4); // Start at the 5th photo (index 4)
@@ -51,7 +51,7 @@ const PostImage = ({ images }: PostImageProps) => {
       ));
     }
 
-    // More than 6 images: show first 4, +X button, then 6th image
+    // More than 6 images: show first 4, then +X button (no additional thumbnails)
     const thumbnails = [];
     
     // First 4 images
@@ -74,7 +74,7 @@ const PostImage = ({ images }: PostImageProps) => {
       );
     }
 
-    // +X More Photos Button in 5th position
+    // +X More Photos Button in 5th position (replaces 5th thumbnail entirely)
     thumbnails.push(
       <button
         key="more-photos"
@@ -84,24 +84,6 @@ const PostImage = ({ images }: PostImageProps) => {
         <span className="text-sm font-medium text-muted-foreground">
           +{remainingCount}
         </span>
-      </button>
-    );
-
-    // 6th image (index 5)
-    thumbnails.push(
-      <button
-        key={5}
-        onClick={() => setSelectedIndex(5)}
-        className={cn(
-          "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
-          selectedIndex === 5 ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
-        )}
-      >
-        <img
-          src={images[5]}
-          alt={`Thumbnail 6`}
-          className="w-full h-full object-cover"
-        />
       </button>
     );
 
