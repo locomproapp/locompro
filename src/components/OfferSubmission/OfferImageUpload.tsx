@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, ZoomIn, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useAuth } from '@/hooks/useAuth';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 interface OfferImageUploadProps {
   value: string[];
@@ -13,19 +15,28 @@ interface OfferImageUploadProps {
 }
 
 export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadProps) => {
-  const [isDragging, setIsDragging] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
   const { uploadImages, uploading } = useImageUpload({
     bucketName: 'offer-images',
     maxFileSize: 5 * 1024 * 1024, // 5MB
     allowMultiple: true
   });
 
-  const handleFileSelect = async (files: FileList | null) => {
+  const MAX_IMAGES = 5;
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    const remainingSlots = 5 - value.length;
-    if (files.length > remainingSlots) {
-      alert(`Solo puedes subir ${remainingSlots} imagen(es) más`);
+    // Check if adding these files would exceed the limit
+    if (value.length + files.length > MAX_IMAGES) {
+      toast({
+        title: "Límite de imágenes",
+        description: `Solo podés subir hasta ${MAX_IMAGES} imágenes en total`,
+        variant: "destructive"
+      });
+      event.target.value = '';
       return;
     }
 
@@ -34,112 +45,124 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
       onChange([...value, ...uploadedUrls]);
     } catch (error) {
       console.error('Error uploading images:', error);
+    } finally {
+      // Clear the input to allow uploading the same files again
+      event.target.value = '';
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    handleFileSelect(e.dataTransfer.files);
+  const handleImageRemove = (index: number) => {
+    onChange(value.filter((_, i) => i !== index));
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+  const handleMoveImage = (index: number, direction: 'left' | 'right') => {
+    const newImages = [...value];
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newImages.length) return;
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const removeImage = (index: number) => {
-    const newImages = value.filter((_, i) => i !== index);
+    // Swap elements
+    [newImages[index], newImages[targetIndex]] = [newImages[targetIndex], newImages[index]];
     onChange(newImages);
   };
 
-  const triggerFileInput = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.multiple = true;
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const target = e.target as HTMLInputElement;
-      handleFileSelect(target.files);
-    };
-    input.click();
-  };
+  const canUploadMore = value.length < MAX_IMAGES;
 
   return (
     <div className="space-y-4">
-      {value.length < 5 && (
-        <div
-          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
-            isDragging 
-              ? 'border-primary bg-primary/10' 
-              : 'border-gray-300 hover:border-gray-400'
-          }`}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onClick={triggerFileInput}
+      <input 
+        type="file" 
+        accept="image/*" 
+        multiple 
+        onChange={handleImageUpload} 
+        disabled={uploading || !user || !canUploadMore} 
+        className="hidden" 
+        id="images-upload" 
+      />
+      <label htmlFor="images-upload">
+        <Button 
+          type="button" 
+          variant="outline" 
+          disabled={uploading || !user || !canUploadMore} 
+          className="w-full border-dashed cursor-pointer h-20" 
+          asChild
         >
-          <div className="space-y-4">
-            <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-              <Upload className="h-6 w-6 text-gray-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-2">
-                Arrastra imágenes aquí o haz click para seleccionar
-              </p>
-              <p className="text-xs text-gray-500">
-                Máximo 5MB por imagen • JPG, PNG, WebP, GIF
-              </p>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={uploading}
-              onClick={(e) => {
-                e.stopPropagation();
-                triggerFileInput();
-              }}
-            >
-              {uploading ? 'Subiendo...' : 'Seleccionar imágenes'}
-            </Button>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <Upload className="h-6 w-6" />
+            <span className="text-sm">
+              {uploading 
+                ? 'Subiendo imágenes...' 
+                : !user 
+                  ? 'Inicia sesión para subir imágenes' 
+                  : !canUploadMore
+                    ? `Máximo ${MAX_IMAGES} imágenes permitidas`
+                    : `Subir imágenes desde dispositivo (${value.length}/${MAX_IMAGES})`}
+            </span>
           </div>
-        </div>
+        </Button>
+      </label>
+      
+      {value.length === 0 && (
+        <p className="text-sm text-muted-foreground text-center">
+          Tenés que subir al menos una imagen
+        </p>
       )}
-
+      
       {value.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
-          {value.map((imageUrl, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {value.map((url, index) => (
             <div key={index} className="relative group">
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border">
-                <img
-                  src={imageUrl}
-                  alt={`Imagen ${index + 1}`}
-                  className="w-full h-full object-cover"
+              <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
+                <img 
+                  src={url} 
+                  alt={`Referencia ${index + 1}`} 
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                  onError={(e) => {
+                    console.error('Error cargando imagen:', url);
+                    e.currentTarget.src = '/placeholder.svg';
+                  }} 
                 />
               </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                className="absolute top-2 right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => removeImage(index)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
+              
+              {/* Botones de acción */}
+              <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button type="button" size="sm" variant="secondary" className="h-7 w-7 p-0">
+                      <ZoomIn className="h-3 w-3" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl">
+                    <img src={url} alt={`Referencia ${index + 1}`} className="w-full h-auto max-h-[80vh] object-contain" />
+                  </DialogContent>
+                </Dialog>
+                
+                <Button type="button" size="sm" variant="destructive" onClick={() => handleImageRemove(index)} className="h-7 w-7 p-0">
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+              
+              {/* Botones de reordenar */}
+              <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <Button type="button" size="sm" variant="secondary" onClick={() => handleMoveImage(index, 'left')} disabled={index === 0} className="h-7 w-7 p-0">
+                   <ArrowLeft className="h-3 w-3" />
+                 </Button>
+                 <Button type="button" size="sm" variant="secondary" onClick={() => handleMoveImage(index, 'right')} disabled={index === value.length - 1} className="h-7 w-7 p-0">
+                   <ArrowRight className="h-3 w-3" />
+                 </Button>
+              </div>
+
+              {/* Indicador de imagen principal */}
+              {index === 0 && (
+                <div className="absolute bottom-2 left-2">
+                  <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
+                    Principal
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>
       )}
-
-      <div className="text-sm text-gray-500">
-        {value.length}/5 imágenes subidas
-        {value.length === 0 && <span className="text-red-500"> • Mínimo 1 imagen requerida</span>}
-      </div>
 
       {error && <FormMessage>{error}</FormMessage>}
     </div>
