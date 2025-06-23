@@ -16,7 +16,7 @@ export const OfferFormFields = ({
       <FormField control={control} name="title" render={({
       field
     }) => <FormItem>
-            <FormLabel>¿Qué estás buscando? *</FormLabel>
+            <FormLabel>Título</FormLabel>
             <FormControl>
               <Input placeholder="Ej: iPhone 12 Pro usado en excelente estado" {...field} />
             </FormControl>
@@ -26,7 +26,7 @@ export const OfferFormFields = ({
       <FormField control={control} name="description" render={({
       field
     }) => <FormItem>
-            <FormLabel>Descripción *</FormLabel>
+            <FormLabel>Descripción</FormLabel>
             <FormControl>
               <Textarea placeholder="Describe tu producto, condición, características especiales..." className="resize-none" rows={4} {...field} />
             </FormControl>
@@ -40,7 +40,7 @@ export const OfferFormFields = ({
       <FormField control={control} name="zone" render={({
       field
     }) => <FormItem>
-            <FormLabel>Zona *</FormLabel>
+            <FormLabel>Zona</FormLabel>
             <FormControl>
               <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
             </FormControl>
@@ -52,7 +52,7 @@ export const OfferFormFields = ({
     }) => <FormItem>
             
             <FormControl>
-              <Textarea placeholder="Información técnica, estado, accesorios incluidos, etc." className="resize-none" rows={2} {...field} />
+              
             </FormControl>
             <FormMessage />
           </FormItem>} />
@@ -60,7 +60,7 @@ export const OfferFormFields = ({
       <FormField control={control} name="images" render={({
       field
     }) => <FormItem>
-            <FormLabel>Fotos de Referencia *</FormLabel>
+            <FormLabel>Imágenes</FormLabel>
             <FormControl>
               <OfferImageUpload value={field.value || []} onChange={field.onChange} error={control.getFieldState('images').error?.message} />
             </FormControl>
