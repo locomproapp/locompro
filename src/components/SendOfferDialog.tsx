@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -46,7 +45,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
     defaultValues: {
       title: '',
       description: '',
-      price: 0,
+      price: undefined,
       video_link: '',
       contact_info: {
         email: '',
@@ -58,11 +57,16 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
 
   // Price formatting functions
   const formatPrice = (value: string): string => {
+    // Remove everything that's not a digit
     const numericValue = value.replace(/[^\d]/g, '');
-    if (numericValue === '') return '';
+    
+    if (numericValue === '') return '$';
+    
+    // Convert to number and format with period as thousand separator
     const number = parseInt(numericValue);
-    const formatted = number.toLocaleString('es-ES');
-    return `$ ${formatted}`;
+    const formatted = number.toLocaleString('es-AR'); // Use Argentina locale for period separator
+    
+    return `$${formatted}`;
   };
 
   const parseFormattedPrice = (formattedValue: string): number | undefined => {
@@ -70,8 +74,8 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
     return numericValue === '' ? undefined : parseInt(numericValue);
   };
 
-  const getCurrentDisplayValue = (value: number) => {
-    if (!value || value === 0) return '';
+  const getCurrentDisplayValue = (value: number | undefined) => {
+    if (!value || value === 0) return '$';
     return formatPrice(value.toString());
   };
 
