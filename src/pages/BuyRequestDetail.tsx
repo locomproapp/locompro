@@ -1,9 +1,7 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SendBuyRequestOfferDialog from '@/components/SendBuyRequestOfferDialog';
 import BuyRequestOffersList from '@/components/BuyRequestOffersList';
 import { useBuyRequestDetail } from '@/hooks/useBuyRequestDetail';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,6 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 import BuyRequestInformation from '@/components/BuyRequestDetail/BuyRequestInformation';
 import PublisherCard from '@/components/BuyRequestDetail/PublisherCard';
 import ImageAndActionsCard from '@/components/BuyRequestDetail/ImageAndActionsCard';
+import { OfferSubmissionModal } from '@/components/OfferSubmission';
 
 interface BuyRequestDetailType {
   id: string;
@@ -123,24 +122,13 @@ const BuyRequestDetail = () => {
           />
         </div>
 
-        {!isOwner && isActive && user && (
+        {!isOwner && isActive && (
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <SendBuyRequestOfferDialog 
+            <OfferSubmissionModal 
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
-              onOfferSent={() => refetch()}
+              onOfferSubmitted={() => refetch()}
             />
-          </div>
-        )}
-
-        {!isOwner && !user && isActive && (
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm text-center">
-            <p className="text-muted-foreground mb-4">
-              Inicia sesión para enviar una oferta
-            </p>
-            <Button asChild>
-              <Link to="/auth">Iniciar sesión</Link>
-            </Button>
           </div>
         )}
 
