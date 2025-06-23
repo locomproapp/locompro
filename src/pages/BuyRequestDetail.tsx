@@ -41,6 +41,22 @@ const BuyRequestDetail = () => {
     }
   }, [id, refetch]);
 
+  const handleOfferSubmitted = () => {
+    // Force a complete refresh of the page data
+    if (refetch) {
+      refetch();
+    }
+    // Small delay to ensure database changes are propagated
+    setTimeout(() => {
+      if (refetch) {
+        refetch();
+      }
+    }, 500);
+    
+    // Force refresh of the offers list component by triggering a re-render
+    window.location.reload();
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -127,7 +143,7 @@ const BuyRequestDetail = () => {
             <OfferSubmissionModal 
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
-              onOfferSubmitted={() => refetch()}
+              onOfferSubmitted={handleOfferSubmitted}
             />
           </div>
         )}
@@ -136,6 +152,7 @@ const BuyRequestDetail = () => {
           <BuyRequestOffersList 
             buyRequestId={buyRequest.id}
             buyRequestOwnerId={buyRequest.user_id}
+            key={`offers-${Date.now()}`} // Force re-render with timestamp key
           />
         </div>
       </main>

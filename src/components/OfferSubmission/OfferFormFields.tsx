@@ -5,6 +5,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PriceInput } from './PriceInput';
+import { OfferImageUpload } from './OfferImageUpload';
 import { OfferSubmissionData } from './offerSubmissionSchema';
 
 interface OfferFormFieldsProps {
@@ -65,7 +66,7 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Descripción</FormLabel>
+            <FormLabel>Descripción *</FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Describe tu producto, condición, características especiales..."
@@ -84,10 +85,10 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
         name="characteristics"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Características (opcional)</FormLabel>
+            <FormLabel>Características *</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Información adicional en formato JSON o texto libre..."
+                placeholder="Información técnica, estado, accesorios incluidos, etc."
                 className="resize-none"
                 rows={2}
                 {...field}
@@ -95,6 +96,18 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
             </FormControl>
             <FormMessage />
           </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="images"
+        render={({ field }) => (
+          <OfferImageUpload
+            value={field.value || []}
+            onChange={field.onChange}
+            error={control.getFieldState('images').error?.message}
+          />
         )}
       />
     </>

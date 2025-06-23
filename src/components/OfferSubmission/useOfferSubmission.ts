@@ -34,12 +34,12 @@ export const useOfferSubmission = ({ buyRequestId, onSuccess }: UseOfferSubmissi
         seller_id: user.id,
         title: data.title,
         price: data.price,
-        description: data.description || null,
+        description: data.description,
+        images: data.images,
         status: 'pending',
-        // Store characteristics and zone in a structured way
         contact_info: {
           zone: data.zone,
-          characteristics: data.characteristics || null,
+          characteristics: data.characteristics,
         },
       };
 
