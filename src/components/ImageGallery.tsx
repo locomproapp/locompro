@@ -24,13 +24,90 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
   }
 
   const mainImage = images[selectedIndex];
-  const maxThumbnails = 6;
-  const visibleThumbnails = images.slice(0, maxThumbnails);
-  const remainingCount = images.length - maxThumbnails;
+  const hasMoreThan6 = images.length > 6;
+  const remainingCount = images.length - 6;
 
   const handleMorePhotosClick = () => {
-    setSelectedIndex(6); // Start at the 7th photo (index 6)
+    setSelectedIndex(4); // Start at the 5th photo (index 4)
     setLightboxOpen(true);
+  };
+
+  const renderThumbnails = () => {
+    if (!hasMoreThan6) {
+      // Show all thumbnails if 6 or fewer images
+      return images.map((image, index) => (
+        <button
+          key={index}
+          onClick={() => setSelectedIndex(index)}
+          className={cn(
+            "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
+            selectedIndex === index ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
+          )}
+        >
+          <img
+            src={image}
+            alt={`Thumbnail ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </button>
+      ));
+    }
+
+    // More than 6 images: show first 4, +X button, then 6th image
+    const thumbnails = [];
+    
+    // First 4 images
+    for (let i = 0; i < 4; i++) {
+      thumbnails.push(
+        <button
+          key={i}
+          onClick={() => setSelectedIndex(i)}
+          className={cn(
+            "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
+            selectedIndex === i ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
+          )}
+        >
+          <img
+            src={images[i]}
+            alt={`Thumbnail ${i + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </button>
+      );
+    }
+
+    // +X More Photos Button in 5th position
+    thumbnails.push(
+      <button
+        key="more-photos"
+        onClick={handleMorePhotosClick}
+        className="w-20 h-20 flex-shrink-0 rounded-lg border-2 border-transparent hover:border-muted-foreground/50 bg-muted flex items-center justify-center transition-all"
+      >
+        <span className="text-sm font-medium text-muted-foreground">
+          +{remainingCount}
+        </span>
+      </button>
+    );
+
+    // 6th image (index 5)
+    thumbnails.push(
+      <button
+        key={5}
+        onClick={() => setSelectedIndex(5)}
+        className={cn(
+          "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
+          selectedIndex === 5 ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
+        )}
+      >
+        <img
+          src={images[5]}
+          alt={`Thumbnail 6`}
+          className="w-full h-full object-cover"
+        />
+      </button>
+    );
+
+    return thumbnails;
   };
 
   return (
@@ -55,34 +132,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
         {/* Thumbnails */}
         {images.length > 1 && (
           <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[500px] pb-2 md:pb-0 md:pl-2">
-            {visibleThumbnails.map((image, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedIndex(index)}
-                className={cn(
-                  "w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
-                  selectedIndex === index ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
-                )}
-              >
-                <img
-                  src={image}
-                  alt={`Thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
-            
-            {/* +X More Photos Button */}
-            {remainingCount > 0 && (
-              <button
-                onClick={handleMorePhotosClick}
-                className="w-20 h-20 flex-shrink-0 rounded-lg border-2 border-transparent hover:border-muted-foreground/50 bg-muted flex items-center justify-center transition-all"
-              >
-                <span className="text-sm font-medium text-muted-foreground">
-                  +{remainingCount}
-                </span>
-              </button>
-            )}
+            {renderThumbnails()}
           </div>
         )}
       </div>
