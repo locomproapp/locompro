@@ -39,6 +39,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [priceDisplayValue, setPriceDisplayValue] = useState('$');
 
   const form = useForm<OfferFormData>({
     resolver: zodResolver(offerSchema),
@@ -56,7 +57,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
   });
 
   // Price formatting functions
-  const formatPrice = (value: string): string => {
+  const formatPriceDisplay = (value: string): string => {
     // Remove everything that's not a digit
     const numericValue = value.replace(/[^\d]/g, '');
     
@@ -74,9 +75,20 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
     return numericValue === '' ? undefined : parseInt(numericValue);
   };
 
-  const getCurrentDisplayValue = (value: number | undefined) => {
-    if (!value || value === 0) return '$';
-    return formatPrice(value.toString());
+  const handlePriceChange = (value: string, onChange: (value: number | undefined) => void) => {
+    // Always ensure the value starts with $
+    let processedValue = value;
+    if (!value.startsWith('$')) {
+      processedValue = '$' + value.replace(/[^\d]/g, '');
+    }
+
+    // Format the display value
+    const formattedDisplay = formatPriceDisplay(processedValue);
+    setPriceDisplayValue(formattedDisplay);
+
+    // Update the form value
+    const numericValue = parseFormattedPrice(formattedDisplay);
+    onChange(numericValue);
   };
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,6 +206,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
       // Limpiar formulario y estado
       form.reset();
       setSelectedImages([]);
+      setPriceDisplayValue('$');
       
       // Limpiar URLs de previsualización
       imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
@@ -219,6 +232,13 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
       imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
     };
   }, []);
+
+  // Reset price display when dialog opens/closes
+  React.useEffect(() => {
+    if (open) {
+      setPriceDisplayValue('$');
+    }
+  }, [open]);
 
   if (!user) {
     return null;
@@ -265,13 +285,9 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
                   <FormControl>
                     <Input
                       type="text"
-                      placeholder="Ingresa el precio"
-                      value={getCurrentDisplayValue(field.value)}
-                      onChange={(e) => {
-                        const rawValue = e.target.value;
-                        const numericValue = parseFormattedPrice(rawValue);
-                        field.onChange(numericValue);
-                      }}
+                      placeholder="$"
+                      value={priceDisplayValue}
+                      onChange={(e) => handlePriceChange(e.target.value, field.onChange)}
                     />
                   </FormControl>
                   <FormMessage />
