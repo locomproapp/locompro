@@ -24,6 +24,14 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
   }
 
   const mainImage = images[selectedIndex];
+  const maxThumbnails = 6;
+  const visibleThumbnails = images.slice(0, maxThumbnails);
+  const remainingCount = images.length - maxThumbnails;
+
+  const handleMorePhotosClick = () => {
+    setSelectedIndex(6); // Start at the 7th photo (index 6)
+    setLightboxOpen(true);
+  };
 
   return (
     <>
@@ -47,7 +55,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
         {/* Thumbnails */}
         {images.length > 1 && (
           <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[500px] pb-2 md:pb-0 md:pl-2">
-            {images.map((image, index) => (
+            {visibleThumbnails.map((image, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedIndex(index)}
@@ -63,6 +71,18 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                 />
               </button>
             ))}
+            
+            {/* +X More Photos Button */}
+            {remainingCount > 0 && (
+              <button
+                onClick={handleMorePhotosClick}
+                className="w-20 h-20 flex-shrink-0 rounded-lg border-2 border-transparent hover:border-muted-foreground/50 bg-muted flex items-center justify-center transition-all"
+              >
+                <span className="text-sm font-medium text-muted-foreground">
+                  +{remainingCount}
+                </span>
+              </button>
+            )}
           </div>
         )}
       </div>
