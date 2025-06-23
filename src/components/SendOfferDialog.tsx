@@ -56,6 +56,25 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
     },
   });
 
+  // Price formatting functions
+  const formatPrice = (value: string): string => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (numericValue === '') return '';
+    const number = parseInt(numericValue);
+    const formatted = number.toLocaleString('es-ES');
+    return `$ ${formatted}`;
+  };
+
+  const parseFormattedPrice = (formattedValue: string): number | undefined => {
+    const numericValue = formattedValue.replace(/[^\d]/g, '');
+    return numericValue === '' ? undefined : parseInt(numericValue);
+  };
+
+  const getCurrentDisplayValue = (value: number) => {
+    if (!value || value === 0) return '';
+    return formatPrice(value.toString());
+  };
+
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     
@@ -123,9 +142,11 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
 
     try {
       setLoading(true);
+      console.log('Submitting offer with data:', data);
 
       // Subir imágenes primero
       const imageUrls = await uploadImages();
+      console.log('Images uploaded:', imageUrls);
 
       // Preparar la información de contacto
       const contactInfo = {
@@ -135,7 +156,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
         video_link: data.video_link || null,
       };
 
-      const { error } = await supabase.from('offers').insert({
+      const offerData = {
         buy_request_id: buyRequestId,
         seller_id: user.id,
         title: data.title,
@@ -143,9 +164,23 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
         price: data.price,
         images: imageUrls.length > 0 ? imageUrls : null,
         contact_info: contactInfo,
-      });
+        status: 'pending'
+      };
 
-      if (error) throw error;
+      console.log('Inserting offer:', offerData);
+
+      const { data: insertedOffer, error } = await supabase
+        .from('offers')
+        .insert(offerData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+
+      console.log('Offer inserted successfully:', insertedOffer);
 
       toast({
         title: '¡Oferta enviada!',
@@ -225,11 +260,14 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
                   <FormLabel>Precio *</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      type="text"
+                      placeholder="Ingresa el precio"
+                      value={getCurrentDisplayValue(field.value)}
+                      onChange={(e) => {
+                        const rawValue = e.target.value;
+                        const numericValue = parseFormattedPrice(rawValue);
+                        field.onChange(numericValue);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

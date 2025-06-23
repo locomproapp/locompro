@@ -8,22 +8,30 @@ export const useBuyRequestDetail = (id: string) => {
     queryFn: async () => {
       if (!id) return null;
       
+      console.log('Fetching buy request detail for ID:', id);
+      
       const { data, error } = await supabase
         .from('buy_requests')
         .select(`
           *,
-          profiles (
+          profiles!inner (
             full_name,
+            email,
             avatar_url,
-            bio,
-            location,
-            email
+            location
           )
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching buy request:', error);
+        throw error;
+      }
+      
+      console.log('Buy request data fetched:', data);
+      console.log('Profile data:', data?.profiles);
+      
       return data;
     },
     enabled: !!id

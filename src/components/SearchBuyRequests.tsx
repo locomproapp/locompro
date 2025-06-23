@@ -38,7 +38,9 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          profiles (full_name)
+          profiles!inner (
+            full_name
+          )
         `)
         .eq('status', 'active')
         .order('created_at', { ascending: false });
@@ -54,6 +56,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       }
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
+      console.log('Profile data sample:', data?.[0]?.profiles);
       
       // Log the IDs of fetched requests for debugging
       const requestIds = data?.map(r => r.id) || [];

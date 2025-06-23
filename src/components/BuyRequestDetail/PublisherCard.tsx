@@ -12,6 +12,8 @@ const formatDate = (dateString: string) => {
 };
 
 const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
+    console.log('PublisherCard - buyRequest.profiles:', buyRequest.profiles);
+    
     return (
         <div className="bg-card rounded-lg border border-border p-6 space-y-4 shadow-sm">
             <div>
