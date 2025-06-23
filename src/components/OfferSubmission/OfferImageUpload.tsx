@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Upload, X } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface OfferImageUploadProps {
@@ -57,13 +58,23 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
     onChange(newImages);
   };
 
+  const triggerFileInput = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      handleFileSelect(target.files);
+    };
+    input.click();
+  };
+
   return (
-    <FormItem>
-      <FormLabel>Imágenes del producto * (1-5 imágenes)</FormLabel>
-      
+    <div className="space-y-4">
       {value.length < 5 && (
         <div
-          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
             isDragging 
               ? 'border-primary bg-primary/10' 
               : 'border-gray-300 hover:border-gray-400'
@@ -71,6 +82,7 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
+          onClick={triggerFileInput}
         >
           <div className="space-y-4">
             <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
@@ -88,16 +100,9 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
               type="button"
               variant="outline"
               disabled={uploading}
-              onClick={() => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.multiple = true;
-                input.accept = 'image/*';
-                input.onchange = (e) => {
-                  const target = e.target as HTMLInputElement;
-                  handleFileSelect(target.files);
-                };
-                input.click();
+              onClick={(e) => {
+                e.stopPropagation();
+                triggerFileInput();
               }}
             >
               {uploading ? 'Subiendo...' : 'Seleccionar imágenes'}
@@ -107,10 +112,10 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
       )}
 
       {value.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-4">
           {value.map((imageUrl, index) => (
             <div key={index} className="relative group">
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border">
                 <img
                   src={imageUrl}
                   alt={`Imagen ${index + 1}`}
@@ -121,10 +126,10 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
                 type="button"
                 variant="destructive"
                 size="sm"
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => removeImage(index)}
               >
-                <X className="h-4 w-4" />
+                <X className="h-3 w-3" />
               </Button>
             </div>
           ))}
@@ -137,6 +142,6 @@ export const OfferImageUpload = ({ value, onChange, error }: OfferImageUploadPro
       </div>
 
       {error && <FormMessage>{error}</FormMessage>}
-    </FormItem>
+    </div>
   );
 };

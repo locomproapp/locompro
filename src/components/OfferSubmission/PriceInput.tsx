@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
@@ -10,58 +10,52 @@ interface PriceInputProps {
 }
 
 export const PriceInput = ({ value, onChange, error }: PriceInputProps) => {
-  const [displayValue, setDisplayValue] = useState('$');
+  const [displayValue, setDisplayValue] = React.useState('');
 
-  // Format price with thousand separators
-  const formatPrice = (numericValue: string): string => {
-    if (numericValue === '') return '$';
+  React.useEffect(() => {
+    if (value === undefined || value === 0) {
+      setDisplayValue('');
+    } else {
+      setDisplayValue('$' + value.toLocaleString('es-AR'));
+    }
+  }, [value]);
+
+  const formatPriceDisplay = (inputValue: string): string => {
+    // Remove everything that's not a digit
+    const numericValue = inputValue.replace(/[^\d]/g, '');
     
+    if (numericValue === '') return '';
+    
+    // Convert to number and format with period as thousand separator
     const number = parseInt(numericValue);
-    const formatted = number.toLocaleString('es-AR'); // Argentina locale uses periods
+    const formatted = number.toLocaleString('es-AR');
+    
     return `$${formatted}`;
   };
 
-  // Extract numeric value from formatted string
-  const parsePrice = (formattedValue: string): number | undefined => {
+  const parseFormattedPrice = (formattedValue: string): number | undefined => {
     const numericValue = formattedValue.replace(/[^\d]/g, '');
     return numericValue === '' ? undefined : parseInt(numericValue);
   };
 
-  // Handle input changes
-  const handleInputChange = (inputValue: string) => {
-    // Always ensure it starts with $
-    let processedValue = inputValue;
-    if (!inputValue.startsWith('$')) {
-      processedValue = '$' + inputValue.replace(/[^\d]/g, '');
-    }
-
-    // Format the display value
-    const numericOnly = processedValue.replace(/[^\d]/g, '');
-    const formattedDisplay = formatPrice(numericOnly);
-    setDisplayValue(formattedDisplay);
-
-    // Update form value
-    const numericValue = parsePrice(formattedDisplay);
+  const handlePriceChange = (inputValue: string) => {
+    const formatted = formatPriceDisplay(inputValue);
+    setDisplayValue(formatted);
+    
+    const numericValue = parseFormattedPrice(formatted);
     onChange(numericValue);
   };
-
-  // Update display value when form value changes externally
-  useEffect(() => {
-    if (value === undefined || value === 0) {
-      setDisplayValue('$');
-    } else {
-      setDisplayValue(formatPrice(value.toString()));
-    }
-  }, [value]);
 
   return (
     <FormItem>
       <FormLabel>Precio *</FormLabel>
       <Input
         type="text"
-        placeholder="$"
+        inputMode="numeric"
         value={displayValue}
-        onChange={(e) => handleInputChange(e.target.value)}
+        onChange={(e) => handlePriceChange(e.target.value)}
+        placeholder="$0"
+        className={error ? 'border-destructive focus-visible:ring-destructive' : ''}
       />
       {error && <FormMessage>{error}</FormMessage>}
     </FormItem>

@@ -40,23 +40,27 @@ export const OfferSubmissionForm = ({
     submitOffer(data);
   };
 
+  const watchedValues = form.watch();
+  const isFormValid = watchedValues.images && watchedValues.images.length > 0;
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <OfferFormFields control={form.control} />
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
+            disabled={isSubmitting}
             className="flex-1"
           >
             Cancelar
           </Button>
           <Button 
             type="submit" 
-            disabled={isSubmitting} 
+            disabled={isSubmitting || !isFormValid} 
             className="flex-1"
           >
             {isSubmitting ? 'Enviando...' : 'Enviar Oferta'}

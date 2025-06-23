@@ -14,17 +14,36 @@ interface OfferFormFieldsProps {
 
 export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
   return (
-    <>
+    <div className="space-y-6">
       <FormField
         control={control}
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Título de tu oferta *</FormLabel>
+            <FormLabel>¿Qué estás buscando? *</FormLabel>
             <FormControl>
               <Input 
                 placeholder="Ej: iPhone 12 Pro usado en excelente estado" 
                 {...field} 
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descripción *</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Describe tu producto, condición, características especiales..."
+                className="resize-none"
+                rows={4}
+                {...field}
               />
             </FormControl>
             <FormMessage />
@@ -52,27 +71,8 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
             <FormLabel>Zona *</FormLabel>
             <FormControl>
               <Input 
-                placeholder="Ej: Capital Federal, Zona Norte, etc." 
+                placeholder="Ej: CABA, Zona Norte, etc." 
                 {...field} 
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Descripción *</FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Describe tu producto, condición, características especiales..."
-                className="resize-none"
-                rows={3}
-                {...field}
               />
             </FormControl>
             <FormMessage />
@@ -103,13 +103,19 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
         control={control}
         name="images"
         render={({ field }) => (
-          <OfferImageUpload
-            value={field.value || []}
-            onChange={field.onChange}
-            error={control.getFieldState('images').error?.message}
-          />
+          <FormItem>
+            <FormLabel>Fotos de Referencia *</FormLabel>
+            <FormControl>
+              <OfferImageUpload
+                value={field.value || []}
+                onChange={field.onChange}
+                error={control.getFieldState('images').error?.message}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
         )}
       />
-    </>
+    </div>
   );
 };
