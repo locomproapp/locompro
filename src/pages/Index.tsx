@@ -5,41 +5,31 @@ import { Button } from '@/components/ui/button';
 import { ShoppingBag, Plus, Search, Package, Handshake } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
-
 const Index = () => {
   const navigate = useNavigate();
-
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
       navigate(`/marketplace?search=${encodeURIComponent(query.trim())}`);
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
+  return <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full flex-1">
         <div className="text-center mb-16">
-          <h1
-            className="text-4xl md:text-6xl font-medium tracking-tight text-foreground"
-            style={{
-              fontFamily: 'inherit',
-              letterSpacing: '0em',
-              fontWeight: 500,
-              color: 'inherit',
-            }}
-          >
+          <h1 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground" style={{
+          fontFamily: 'inherit',
+          letterSpacing: '0em',
+          fontWeight: 500,
+          color: 'inherit'
+        }}>
             LoCompro
           </h1>
           <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto">
             La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
           </p>
           <div className="mb-10 flex justify-center">
-            <SearchBar 
-              placeholder="Producto que quieras vender"
-              onSearch={handleSearch}
-            />
+            <SearchBar placeholder="Producto que quieras vender" onSearch={handleSearch} />
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="text-lg px-8 py-6">
@@ -49,10 +39,9 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild size="lg" className="text-lg px-8 py-6">
-              <Link 
-                to="/create-buy-request" 
-                state={{ from: "/" }}
-              >
+              <Link to="/create-buy-request" state={{
+              from: "/"
+            }}>
                 <Plus className="mr-2 h-5 w-5" />
                 Crear Búsqueda
               </Link>
@@ -66,9 +55,7 @@ const Index = () => {
               <Search className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Publicá el producto que buscás</h3>
-            <p className="text-muted-foreground">
-              Describí tu presupuesto, de dónde sos y qué características te interesan.
-            </p>
+            <p className="text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -91,8 +78,6 @@ const Index = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
