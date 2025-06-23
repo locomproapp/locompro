@@ -38,7 +38,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          profiles!inner (
+          profiles (
             full_name
           )
         `)

@@ -14,7 +14,7 @@ export const useBuyRequestDetail = (id: string) => {
         .from('buy_requests')
         .select(`
           *,
-          profiles!inner (
+          profiles (
             full_name,
             email,
             avatar_url,
