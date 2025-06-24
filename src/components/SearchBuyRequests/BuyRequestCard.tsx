@@ -39,6 +39,14 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
+  // Better handling for user name display
+  const getDisplayName = () => {
+    if (request.profiles?.full_name) {
+      return request.profiles.full_name;
+    }
+    return 'Usuario anónimo';
+  };
+
   return (
     <Card key={request.id} className="hover:shadow-md transition-shadow">
       <CardHeader className="space-y-2">
@@ -72,7 +80,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
         </div>
         <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-muted-foreground">
-            Por: {request.profiles?.full_name || 'Usuario anónimo'}
+            Por: {getDisplayName()}
           </p>
           <Button asChild size="sm">
             <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">

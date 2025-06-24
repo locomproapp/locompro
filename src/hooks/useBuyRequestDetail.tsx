@@ -15,11 +15,12 @@ export const useBuyRequestDetail = (id: string) => {
         .select(`
           *,
           categories (name),
-          profiles (
+          profiles!buy_requests_user_id_fkey (
             full_name,
             avatar_url,
             bio,
-            location
+            location,
+            email
           )
         `)
         .eq('id', id)
@@ -28,6 +29,10 @@ export const useBuyRequestDetail = (id: string) => {
       console.log('=== RESPUESTA DE LA CONSULTA ===');
       console.log('Data recibida:', JSON.stringify(data, null, 2));
       console.log('Error (si hay):', error);
+      console.log('=== PROFILE DATA ANALYSIS ===');
+      console.log('Profile object:', data?.profiles);
+      console.log('Profile full_name:', data?.profiles?.full_name);
+      console.log('Profile type:', typeof data?.profiles);
       
       if (error) {
         console.error("Error fetching buy request details:", error);

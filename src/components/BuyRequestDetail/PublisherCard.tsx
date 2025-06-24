@@ -14,8 +14,26 @@ const formatDate = (dateString: string) => {
 const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
     console.log('PublisherCard - buyRequest.profiles:', buyRequest.profiles);
     
+    // Get the full name with better fallback handling
+    const getDisplayName = () => {
+        if (buyRequest.profiles?.full_name) {
+            return buyRequest.profiles.full_name;
+        }
+        return 'Usuario anónimo';
+    };
+
+    // Get avatar URL
+    const getAvatarUrl = () => {
+        return buyRequest.profiles?.avatar_url || undefined;
+    };
+
+    // Get location
+    const getLocation = () => {
+        return buyRequest.profiles?.location || null;
+    };
+    
     return (
-        <div className="bg-card rounded-lg border border-border p-6 space-y-4 shadow-sm">
+        <div className="space-y-4">
             <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha de publicación</h3>
                 <p className="text-base text-foreground">{formatDate(buyRequest.created_at)}</p>
@@ -26,20 +44,20 @@ const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
                 <div className="flex items-center gap-3 mt-2">
                     <Avatar className="h-12 w-12">
                         <AvatarImage
-                            src={buyRequest.profiles?.avatar_url || undefined}
-                            alt={buyRequest.profiles?.full_name || 'Usuario'}
+                            src={getAvatarUrl()}
+                            alt={getDisplayName()}
                         />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                            {buyRequest.profiles?.full_name?.charAt(0) || 'U'}
+                            {getDisplayName().charAt(0).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                         <p className="font-medium text-foreground">
-                            {buyRequest.profiles?.full_name || 'Usuario anónimo'}
+                            {getDisplayName()}
                         </p>
-                        {buyRequest.profiles?.location && (
+                        {getLocation() && (
                             <p className="text-sm text-muted-foreground">
-                                {buyRequest.profiles.location}
+                                {getLocation()}
                             </p>
                         )}
                     </div>
