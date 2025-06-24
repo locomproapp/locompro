@@ -8,29 +8,35 @@ export const useBuyRequestDetail = (id: string) => {
     queryFn: async () => {
       if (!id) return null;
       
-      console.log('Fetching buy request detail for ID:', id);
+      console.log('🔍 Fetching buy request detail for ID:', id);
       
       const { data, error } = await supabase
         .from('buy_requests')
         .select(`
           *,
-          profiles (
+          profiles!buy_requests_user_id_fkey (
             full_name,
             email,
             avatar_url,
-            location
+            location,
+            bio
           )
         `)
         .eq('id', id)
         .maybeSingle();
       
       if (error) {
-        console.error('Error fetching buy request:', error);
+        console.error('❌ Error fetching buy request:', error);
         throw error;
       }
       
-      console.log('Buy request data fetched:', data);
-      console.log('Profile data:', data?.profiles);
+      if (!data) {
+        console.warn('⚠️ No buy request found with ID:', id);
+        throw new Error('Buy request not found');
+      }
+      
+      console.log('✅ Buy request data fetched:', data);
+      console.log('👤 Profile data:', data?.profiles);
       
       return data;
     },

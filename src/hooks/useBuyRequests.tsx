@@ -25,12 +25,16 @@ export const useBuyRequests = (searchQuery?: string) => {
   const fetchBuyRequests = async () => {
     try {
       setLoading(true);
+      console.log('🔍 Fetching buy requests with profile data...');
+      
       let query = supabase
         .from('buy_requests')
         .select(`
           *,
-          profiles (
-            full_name
+          profiles!buy_requests_user_id_fkey (
+            full_name,
+            avatar_url,
+            location
           )
         `)
         .eq('status', 'active')
@@ -42,7 +46,13 @@ export const useBuyRequests = (searchQuery?: string) => {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching buy requests:', error);
+        throw error;
+      }
+      
+      console.log(`✅ Fetched ${data?.length || 0} buy requests`);
+      console.log('📋 Sample profile data:', data?.[0]?.profiles);
       
       const transformedData: BuyRequest[] = (data || []).map(request => ({
         id: request.id,

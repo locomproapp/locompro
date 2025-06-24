@@ -38,8 +38,10 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          profiles (
-            full_name
+          profiles!buy_requests_user_id_fkey (
+            full_name,
+            avatar_url,
+            location
           )
         `)
         .eq('status', 'active')
@@ -74,10 +76,10 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         profiles: request.profiles
       })) as BuyRequest[];
     },
-    staleTime: 0, // Always fetch fresh data
-    gcTime: 0, // Remove from cache immediately when unused
-    refetchOnMount: 'always', // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gains focus
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 
   // Handle refresh when coming from a deletion
