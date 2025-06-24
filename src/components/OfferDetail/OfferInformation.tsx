@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import ImageGallery from '@/components/ImageGallery';
-import ContactInfo from '@/components/OfferCard/ContactInfo';
 import RejectionReason from '@/components/OfferCard/RejectionReason';
 
 interface OfferInformationProps {
@@ -110,12 +108,6 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
       {offer.status === 'rejected' && offer.rejection_reason && (
         <div className="mb-6">
           <RejectionReason rejectionReason={offer.rejection_reason} />
-        </div>
-      )}
-
-      {offer.contact_info && (offer.status === 'accepted' || isSeller || isBuyer) && (
-        <div className="mb-6">
-          <ContactInfo contactInfo={offer.contact_info} />
         </div>
       )}
     </div>

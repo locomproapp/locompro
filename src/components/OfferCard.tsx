@@ -6,7 +6,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import Chat from '@/components/Chat';
 import OfferHeader from './OfferCard/OfferHeader';
 import RejectionReason from './OfferCard/RejectionReason';
-import ContactInfo from './OfferCard/ContactInfo';
 import OfferActions from './OfferCard/OfferActions';
 import SellerOfferActions from './OfferCard/SellerOfferActions';
 import RejectedOfferActions from './OfferCard/RejectedOfferActions';
@@ -103,22 +102,20 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
     <div className="space-y-4">
       <Card className={`p-4 ${offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''}`}>
         <div className="space-y-3">
-          {/* Title and Price */}
+          {/* Title and Price with Status Badge */}
           <div className="flex justify-between items-start">
             <h3 className="font-semibold text-lg flex-1 mr-4">{offer.title}</h3>
-            <div className="text-xl font-bold text-primary">
-              ${offer.price.toLocaleString('es-AR')}
+            <div className="flex flex-col items-end">
+              <div className="text-xl font-bold text-primary">
+                ${offer.price.toLocaleString('es-AR')}
+              </div>
+              <Badge variant={getStatusColor(offer.status)} className="mt-1">
+                {getStatusText(offer.status)}
+              </Badge>
             </div>
           </div>
 
-          {/* Status Badge (centered) */}
-          <div className="flex justify-center">
-            <Badge variant={getStatusColor(offer.status)}>
-              {getStatusText(offer.status)}
-            </Badge>
-          </div>
-
-          {/* Structured Information */}
+          {/* Structured Information - directly below title */}
           <div className="space-y-1">
             {offer.contact_info?.zone && (
               <div>
@@ -165,10 +162,6 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
 
           {offer.status === 'rejected' && offer.rejection_reason && (
             <RejectionReason rejectionReason={offer.rejection_reason} />
-          )}
-
-          {offer.contact_info && (showActions || showPublicInfo) && (
-            <ContactInfo contactInfo={offer.contact_info} />
           )}
 
           {/* Actions for buyers (accept/reject) */}
