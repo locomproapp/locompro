@@ -25,6 +25,8 @@ interface BuyRequestCardProps {
 }
 
 const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
+  console.log('🔄 BuyRequestCard rendering:', request.title, 'with profile:', request.profiles);
+  
   const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (min === max) return format(min);
