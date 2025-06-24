@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
+import UserProfileDebug from '@/components/Debug/UserProfileDebug';
 
 const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,6 +24,9 @@ const Marketplace = () => {
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Debug component - remove after fixing */}
+        <UserProfileDebug />
+        
         {/* Marketplace Heading & Main search bar */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
