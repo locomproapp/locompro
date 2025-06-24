@@ -12,8 +12,11 @@ interface BuyRequest {
   zone: string;
   status: string;
   created_at: string;
+  user_id: string;
   profiles: {
     full_name: string | null;
+    avatar_url: string | null;
+    location: string | null;
   } | null;
 }
 
@@ -25,7 +28,7 @@ export const useBuyRequests = (searchQuery?: string) => {
   const fetchBuyRequests = async () => {
     try {
       setLoading(true);
-      console.log('🔍 Fetching buy requests with profile data...');
+      console.log('🔍 useBuyRequests - Fetching buy requests with complete profile data...');
       
       let query = supabase
         .from('buy_requests')
@@ -34,7 +37,8 @@ export const useBuyRequests = (searchQuery?: string) => {
           profiles!buy_requests_user_id_fkey (
             full_name,
             avatar_url,
-            location
+            location,
+            email
           )
         `)
         .eq('status', 'active')
@@ -47,12 +51,23 @@ export const useBuyRequests = (searchQuery?: string) => {
       const { data, error } = await query;
 
       if (error) {
-        console.error('❌ Error fetching buy requests:', error);
+        console.error('❌ useBuyRequests - Error fetching buy requests:', error);
         throw error;
       }
       
-      console.log(`✅ Fetched ${data?.length || 0} buy requests`);
-      console.log('📋 Sample profile data:', data?.[0]?.profiles);
+      console.log(`✅ useBuyRequests - Fetched ${data?.length || 0} buy requests`);
+      
+      // Enhanced logging for profile data
+      data?.forEach((request, index) => {
+        console.log(`📋 useBuyRequests - Request ${index + 1}:`, {
+          id: request.id,
+          title: request.title,
+          user_id: request.user_id,
+          has_profiles: !!request.profiles,
+          full_name: request.profiles?.full_name,
+          profile_keys: request.profiles ? Object.keys(request.profiles) : 'null'
+        });
+      });
       
       const transformedData: BuyRequest[] = (data || []).map(request => ({
         id: request.id,
@@ -64,12 +79,13 @@ export const useBuyRequests = (searchQuery?: string) => {
         zone: request.zone,
         status: request.status,
         created_at: request.created_at,
+        user_id: request.user_id,
         profiles: request.profiles
       }));
       
       setBuyRequests(transformedData);
     } catch (err) {
-      console.error('Error fetching buy requests:', err);
+      console.error('❌ useBuyRequests - Error in fetchBuyRequests:', err);
       setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
       setLoading(false);

@@ -12,13 +12,32 @@ const formatDate = (dateString: string) => {
 };
 
 const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
-    console.log('PublisherCard - buyRequest.profiles:', buyRequest.profiles);
+    console.log('🔍 PublisherCard - Full buyRequest data:', {
+        id: buyRequest.id,
+        user_id: buyRequest.user_id,
+        profiles: buyRequest.profiles,
+        profiles_type: typeof buyRequest.profiles,
+        full_name: buyRequest.profiles?.full_name,
+        full_name_type: typeof buyRequest.profiles?.full_name
+    });
     
-    // Get the full name with better fallback handling
+    // Enhanced name display with comprehensive fallback
     const getDisplayName = () => {
-        if (buyRequest.profiles?.full_name) {
+        console.log('👤 PublisherCard - Analyzing name for request:', buyRequest.id);
+        
+        if (buyRequest.profiles?.full_name && buyRequest.profiles.full_name.trim() !== '') {
+            console.log('✅ PublisherCard - Found valid name:', buyRequest.profiles.full_name);
             return buyRequest.profiles.full_name;
         }
+        
+        // Try email as fallback
+        if (buyRequest.profiles?.email) {
+            const emailName = buyRequest.profiles.email.split('@')[0];
+            console.log('📧 PublisherCard - Using email fallback:', emailName);
+            return emailName;
+        }
+        
+        console.log('⚠️ PublisherCard - No valid name found, using anonymous');
         return 'Usuario anónimo';
     };
 

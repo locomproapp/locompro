@@ -15,8 +15,11 @@ interface BuyRequest {
   reference_image: string | null;
   zone: string;
   created_at: string;
+  user_id: string;
   profiles: {
     full_name: string | null;
+    avatar_url: string | null;
+    location: string | null;
   } | null;
 }
 
@@ -39,21 +42,33 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  // Enhanced user name display with detailed logging
+  // Enhanced user name display with comprehensive debugging
   const getDisplayName = () => {
-    console.log(`👤 Profile data for request ${request.id}:`, {
-      profiles: request.profiles,
-      full_name: request.profiles?.full_name,
-      has_profiles: !!request.profiles,
-      profiles_type: typeof request.profiles
+    console.log(`👤 [${request.id}] Profile Analysis:`, {
+      request_id: request.id,
+      user_id: request.user_id,
+      profiles_object: request.profiles,
+      profiles_exists: !!request.profiles,
+      profiles_type: typeof request.profiles,
+      full_name_value: request.profiles?.full_name,
+      full_name_type: typeof request.profiles?.full_name,
+      full_name_length: request.profiles?.full_name?.length || 0,
+      all_profile_keys: request.profiles ? Object.keys(request.profiles) : 'null'
     });
     
-    if (request.profiles?.full_name) {
-      console.log(`✅ Displaying name: ${request.profiles.full_name}`);
+    // Check if we have a valid full name
+    if (request.profiles?.full_name && request.profiles.full_name.trim() !== '') {
+      console.log(`✅ [${request.id}] Displaying name: "${request.profiles.full_name}"`);
       return request.profiles.full_name;
     }
     
-    console.log(`⚠️ No name found, showing anonymous user for request ${request.id}`);
+    console.log(`⚠️ [${request.id}] No valid name found, using fallback. Reasons:`, {
+      no_profiles: !request.profiles,
+      no_full_name: !request.profiles?.full_name,
+      empty_full_name: request.profiles?.full_name === '',
+      whitespace_only: request.profiles?.full_name?.trim() === ''
+    });
+    
     return 'Usuario anónimo';
   };
 

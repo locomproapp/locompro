@@ -17,8 +17,11 @@ interface BuyRequest {
   reference_image: string | null;
   zone: string;
   created_at: string;
+  user_id: string;
   profiles: {
     full_name: string | null;
+    avatar_url: string | null;
+    location: string | null;
   } | null;
 }
 
@@ -33,7 +36,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   const { data: buyRequests, isLoading, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
-      console.log('🔄 Fetching buy requests from database...');
+      console.log('🔄 Fetching buy requests with full profile data...');
       let query = supabase
         .from('buy_requests')
         .select(`
@@ -41,7 +44,8 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
           profiles!buy_requests_user_id_fkey (
             full_name,
             avatar_url,
-            location
+            location,
+            email
           )
         `)
         .eq('status', 'active')
@@ -59,20 +63,18 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
       
-      // Log detailed profile data for debugging
+      // Enhanced logging for profile data debugging
       data?.forEach((request, index) => {
-        console.log(`🔍 Request ${index + 1}:`, {
-          id: request.id,
+        console.log(`🔍 Request ${index + 1} [${request.id}]:`, {
           title: request.title,
           user_id: request.user_id,
-          profile_data: request.profiles,
-          profile_full_name: request.profiles?.full_name
+          has_profiles: !!request.profiles,
+          profile_structure: request.profiles,
+          full_name: request.profiles?.full_name,
+          full_name_type: typeof request.profiles?.full_name,
+          profiles_keys: request.profiles ? Object.keys(request.profiles) : 'null'
         });
       });
-      
-      // Log the IDs of fetched requests for debugging
-      const requestIds = data?.map(r => r.id) || [];
-      console.log('📋 Current request IDs:', requestIds);
       
       return (data || []).map(request => ({
         id: request.id,
@@ -83,6 +85,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         reference_image: request.reference_image,
         zone: request.zone,
         created_at: request.created_at,
+        user_id: request.user_id,
         profiles: request.profiles
       })) as BuyRequest[];
     },

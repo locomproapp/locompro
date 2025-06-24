@@ -8,7 +8,7 @@ export const useBuyRequestDetail = (id: string) => {
     queryFn: async () => {
       if (!id) return null;
       
-      console.log('🔍 Fetching buy request detail for ID:', id);
+      console.log('🔍 Fetching buy request detail with full profile data for ID:', id);
       
       const { data, error } = await supabase
         .from('buy_requests')
@@ -35,8 +35,14 @@ export const useBuyRequestDetail = (id: string) => {
         throw new Error('Buy request not found');
       }
       
-      console.log('✅ Buy request data fetched:', data);
-      console.log('👤 Profile data:', data?.profiles);
+      console.log('✅ Buy request detail fetched:', {
+        id: data.id,
+        title: data.title,
+        user_id: data.user_id,
+        has_profiles: !!data.profiles,
+        profile_data: data.profiles,
+        full_name: data.profiles?.full_name
+      });
       
       return data;
     },

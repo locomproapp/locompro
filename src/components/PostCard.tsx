@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,8 +16,10 @@ interface Post {
   characteristics: any;
   images: string[] | null;
   created_at: string;
+  user_id?: string;
   profiles?: {
     full_name: string | null;
+    email?: string | null;
   } | null;
 }
 
@@ -41,6 +44,30 @@ const PostCard = ({ post }: PostCardProps) => {
       month: 'short',
       year: 'numeric'
     });
+  };
+
+  // Enhanced user name display with fallbacks
+  const getDisplayName = () => {
+    console.log(`👤 PostCard - Profile data for post ${post.id}:`, {
+      profiles: post.profiles,
+      full_name: post.profiles?.full_name,
+      email: post.profiles?.email
+    });
+
+    if (post.profiles?.full_name && post.profiles.full_name.trim() !== '') {
+      console.log(`✅ PostCard - Displaying name: ${post.profiles.full_name}`);
+      return post.profiles.full_name;
+    }
+
+    // Try email as fallback
+    if (post.profiles?.email) {
+      const emailName = post.profiles.email.split('@')[0];
+      console.log(`📧 PostCard - Using email fallback: ${emailName}`);
+      return emailName;
+    }
+
+    console.log(`⚠️ PostCard - No name found for post ${post.id}`);
+    return 'Usuario anónimo';
   };
 
   return (
@@ -82,9 +109,7 @@ const PostCard = ({ post }: PostCardProps) => {
             <Calendar className="h-3 w-3" />
             <span>{formatDate(post.created_at)}</span>
           </div>
-          {post.profiles?.full_name &&
-            <span>Por: {post.profiles.full_name}</span>
-          }
+          <span>Por: {getDisplayName()}</span>
         </div>
       </div>
     </Card>
