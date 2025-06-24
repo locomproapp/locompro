@@ -23,6 +23,7 @@ interface Offer {
   profiles: {
     full_name: string;
     email: string;
+    location?: string;
   };
   buy_requests: {
     title: string;
@@ -35,15 +36,18 @@ export const useFetchOffers = (buyRequestId: string) => {
   return useQuery({
     queryKey: ['offers', buyRequestId],
     queryFn: async () => {
+      console.log('🔍 Fetching offers for buy request:', buyRequestId);
+      
       const { data, error } = await supabase
         .from('offers')
         .select(`
           *,
-          profiles!inner (
+          profiles!offers_seller_id_fkey (
             full_name,
-            email
+            email,
+            location
           ),
-          buy_requests!inner (
+          buy_requests!offers_buy_request_id_fkey (
             title,
             zone,
             status
@@ -53,9 +57,11 @@ export const useFetchOffers = (buyRequestId: string) => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching offers:', error);
+        console.error('❌ Error fetching offers:', error);
         throw error;
       }
+
+      console.log('✅ Offers data fetched:', data);
 
       const transformedOffers: Offer[] = (data || []).map(offer => ({
         id: offer.id,
@@ -77,12 +83,24 @@ export const useFetchOffers = (buyRequestId: string) => {
         price_history: Array.isArray(offer.price_history) ? 
           (offer.price_history as Array<{ price: number; timestamp: string; type: 'initial' | 'rejected' }>) : 
           null,
-        profiles: offer.profiles as { full_name: string; email: string; },
-        buy_requests: offer.buy_requests as { title: string; zone: string; status: string; }
+        profiles: {
+          full_name: offer.profiles?.full_name || 'Usuario anónimo',
+          email: offer.profiles?.email || '',
+          location: offer.profiles?.location || undefined
+        },
+        buy_requests: {
+          title: offer.buy_requests?.title || '',
+          zone: offer.buy_requests?.zone || '',
+          status: offer.buy_requests?.status || ''
+        }
       }));
 
       return transformedOffers;
     },
-    enabled: !!buyRequestId
+    enabled: !!buyRequestId,
+    // Force refresh to ensure we get latest offers
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    staleTime: 0
   });
 };

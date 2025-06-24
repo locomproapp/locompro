@@ -47,7 +47,14 @@ export const useOfferSubmission = ({ buyRequestId, onSuccess }: UseOfferSubmissi
       const { data: insertedOffer, error } = await supabase
         .from('offers')
         .insert(offerData)
-        .select()
+        .select(`
+          *,
+          profiles!offers_seller_id_fkey (
+            full_name,
+            email,
+            location
+          )
+        `)
         .single();
 
       if (error) {
@@ -62,7 +69,11 @@ export const useOfferSubmission = ({ buyRequestId, onSuccess }: UseOfferSubmissi
         description: 'Tu oferta ha sido enviada exitosamente',
       });
 
-      onSuccess();
+      // Force a small delay to ensure database changes are propagated
+      setTimeout(() => {
+        onSuccess();
+      }, 500);
+
     } catch (err) {
       console.error('Error sending offer:', err);
       toast({

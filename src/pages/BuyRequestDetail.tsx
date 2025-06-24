@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -11,6 +12,7 @@ import BuyRequestInformation from '@/components/BuyRequestDetail/BuyRequestInfor
 import PublisherCard from '@/components/BuyRequestDetail/PublisherCard';
 import ImageAndActionsCard from '@/components/BuyRequestDetail/ImageAndActionsCard';
 import { OfferSubmissionModal } from '@/components/OfferSubmission';
+import OffersForRequest from '@/components/OffersForRequest';
 
 interface BuyRequestDetailType {
   id: string;
@@ -35,13 +37,8 @@ const BuyRequestDetail = () => {
 
   const { data: buyRequestData, isLoading, error, refetch } = useBuyRequestDetail(id || '');
 
-  useEffect(() => {
-    if (id && refetch) {
-      refetch();
-    }
-  }, [id, refetch]);
-
   const handleOfferSubmitted = () => {
+    console.log('🔄 Offer submitted, refreshing data...');
     // Force a complete refresh of the page data
     if (refetch) {
       refetch();
@@ -51,10 +48,7 @@ const BuyRequestDetail = () => {
       if (refetch) {
         refetch();
       }
-    }, 500);
-    
-    // Force refresh of the offers list component by triggering a re-render
-    window.location.reload();
+    }, 1000);
   };
 
   if (isLoading) {
@@ -149,10 +143,9 @@ const BuyRequestDetail = () => {
         )}
 
         <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-          <BuyRequestOffersList 
+          <OffersForRequest 
             buyRequestId={buyRequest.id}
-            buyRequestOwnerId={buyRequest.user_id}
-            key={`offers-${Date.now()}`} // Force re-render with timestamp key
+            onOfferUpdate={handleOfferSubmitted}
           />
         </div>
       </main>
