@@ -23,6 +23,38 @@ export const useBuyRequestSubmit = () => {
 
     setLoading(true);
     try {
+      // First, ensure the user profile exists
+      console.log('🔍 Checking/creating profile for user:', user.id);
+      
+      // Check if profile exists
+      const { data: existingProfile, error: profileCheckError } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
+        console.error('Error checking profile:', profileCheckError);
+        throw profileCheckError;
+      }
+
+      // If profile doesn't exist, create it
+      if (!existingProfile) {
+        console.log('📝 Creating profile for user:', user.id);
+        const { error: profileCreateError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario'
+          });
+
+        if (profileCreateError) {
+          console.error('Error creating profile:', profileCreateError);
+          throw profileCreateError;
+        }
+      }
+
       const insertData = {
         user_id: user.id,
         title: formData.title.trim(),
@@ -35,13 +67,28 @@ export const useBuyRequestSubmit = () => {
         images: formData.images,
       };
 
+      console.log('💾 Creating buy request with data:', insertData);
+
       const { data: newRequest, error } = await supabase
         .from("buy_requests")
         .insert(insertData)
-        .select()
+        .select(`
+          *,
+          profiles!buy_requests_user_id_fkey (
+            full_name,
+            avatar_url,
+            location
+          )
+        `)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error creating buy request:', error);
+        throw error;
+      }
+
+      console.log('✅ Buy request created successfully:', newRequest);
+      console.log('👤 Profile data in response:', newRequest.profiles);
 
       toast({
         title: "¡Éxito!",

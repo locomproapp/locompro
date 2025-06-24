@@ -40,10 +40,41 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
     console.log('=== INICIANDO CREACIÓN ===');
     console.log('Valores del formulario recibidos:', JSON.stringify(values, null, 2));
     console.log('Usuario ID:', user.id);
-    console.log('Auth UID:', (await supabase.auth.getUser()).data.user?.id);
 
     setLoading(true);
     try {
+      // First, ensure the user profile exists
+      console.log('🔍 Checking/creating profile for user:', user.id);
+      
+      // Check if profile exists
+      const { data: existingProfile, error: profileCheckError } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
+        console.error('Error checking profile:', profileCheckError);
+        throw profileCheckError;
+      }
+
+      // If profile doesn't exist, create it
+      if (!existingProfile) {
+        console.log('📝 Creating profile for user:', user.id);
+        const { error: profileCreateError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario'
+          });
+
+        if (profileCreateError) {
+          console.error('Error creating profile:', profileCreateError);
+          throw profileCreateError;
+        }
+      }
+
       // IMPORTANTE: Usar exactamente la misma lógica que useEditBuyRequest
       const insertData = {
         user_id: user.id,
@@ -60,11 +91,6 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
 
       console.log('=== DATOS PARA INSERTAR (FINALES) ===');
       console.log('Insert data:', JSON.stringify(insertData, null, 2));
-      console.log('Campos críticos:');
-      console.log('- description:', insertData.description);
-      console.log('- condition:', insertData.condition);  
-      console.log('- reference_url:', insertData.reference_url);
-      console.log('- images length:', insertData.images?.length);
 
       const { data, error } = await supabase
         .from('buy_requests')
@@ -72,7 +98,7 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
         .select(`
           *,
           categories (name),
-          profiles (
+          profiles!buy_requests_user_id_fkey (
             full_name,
             avatar_url,
             bio,
@@ -84,20 +110,12 @@ export const useFormSubmission = (onPostCreated?: () => void) => {
       if (error) {
         console.error('=== ERROR EN INSERT ===');
         console.error('Error completo:', error);
-        console.error('Code:', error.code);
-        console.error('Message:', error.message);
-        console.error('Details:', error.details);
-        console.error('Hint:', error.hint);
         throw error;
       }
 
       console.log('=== DATOS DESDE INSERT (RESPUESTA INMEDIATA) ===');
       console.log('Data returned:', JSON.stringify(data, null, 2));
-      console.log('Verificación de campos guardados:');
-      console.log('- description guardado:', data.description);
-      console.log('- condition guardado:', data.condition);
-      console.log('- reference_url guardado:', data.reference_url);
-      console.log('- images guardadas:', data.images);
+      console.log('👤 Profile data in response:', data.profiles);
 
       toast({
         title: "¡Éxito!",
