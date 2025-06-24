@@ -38,7 +38,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          profiles!inner (
+          profiles (
             id,
             full_name,
             avatar_url,
@@ -61,30 +61,9 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
       console.log('Profile data sample:', data?.[0]?.profiles);
       
-      // Filter out any requests without valid profile data
-      const validRequests = (data || []).filter(request => {
-        const hasValidProfile = request.profiles && 
-                               request.profiles.full_name && 
-                               request.profiles.full_name.trim() !== '';
-        
-        if (!hasValidProfile) {
-          console.warn('⚠️ Filtering out buy request with invalid profile data:', {
-            id: request.id,
-            user_id: request.user_id,
-            profiles: request.profiles
-          });
-        }
-        
-        return hasValidProfile;
-      });
-      
-      console.log(`📋 Valid requests with profiles: ${validRequests.length} of ${data?.length || 0}`);
-      
-      // Log the IDs of fetched requests for debugging
-      const requestIds = validRequests.map(r => r.id) || [];
-      console.log('📋 Current request IDs:', requestIds);
-      
-      return validRequests.map(request => ({
+      // Don't filter out requests - show all active requests even if profile data is incomplete
+      // This ensures the marketplace is always populated for all users (authenticated and anonymous)
+      const validRequests = (data || []).map(request => ({
         id: request.id,
         title: request.title,
         description: request.description,
@@ -95,6 +74,14 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         created_at: request.created_at,
         profiles: request.profiles
       })) as BuyRequest[];
+      
+      console.log(`📋 Total requests to display: ${validRequests.length}`);
+      
+      // Log the IDs of fetched requests for debugging
+      const requestIds = validRequests.map(r => r.id) || [];
+      console.log('📋 Current request IDs:', requestIds);
+      
+      return validRequests;
     },
     staleTime: 0,
     gcTime: 0,

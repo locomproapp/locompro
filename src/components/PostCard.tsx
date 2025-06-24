@@ -44,6 +44,14 @@ const PostCard = ({ post }: PostCardProps) => {
     });
   };
 
+  // Get display name with proper fallback
+  const getDisplayName = () => {
+    if (post.profiles?.full_name && post.profiles.full_name.trim() !== '') {
+      return post.profiles.full_name;
+    }
+    return 'Usuario';
+  };
+
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">
       <div className="space-y-3">
@@ -83,7 +91,7 @@ const PostCard = ({ post }: PostCardProps) => {
             <Calendar className="h-3 w-3" />
             <span>{formatDate(post.created_at)}</span>
           </div>
-          <span>Por: {post.profiles?.full_name}</span>
+          <span>Por: {getDisplayName()}</span>
         </div>
       </div>
     </Card>

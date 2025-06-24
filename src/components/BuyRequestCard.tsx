@@ -57,6 +57,14 @@ const BuyRequestCard = ({
     });
   };
 
+  // Get display name with proper fallback
+  const getDisplayName = () => {
+    if (buyRequest.profiles?.full_name && buyRequest.profiles.full_name.trim() !== '') {
+      return buyRequest.profiles.full_name;
+    }
+    return 'Usuario';
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       {/* Imagen principal */}
@@ -119,7 +127,7 @@ const BuyRequestCard = ({
             <Calendar className="h-3 w-3" />
             <span>{formatDate(buyRequest.created_at)}</span>
           </div>
-          <span>Por: {buyRequest.profiles?.full_name}</span>
+          <span>Por: {getDisplayName()}</span>
         </div>
 
         {showOfferButton && (
