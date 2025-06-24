@@ -16,6 +16,7 @@ export const useBuyRequestDetail = (id: string) => {
           *,
           categories (name),
           profiles!buy_requests_user_id_fkey (
+            id,
             full_name,
             avatar_url,
             bio,
@@ -42,6 +43,15 @@ export const useBuyRequestDetail = (id: string) => {
       if (!data) {
         console.warn("No se encontró buy request con ID:", id);
         throw new Error('Buy request not found');
+      }
+      
+      // Validate that profile data exists
+      if (!data.profiles || !data.profiles.full_name) {
+        console.warn('⚠️ Buy request found but missing profile data:', {
+          id: data.id,
+          user_id: data.user_id,
+          profiles: data.profiles
+        });
       }
       
       console.log('=== ANÁLISIS DETALLADO DE CAMPOS PROBLEMÁTICOS ===');

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -118,9 +119,7 @@ const BuyRequestCard = ({
             <Calendar className="h-3 w-3" />
             <span>{formatDate(buyRequest.created_at)}</span>
           </div>
-          {buyRequest.profiles?.full_name && (
-            <span>Por: {buyRequest.profiles.full_name}</span>
-          )}
+          <span>Por: {buyRequest.profiles?.full_name || 'Sin nombre'}</span>
         </div>
 
         {showOfferButton && (

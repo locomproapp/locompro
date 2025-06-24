@@ -39,6 +39,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .select(`
           *,
           profiles!buy_requests_user_id_fkey (
+            id,
             full_name,
             avatar_url,
             location
@@ -59,6 +60,17 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
       console.log('Profile data sample:', data?.[0]?.profiles);
+      
+      // Log warnings for requests without profile data
+      data?.forEach(request => {
+        if (!request.profiles || !request.profiles.full_name) {
+          console.warn('⚠️ Buy request missing profile data:', {
+            id: request.id,
+            user_id: request.user_id,
+            profiles: request.profiles
+          });
+        }
+      });
       
       // Log the IDs of fetched requests for debugging
       const requestIds = data?.map(r => r.id) || [];

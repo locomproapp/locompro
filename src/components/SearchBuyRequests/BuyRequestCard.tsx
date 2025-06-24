@@ -39,12 +39,9 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  // Better handling for user name display
+  // Display user name - no anonymous fallback
   const getDisplayName = () => {
-    if (request.profiles?.full_name) {
-      return request.profiles.full_name;
-    }
-    return 'Usuario anónimo';
+    return request.profiles?.full_name || 'Sin nombre';
   };
 
   return (

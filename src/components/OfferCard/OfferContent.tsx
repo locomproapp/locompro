@@ -75,7 +75,7 @@ const OfferContent = ({ offer }: OfferContentProps) => {
           <span>{formatDate(offer.created_at)}</span>
         </div>
         <div className="text-sm font-medium text-foreground">
-          {offer.profiles?.full_name || 'Usuario anónimo'}
+          {offer.profiles?.full_name || 'Sin nombre'}
         </div>
       </div>
 
