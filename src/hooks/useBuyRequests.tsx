@@ -31,7 +31,7 @@ export const useBuyRequests = (searchQuery?: string) => {
         .from('buy_requests')
         .select(`
           *,
-          profiles (
+          profiles!buy_requests_user_id_fkey (
             full_name,
             avatar_url,
             location
@@ -54,8 +54,6 @@ export const useBuyRequests = (searchQuery?: string) => {
       console.log(`✅ Fetched ${data?.length || 0} buy requests`);
       console.log('📋 Sample profile data:', data?.[0]?.profiles);
       
-      // Transform data without filtering out requests with missing profile names
-      // Some users might not have set their full_name yet, but we still want to show their requests
       const transformedData: BuyRequest[] = (data || []).map(request => ({
         id: request.id,
         title: request.title,
@@ -68,8 +66,6 @@ export const useBuyRequests = (searchQuery?: string) => {
         created_at: request.created_at,
         profiles: request.profiles
       }));
-      
-      console.log(`📋 Total requests to display: ${transformedData.length}`);
       
       setBuyRequests(transformedData);
     } catch (err) {

@@ -50,7 +50,7 @@ const BuyerInfo = ({ post }: BuyerInfoProps) => {
   };
 
   const getInitials = (name: string | null) => {
-    if (!name) return 'U';
+    if (!name) return 'A';
     return name
       .split(' ')
       .map(word => word.charAt(0))
@@ -98,7 +98,7 @@ const BuyerInfo = ({ post }: BuyerInfoProps) => {
           </Avatar>
           <div className="flex-1">
             <p className="font-medium text-foreground">
-              {post.profiles?.full_name || 'Sin nombre'}
+              {post.profiles?.full_name || 'Usuario anónimo'}
             </p>
             {post.profiles?.location && (
               <p className="text-sm text-muted-foreground">

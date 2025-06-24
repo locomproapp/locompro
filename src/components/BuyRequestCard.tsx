@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -55,14 +54,6 @@ const BuyRequestCard = ({
       month: 'short',
       year: 'numeric'
     });
-  };
-
-  // Get display name with proper fallback
-  const getDisplayName = () => {
-    if (buyRequest.profiles?.full_name && buyRequest.profiles.full_name.trim() !== '') {
-      return buyRequest.profiles.full_name;
-    }
-    return 'Usuario';
   };
 
   return (
@@ -127,7 +118,9 @@ const BuyRequestCard = ({
             <Calendar className="h-3 w-3" />
             <span>{formatDate(buyRequest.created_at)}</span>
           </div>
-          <span>Por: {getDisplayName()}</span>
+          {buyRequest.profiles?.full_name && (
+            <span>Por: {buyRequest.profiles.full_name}</span>
+          )}
         </div>
 
         {showOfferButton && (

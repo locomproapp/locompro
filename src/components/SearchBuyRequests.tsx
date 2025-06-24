@@ -38,8 +38,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          profiles (
-            id,
+          profiles!buy_requests_user_id_fkey (
             full_name,
             avatar_url,
             location
@@ -59,21 +58,13 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       }
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
-      console.log('🔍 DETAILED Profile data analysis:');
+      console.log('Profile data sample:', data?.[0]?.profiles);
       
-      // Log each request's profile data individually
-      data?.forEach((request, index) => {
-        console.log(`Request ${index + 1}:`, {
-          id: request.id,
-          title: request.title,
-          user_id: request.user_id,
-          profile: request.profiles,
-          profile_full_name: request.profiles?.full_name
-        });
-      });
+      // Log the IDs of fetched requests for debugging
+      const requestIds = data?.map(r => r.id) || [];
+      console.log('📋 Current request IDs:', requestIds);
       
-      // Transform data to match interface
-      const validRequests = (data || []).map(request => ({
+      return (data || []).map(request => ({
         id: request.id,
         title: request.title,
         description: request.description,
@@ -84,10 +75,6 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         created_at: request.created_at,
         profiles: request.profiles
       })) as BuyRequest[];
-      
-      console.log(`📋 Total requests to display: ${validRequests.length}`);
-      
-      return validRequests;
     },
     staleTime: 0,
     gcTime: 0,

@@ -25,8 +25,6 @@ interface BuyRequestCardProps {
 }
 
 const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
-  console.log('🔄 BuyRequestCard rendering:', request.title, 'with profile:', request.profiles);
-  
   const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (min === max) return format(min);
@@ -41,12 +39,12 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  // Get display name with proper fallback
+  // Better handling for user name display
   const getDisplayName = () => {
-    if (request.profiles?.full_name && request.profiles.full_name.trim() !== '') {
+    if (request.profiles?.full_name) {
       return request.profiles.full_name;
     }
-    return 'Usuario';
+    return 'Usuario anónimo';
   };
 
   return (

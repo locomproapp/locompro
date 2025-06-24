@@ -21,10 +21,6 @@ export const useCreateBuyRequest = () => {
       return;
     }
 
-    console.log('=== CREATING BUY REQUEST ===');
-    console.log('User creating request:', user.id, user.email);
-    console.log('Form data:', data);
-
     setLoading(true);
     try {
       const insertData = {
@@ -39,28 +35,13 @@ export const useCreateBuyRequest = () => {
         images: data.images,
       };
 
-      console.log('Insert data:', insertData);
-
       const { data: newRequest, error } = await supabase
         .from('buy_requests')
         .insert(insertData)
-        .select(`
-          *,
-          profiles (
-            id,
-            full_name,
-            email
-          )
-        `)
+        .select()
         .single();
 
-      if (error) {
-        console.error('Error creating buy request:', error);
-        throw error;
-      }
-
-      console.log('Buy request created successfully:', newRequest);
-      console.log('Associated profile data:', newRequest.profiles);
+      if (error) throw error;
 
       toast({
         title: "¡Éxito!",
