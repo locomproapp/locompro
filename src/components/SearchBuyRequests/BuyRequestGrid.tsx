@@ -11,8 +11,11 @@ interface BuyRequest {
   reference_image: string | null;
   zone: string;
   created_at: string;
+  user_id: string;
   profiles: {
     full_name: string | null;
+    avatar_url: string | null;
+    location: string | null;
   } | null;
 }
 
