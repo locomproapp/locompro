@@ -39,11 +39,21 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  // Better handling for user name display
+  // Enhanced user name display with detailed logging
   const getDisplayName = () => {
+    console.log(`👤 Profile data for request ${request.id}:`, {
+      profiles: request.profiles,
+      full_name: request.profiles?.full_name,
+      has_profiles: !!request.profiles,
+      profiles_type: typeof request.profiles
+    });
+    
     if (request.profiles?.full_name) {
+      console.log(`✅ Displaying name: ${request.profiles.full_name}`);
       return request.profiles.full_name;
     }
+    
+    console.log(`⚠️ No name found, showing anonymous user for request ${request.id}`);
     return 'Usuario anónimo';
   };
 

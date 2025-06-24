@@ -58,7 +58,17 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       }
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
-      console.log('Profile data sample:', data?.[0]?.profiles);
+      
+      // Log detailed profile data for debugging
+      data?.forEach((request, index) => {
+        console.log(`🔍 Request ${index + 1}:`, {
+          id: request.id,
+          title: request.title,
+          user_id: request.user_id,
+          profile_data: request.profiles,
+          profile_full_name: request.profiles?.full_name
+        });
+      });
       
       // Log the IDs of fetched requests for debugging
       const requestIds = data?.map(r => r.id) || [];
