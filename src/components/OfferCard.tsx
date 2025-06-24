@@ -5,11 +5,12 @@ import { Calendar, MessageCircle, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Chat from '@/components/Chat';
 import OfferHeader from './OfferCard/OfferHeader';
-import RejectionReason from './OfferCard/RejectionReason';
+import OfferContent from './OfferCard/OfferContent';
 import OfferActions from './OfferCard/OfferActions';
 import SellerOfferActions from './OfferCard/SellerOfferActions';
 import RejectedOfferActions from './OfferCard/RejectedOfferActions';
-import { Badge } from '@/components/ui/badge';
+import OfferOwnerActions from './OfferCard/OfferOwnerActions';
+import OfferChat from './OfferCard/OfferChat';
 
 interface Offer {
   id: string;
@@ -50,105 +51,18 @@ interface OfferCardProps {
 }
 
 const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatusUpdate, currentUserId }: OfferCardProps) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'accepted': return 'success';
-      case 'rejected': return 'destructive';
-      case 'withdrawn': return 'secondary';
-      default: return 'default';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'accepted': return 'Aceptada';
-      case 'rejected': return 'Rechazada';
-      case 'withdrawn': return 'Retirada';
-      case 'pending': return 'Pendiente';
-      default: return status;
-    }
-  };
-
-  const getConditionText = (condition: string) => {
-    switch (condition) {
-      case 'nuevo': return 'Nuevo';
-      case 'usado-excelente': return 'Usado - Excelente estado';
-      case 'usado-muy-bueno': return 'Usado - Muy buen estado';
-      case 'usado-bueno': return 'Usado - Buen estado';
-      case 'usado-regular': return 'Usado - Estado regular';
-      case 'refurbished': return 'Reacondicionado';
-      case 'para-repuestos': return 'Para repuestos';
-      default: return condition;
-    }
-  };
-
   // Determine user role
   const isSeller = currentUserId === offer.seller_id;
-  const isBuyer = showActions && !isSeller; // showActions is true for buyers in CompareOffers
+  const isBuyer = showActions && !isSeller;
+  const isOfferOwner = currentUserId === offer.seller_id;
   const shouldShowChat = offer.status === 'accepted' && currentUserId && offer.buy_requests;
 
   return (
     <div className="space-y-4">
       <Card className={`p-4 ${offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''}`}>
         <div className="space-y-3">
-          {/* Title and Price with Status Badge */}
-          <div className="flex justify-between items-start">
-            <h3 className="font-semibold text-lg flex-1 mr-4">{offer.title}</h3>
-            <div className="flex flex-col items-end">
-              <div className="text-xl font-bold text-primary">
-                ${offer.price.toLocaleString('es-AR')}
-              </div>
-              <Badge variant={getStatusColor(offer.status)} className="mt-1">
-                {getStatusText(offer.status)}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Structured Information - directly below title */}
-          <div className="space-y-1">
-            {offer.contact_info?.zone && (
-              <div>
-                <span className="font-medium">Zona: </span>
-                <span className="text-muted-foreground">{offer.contact_info.zone}</span>
-              </div>
-            )}
-
-            {offer.contact_info?.condition && (
-              <div>
-                <span className="font-medium">Estado: </span>
-                <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
-              </div>
-            )}
-
-            {offer.description && (
-              <div>
-                <span className="font-medium">Descripción: </span>
-                <span className="text-muted-foreground">{offer.description}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Date and Username */}
-          <div className="space-y-1 border-t pt-2">
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Calendar className="h-3 w-3" />
-              <span>{formatDate(offer.created_at)}</span>
-            </div>
-            <div className="text-sm font-medium text-foreground">
-              {offer.profiles?.full_name || 'Usuario anónimo'}
-            </div>
-          </div>
+          <OfferHeader offer={offer} />
+          <OfferContent offer={offer} />
 
           {/* Status explanation for sellers */}
           {isSeller && offer.status === 'pending' && (
@@ -160,8 +74,13 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             </Alert>
           )}
 
-          {offer.status === 'rejected' && offer.rejection_reason && (
-            <RejectionReason rejectionReason={offer.rejection_reason} />
+          {/* Owner actions (Edit/Delete) - only for offer owner */}
+          {isOfferOwner && (
+            <OfferOwnerActions
+              offerId={offer.id}
+              offerTitle={offer.title}
+              onUpdate={onStatusUpdate}
+            />
           )}
 
           {/* Actions for buyers (accept/reject) */}
@@ -194,22 +113,12 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
         </div>
       </Card>
 
-      {/* Show chat when offer is accepted - for both buyer and seller */}
-      {shouldShowChat && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <MessageCircle className="h-5 w-5 text-green-600" />
-            <h4 className="font-medium text-green-800">
-              {isSeller ? '¡Oferta aceptada! Chatea con el comprador' : '¡Oferta aceptada! Chatea con el vendedor'}
-            </h4>
-          </div>
-          <Chat 
-            buyRequestId={offer.buy_request_id}
-            sellerId={offer.seller_id}
-            offerId={offer.id}
-          />
-        </div>
-      )}
+      <OfferChat 
+        offer={offer}
+        shouldShowChat={shouldShowChat}
+        isSeller={isSeller}
+        currentUserId={currentUserId}
+      />
     </div>
   );
 };
