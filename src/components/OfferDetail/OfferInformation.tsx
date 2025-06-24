@@ -31,6 +31,19 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
     }
   };
 
+  const getConditionText = (condition: string) => {
+    switch (condition) {
+      case 'nuevo': return 'Nuevo';
+      case 'usado-excelente': return 'Usado - Excelente estado';
+      case 'usado-muy-bueno': return 'Usado - Muy buen estado';
+      case 'usado-bueno': return 'Usado - Buen estado';
+      case 'usado-regular': return 'Usado - Estado regular';
+      case 'refurbished': return 'Reacondicionado';
+      case 'para-repuestos': return 'Para repuestos';
+      default: return condition;
+    }
+  };
+
   return (
     <div className="bg-card rounded-lg border border-border p-6">
       <div className="flex items-center gap-2 mb-4">
@@ -39,35 +52,40 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
         </Badge>
       </div>
       
-      <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
         {offer.title}
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <h3 className="font-semibold text-foreground mb-2">Precio</h3>
-          <p className="text-2xl font-bold text-primary">
-            ${offer.price.toLocaleString('es-AR')}
-          </p>
+      <div className="mb-4">
+        <div className="text-2xl font-bold text-primary mb-4">
+          ${offer.price.toLocaleString('es-AR')}
         </div>
 
-        {offer.contact_info?.zone && (
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">Zona</h3>
-            <p className="text-muted-foreground">{offer.contact_info.zone}</p>
-          </div>
-        )}
+        <div className="space-y-2">
+          {offer.contact_info?.zone && (
+            <div>
+              <span className="font-medium text-foreground">Zona: </span>
+              <span className="text-muted-foreground">{offer.contact_info.zone}</span>
+            </div>
+          )}
 
-        {offer.delivery_time && (
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">Tiempo de entrega</h3>
-            <p className="text-muted-foreground">{offer.delivery_time}</p>
-          </div>
-        )}
+          {offer.contact_info?.condition && (
+            <div>
+              <span className="font-medium text-foreground">Estado: </span>
+              <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+            </div>
+          )}
 
-        <div>
-          <h3 className="font-semibold text-foreground mb-2">Fecha de creación</h3>
-          <p className="text-muted-foreground">
+          {offer.description && (
+            <div>
+              <span className="font-medium text-foreground">Descripción: </span>
+              <span className="text-muted-foreground">{offer.description}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 space-y-1">
+          <p className="text-sm text-muted-foreground">
             {new Date(offer.created_at).toLocaleDateString('es-AR', {
               day: 'numeric',
               month: 'long',
@@ -76,17 +94,11 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
               minute: '2-digit'
             })}
           </p>
-        </div>
-      </div>
-
-      {offer.description && (
-        <div className="mb-6">
-          <h3 className="font-semibold text-foreground mb-2">Descripción</h3>
-          <p className="text-muted-foreground whitespace-pre-wrap">
-            {offer.description}
+          <p className="text-sm font-medium text-foreground">
+            {offer.profiles?.full_name || 'Usuario anónimo'}
           </p>
         </div>
-      )}
+      </div>
 
       {offer.images && offer.images.length > 0 && (
         <div className="mb-6">

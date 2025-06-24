@@ -25,6 +25,7 @@ export const OfferSubmissionForm = ({
       title: '',
       price: undefined,
       zone: '',
+      condition: '',
       description: '',
       images: [],
     },

@@ -4,6 +4,7 @@ import { Control } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PriceInput } from './PriceInput';
 import { OfferImageUpload } from './OfferImageUpload';
 import { OfferSubmissionData } from './offerSubmissionSchema';
@@ -75,6 +76,33 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
                 {...field} 
               />
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="condition"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Estado del producto</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona el estado" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="nuevo">Nuevo</SelectItem>
+                <SelectItem value="usado-excelente">Usado - Excelente estado</SelectItem>
+                <SelectItem value="usado-muy-bueno">Usado - Muy buen estado</SelectItem>
+                <SelectItem value="usado-bueno">Usado - Buen estado</SelectItem>
+                <SelectItem value="usado-regular">Usado - Estado regular</SelectItem>
+                <SelectItem value="refurbished">Reacondicionado</SelectItem>
+                <SelectItem value="para-repuestos">Para repuestos</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}

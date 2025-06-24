@@ -39,6 +39,7 @@ export const useOfferSubmission = ({ buyRequestId, onSuccess }: UseOfferSubmissi
         status: 'pending',
         contact_info: {
           zone: data.zone,
+          condition: data.condition,
         },
       };
 
