@@ -59,10 +59,20 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       }
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
-      console.log('Profile data sample:', data?.[0]?.profiles);
+      console.log('🔍 DETAILED Profile data analysis:');
       
-      // Don't filter out requests - show all active requests even if profile data is incomplete
-      // This ensures the marketplace is always populated for all users (authenticated and anonymous)
+      // Log each request's profile data individually
+      data?.forEach((request, index) => {
+        console.log(`Request ${index + 1}:`, {
+          id: request.id,
+          title: request.title,
+          user_id: request.user_id,
+          profile: request.profiles,
+          profile_full_name: request.profiles?.full_name
+        });
+      });
+      
+      // Transform data to match interface
       const validRequests = (data || []).map(request => ({
         id: request.id,
         title: request.title,
@@ -76,10 +86,6 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       })) as BuyRequest[];
       
       console.log(`📋 Total requests to display: ${validRequests.length}`);
-      
-      // Log the IDs of fetched requests for debugging
-      const requestIds = validRequests.map(r => r.id) || [];
-      console.log('📋 Current request IDs:', requestIds);
       
       return validRequests;
     },
