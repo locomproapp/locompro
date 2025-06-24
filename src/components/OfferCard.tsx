@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Calendar, MessageCircle, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import Chat from '@/components/Chat';
 import OfferHeader from './OfferCard/OfferHeader';
 import OfferContent from './OfferCard/OfferContent';
 import OfferActions from './OfferCard/OfferActions';
@@ -55,7 +54,7 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
   const isSeller = currentUserId === offer.seller_id;
   const isBuyer = showActions && !isSeller;
   const isOfferOwner = currentUserId === offer.seller_id;
-  const shouldShowChat = offer.status === 'accepted' && currentUserId && offer.buy_requests;
+  const shouldShowChat = offer.status === 'accepted' && currentUserId && !!offer.buy_requests;
 
   return (
     <div className="space-y-4">
