@@ -15,7 +15,7 @@ export const useBuyRequestDetail = (id: string) => {
         .select(`
           *,
           categories (name),
-          profiles!buy_requests_user_id_fkey (
+          profiles!inner (
             id,
             full_name,
             avatar_url,
@@ -45,13 +45,14 @@ export const useBuyRequestDetail = (id: string) => {
         throw new Error('Buy request not found');
       }
       
-      // Validate that profile data exists
-      if (!data.profiles || !data.profiles.full_name) {
-        console.warn('⚠️ Buy request found but missing profile data:', {
+      // Validate that profile data exists and has a valid name
+      if (!data.profiles || !data.profiles.full_name || data.profiles.full_name.trim() === '') {
+        console.error('⚠️ Buy request found but missing valid profile data:', {
           id: data.id,
           user_id: data.user_id,
           profiles: data.profiles
         });
+        throw new Error('Buy request profile data is incomplete');
       }
       
       console.log('=== ANÁLISIS DETALLADO DE CAMPOS PROBLEMÁTICOS ===');

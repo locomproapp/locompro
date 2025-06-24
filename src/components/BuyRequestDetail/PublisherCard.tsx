@@ -14,9 +14,9 @@ const formatDate = (dateString: string) => {
 const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
     console.log('PublisherCard - buyRequest.profiles:', buyRequest.profiles);
     
-    // Get the full name - no fallback to anonymous
+    // Get the full name - no fallback, it should always exist
     const getDisplayName = () => {
-        return buyRequest.profiles?.full_name || 'Sin nombre';
+        return buyRequest.profiles?.full_name || 'Usuario';
     };
 
     // Get avatar URL

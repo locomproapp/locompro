@@ -119,7 +119,7 @@ const BuyRequestCard = ({
             <Calendar className="h-3 w-3" />
             <span>{formatDate(buyRequest.created_at)}</span>
           </div>
-          <span>Por: {buyRequest.profiles?.full_name || 'Sin nombre'}</span>
+          <span>Por: {buyRequest.profiles?.full_name}</span>
         </div>
 
         {showOfferButton && (

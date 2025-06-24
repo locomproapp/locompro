@@ -31,7 +31,7 @@ export const useBuyRequests = (searchQuery?: string) => {
         .from('buy_requests')
         .select(`
           *,
-          profiles!buy_requests_user_id_fkey (
+          profiles!inner (
             full_name,
             avatar_url,
             location
@@ -54,7 +54,16 @@ export const useBuyRequests = (searchQuery?: string) => {
       console.log(`✅ Fetched ${data?.length || 0} buy requests`);
       console.log('📋 Sample profile data:', data?.[0]?.profiles);
       
-      const transformedData: BuyRequest[] = (data || []).map(request => ({
+      // Filter out any requests without valid profile data
+      const validRequests = (data || []).filter(request => 
+        request.profiles && 
+        request.profiles.full_name && 
+        request.profiles.full_name.trim() !== ''
+      );
+      
+      console.log(`📋 Valid requests with profiles: ${validRequests.length}`);
+      
+      const transformedData: BuyRequest[] = validRequests.map(request => ({
         id: request.id,
         title: request.title,
         description: request.description,

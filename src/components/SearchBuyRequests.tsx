@@ -38,7 +38,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
         .from('buy_requests')
         .select(`
           *,
-          profiles!buy_requests_user_id_fkey (
+          profiles!inner (
             id,
             full_name,
             avatar_url,
@@ -61,22 +61,30 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
       console.log('Profile data sample:', data?.[0]?.profiles);
       
-      // Log warnings for requests without profile data
-      data?.forEach(request => {
-        if (!request.profiles || !request.profiles.full_name) {
-          console.warn('⚠️ Buy request missing profile data:', {
+      // Filter out any requests without valid profile data
+      const validRequests = (data || []).filter(request => {
+        const hasValidProfile = request.profiles && 
+                               request.profiles.full_name && 
+                               request.profiles.full_name.trim() !== '';
+        
+        if (!hasValidProfile) {
+          console.warn('⚠️ Filtering out buy request with invalid profile data:', {
             id: request.id,
             user_id: request.user_id,
             profiles: request.profiles
           });
         }
+        
+        return hasValidProfile;
       });
       
+      console.log(`📋 Valid requests with profiles: ${validRequests.length} of ${data?.length || 0}`);
+      
       // Log the IDs of fetched requests for debugging
-      const requestIds = data?.map(r => r.id) || [];
+      const requestIds = validRequests.map(r => r.id) || [];
       console.log('📋 Current request IDs:', requestIds);
       
-      return (data || []).map(request => ({
+      return validRequests.map(request => ({
         id: request.id,
         title: request.title,
         description: request.description,

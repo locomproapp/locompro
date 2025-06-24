@@ -83,7 +83,7 @@ const PostCard = ({ post }: PostCardProps) => {
             <Calendar className="h-3 w-3" />
             <span>{formatDate(post.created_at)}</span>
           </div>
-          <span>Por: {post.profiles?.full_name || 'Sin nombre'}</span>
+          <span>Por: {post.profiles?.full_name}</span>
         </div>
       </div>
     </Card>
