@@ -10,6 +10,7 @@ import ContactInfo from './OfferCard/ContactInfo';
 import OfferActions from './OfferCard/OfferActions';
 import SellerOfferActions from './OfferCard/SellerOfferActions';
 import RejectedOfferActions from './OfferCard/RejectedOfferActions';
+import { Badge } from '@/components/ui/badge';
 
 interface Offer {
   id: string;
@@ -61,6 +62,38 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
     });
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'accepted': return 'success';
+      case 'rejected': return 'destructive';
+      case 'withdrawn': return 'secondary';
+      default: return 'default';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'accepted': return 'Aceptada';
+      case 'rejected': return 'Rechazada';
+      case 'withdrawn': return 'Retirada';
+      case 'pending': return 'Pendiente';
+      default: return status;
+    }
+  };
+
+  const getConditionText = (condition: string) => {
+    switch (condition) {
+      case 'nuevo': return 'Nuevo';
+      case 'usado-excelente': return 'Usado - Excelente estado';
+      case 'usado-muy-bueno': return 'Usado - Muy buen estado';
+      case 'usado-bueno': return 'Usado - Buen estado';
+      case 'usado-regular': return 'Usado - Estado regular';
+      case 'refurbished': return 'Reacondicionado';
+      case 'para-repuestos': return 'Para repuestos';
+      default: return condition;
+    }
+  };
+
   // Determine user role
   const isSeller = currentUserId === offer.seller_id;
   const isBuyer = showActions && !isSeller; // showActions is true for buyers in CompareOffers
@@ -70,21 +103,55 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
     <div className="space-y-4">
       <Card className={`p-4 ${offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''}`}>
         <div className="space-y-3">
-          <OfferHeader
-            title={offer.title}
-            price={offer.price}
-            priceHistory={offer.price_history}
-            status={offer.status}
-            buyRequest={offer.buy_requests}
-            profile={offer.profiles}
-            showPublicInfo={showPublicInfo}
-            buyerRating={offer.buyer_rating}
-            offerId={showPublicInfo ? offer.id : undefined}
-          />
+          {/* Title and Price */}
+          <div className="flex justify-between items-start">
+            <h3 className="font-semibold text-lg flex-1 mr-4">{offer.title}</h3>
+            <div className="text-xl font-bold text-primary">
+              ${offer.price.toLocaleString('es-AR')}
+            </div>
+          </div>
 
-          {offer.description && (
-            <p className="text-muted-foreground text-sm">{offer.description}</p>
-          )}
+          {/* Status Badge (centered) */}
+          <div className="flex justify-center">
+            <Badge variant={getStatusColor(offer.status)}>
+              {getStatusText(offer.status)}
+            </Badge>
+          </div>
+
+          {/* Structured Information */}
+          <div className="space-y-1">
+            {offer.contact_info?.zone && (
+              <div>
+                <span className="font-medium">Zona: </span>
+                <span className="text-muted-foreground">{offer.contact_info.zone}</span>
+              </div>
+            )}
+
+            {offer.contact_info?.condition && (
+              <div>
+                <span className="font-medium">Estado: </span>
+                <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+              </div>
+            )}
+
+            {offer.description && (
+              <div>
+                <span className="font-medium">Descripción: </span>
+                <span className="text-muted-foreground">{offer.description}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Date and Username */}
+          <div className="space-y-1 border-t pt-2">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              <span>{formatDate(offer.created_at)}</span>
+            </div>
+            <div className="text-sm font-medium text-foreground">
+              {offer.profiles?.full_name || 'Usuario anónimo'}
+            </div>
+          </div>
 
           {/* Status explanation for sellers */}
           {isSeller && offer.status === 'pending' && (
@@ -103,13 +170,6 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
           {offer.contact_info && (showActions || showPublicInfo) && (
             <ContactInfo contactInfo={offer.contact_info} />
           )}
-
-          <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              <span>{formatDate(offer.created_at)}</span>
-            </div>
-          </div>
 
           {/* Actions for buyers (accept/reject) */}
           {isBuyer && (
