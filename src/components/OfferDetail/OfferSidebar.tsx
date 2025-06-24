@@ -55,9 +55,11 @@ const OfferSidebar = ({ offer }: OfferSidebarProps) => {
               <p className="font-medium text-foreground">
                 {offer.profiles?.full_name || 'Usuario anónimo'}
               </p>
-              <p className="text-sm text-muted-foreground">
-                {offer.profiles?.email}
-              </p>
+              {offer.profiles?.email && (
+                <p className="text-sm text-muted-foreground">
+                  {offer.profiles.email}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -73,9 +75,9 @@ const OfferSidebar = ({ offer }: OfferSidebarProps) => {
           
           <div className="space-y-3">
             <div>
-              <p className="font-medium text-foreground">
+              <h4 className="font-medium text-foreground mb-1">
                 {offer.buy_requests.title}
-              </p>
+              </h4>
             </div>
             
             <div className="flex items-center gap-2 text-muted-foreground">
