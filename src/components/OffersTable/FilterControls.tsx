@@ -33,16 +33,16 @@ const FilterControls = ({
   onSortChange
 }: FilterControlsProps) => {
   return (
-    <div className="w-80 space-y-6">
+    <div className="w-72 space-y-4 p-1">
       {/* Sorting Section */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium">Ordenar por</h4>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2">
           <Button
             variant={sortField === 'created_at' ? 'default' : 'outline'}
             size="sm"
             onClick={() => onSortChange('created_at', sortField === 'created_at' && sortDirection === 'desc' ? 'asc' : 'desc')}
-            className="justify-between"
+            className="w-full justify-between"
           >
             Fecha
             {sortField === 'created_at' && (
@@ -53,7 +53,7 @@ const FilterControls = ({
             variant={sortField === 'price' ? 'default' : 'outline'}
             size="sm"
             onClick={() => onSortChange('price', sortField === 'price' && sortDirection === 'asc' ? 'desc' : 'asc')}
-            className="justify-between"
+            className="w-full justify-between"
           >
             Precio
             {sortField === 'price' && (
@@ -74,7 +74,7 @@ const FilterControls = ({
                 checked={checked}
                 onCheckedChange={(checked) => onStatusFilterChange(status, !!checked)}
               />
-              <label htmlFor={`filter-status-${status}`} className="text-sm">
+              <label htmlFor={`filter-status-${status}`} className="text-sm cursor-pointer">
                 {status === 'pending' ? 'Pendiente' : 
                  status === 'accepted' ? 'Aceptada' : 
                  status === 'rejected' ? 'Rechazada' : 'Finalizada'}
@@ -95,7 +95,7 @@ const FilterControls = ({
                 checked={checked}
                 onCheckedChange={(checked) => onDeliveryFilterChange(delivery, !!checked)}
               />
-              <label htmlFor={`filter-delivery-${delivery}`} className="text-sm">
+              <label htmlFor={`filter-delivery-${delivery}`} className="text-sm cursor-pointer">
                 {delivery}
               </label>
             </div>

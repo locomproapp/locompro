@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -175,8 +174,30 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
 
   return (
     <div className="space-y-4">
-      {/* Table */}
-      <div className="rounded-md border bg-card">
+      {/* Table Container with Filter Icon */}
+      <div className="rounded-md border bg-card relative">
+        {/* Filter Icon in top-right corner */}
+        <div className="absolute top-4 right-4 z-10">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto" align="end">
+              <FilterControls
+                statusFilters={statusFilters}
+                deliveryFilters={deliveryFilters}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onStatusFilterChange={handleStatusFilterChange}
+                onDeliveryFilterChange={handleDeliveryFilterChange}
+                onSortChange={handleSortChange}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -188,29 +209,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                 <TableHead>Zona</TableHead>
                 <TableHead>Envío</TableHead>
                 <TableHead>Fecha</TableHead>
-                <TableHead className="relative">
-                  <div className="flex items-center justify-between">
-                    <span>Usuario</span>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
-                          <Filter className="h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-80" align="end">
-                        <FilterControls
-                          statusFilters={statusFilters}
-                          deliveryFilters={deliveryFilters}
-                          sortField={sortField}
-                          sortDirection={sortDirection}
-                          onStatusFilterChange={handleStatusFilterChange}
-                          onDeliveryFilterChange={handleDeliveryFilterChange}
-                          onSortChange={handleSortChange}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </TableHead>
+                <TableHead>Usuario</TableHead>
                 <TableHead>Estado</TableHead>
                 {isOwner && <TableHead>Acciones</TableHead>}
               </TableRow>
