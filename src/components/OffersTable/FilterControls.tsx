@@ -37,31 +37,29 @@ const FilterControls = ({
       {/* Sorting Section */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium">Ordenar por</h4>
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <Button
-              variant={sortField === 'created_at' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => onSortChange('created_at', sortField === 'created_at' && sortDirection === 'desc' ? 'asc' : 'desc')}
-              className="flex-1 justify-between"
-            >
-              Fecha
-              {sortField === 'created_at' && (
-                sortDirection === 'desc' ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />
-              )}
-            </Button>
-            <Button
-              variant={sortField === 'price' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => onSortChange('price', sortField === 'price' && sortDirection === 'asc' ? 'desc' : 'asc')}
-              className="flex-1 justify-between"
-            >
-              Precio
-              {sortField === 'price' && (
-                sortDirection === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
-              )}
-            </Button>
-          </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant={sortField === 'created_at' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onSortChange('created_at', sortField === 'created_at' && sortDirection === 'desc' ? 'asc' : 'desc')}
+            className="justify-between"
+          >
+            Fecha
+            {sortField === 'created_at' && (
+              sortDirection === 'desc' ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />
+            )}
+          </Button>
+          <Button
+            variant={sortField === 'price' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onSortChange('price', sortField === 'price' && sortDirection === 'asc' ? 'desc' : 'asc')}
+            className="justify-between"
+          >
+            Precio
+            {sortField === 'price' && (
+              sortDirection === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+            )}
+          </Button>
         </div>
       </div>
 

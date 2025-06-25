@@ -114,6 +114,21 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
     }
   };
 
+  const getConditionText = (contactInfo: any) => {
+    if (!contactInfo?.condition) return 'No especificada';
+    
+    switch (contactInfo.condition) {
+      case 'nuevo': return 'Nuevo';
+      case 'usado-excelente': return 'Usado - Excelente estado';
+      case 'usado-muy-bueno': return 'Usado - Muy buen estado';
+      case 'usado-bueno': return 'Usado - Buen estado';
+      case 'usado-regular': return 'Usado - Estado regular';
+      case 'refurbished': return 'Reacondicionado';
+      case 'para-repuestos': return 'Para repuestos';
+      default: return contactInfo.condition;
+    }
+  };
+
   const getDeliveryText = (delivery: string | null, contactInfo: any) => {
     if (delivery) return delivery;
     return contactInfo?.delivery || 'No especificado';
@@ -169,7 +184,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                 <TableHead className="w-12"></TableHead>
                 <TableHead>Título</TableHead>
                 <TableHead>Precio</TableHead>
-                <TableHead>Estado</TableHead>
+                <TableHead>Condición</TableHead>
                 <TableHead>Zona</TableHead>
                 <TableHead>Envío</TableHead>
                 <TableHead>Fecha</TableHead>
@@ -196,6 +211,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                     </Popover>
                   </div>
                 </TableHead>
+                <TableHead>Estado</TableHead>
                 {isOwner && <TableHead>Acciones</TableHead>}
               </TableRow>
             </TableHeader>
@@ -218,7 +234,9 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                   <TableCell className="font-semibold text-primary">
                     ${formatPrice(offer.price)}
                   </TableCell>
-                  <TableCell>{getStatusBadge(offer.status)}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {getConditionText(offer.contact_info)}
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {offer.contact_info?.zone || 'No especificada'}
                   </TableCell>
@@ -231,6 +249,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                   <TableCell>
                     {offer.profiles?.full_name || 'Usuario anónimo'}
                   </TableCell>
+                  <TableCell>{getStatusBadge(offer.status)}</TableCell>
                   {isOwner && (
                     <TableCell>
                       <CompactOfferActions
