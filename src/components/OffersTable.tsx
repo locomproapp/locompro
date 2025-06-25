@@ -4,10 +4,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Filter } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import CompactOfferActions from './OfferCard/CompactOfferActions';
+import FilterControls from './OffersTable/FilterControls';
 
 interface Offer {
   id: string;
@@ -65,18 +66,17 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
 
   const isOwner = user?.id === buyRequestOwnerId;
 
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection(field === 'created_at' ? 'desc' : 'asc');
-    }
+  const handleSortChange = (field: SortField, direction: SortDirection) => {
+    setSortField(field);
+    setSortDirection(direction);
   };
 
-  const getSortIcon = (field: SortField) => {
-    if (sortField !== field) return <ArrowUpDown className="h-4 w-4" />;
-    return sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />;
+  const handleStatusFilterChange = (status: string, checked: boolean) => {
+    setStatusFilters(prev => ({ ...prev, [status]: checked }));
+  };
+
+  const handleDeliveryFilterChange = (delivery: string, checked: boolean) => {
+    setDeliveryFilters(prev => ({ ...prev, [delivery]: checked }));
   };
 
   const formatDate = (dateString: string) => {
@@ -160,51 +160,6 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
 
   return (
     <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex flex-wrap gap-6 p-4 bg-muted/30 rounded-lg">
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium">Estado</h4>
-          <div className="flex flex-wrap gap-3">
-            {Object.entries(statusFilters).map(([status, checked]) => (
-              <div key={status} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`status-${status}`}
-                  checked={checked}
-                  onCheckedChange={(checked) => 
-                    setStatusFilters(prev => ({ ...prev, [status]: !!checked }))
-                  }
-                />
-                <label htmlFor={`status-${status}`} className="text-sm capitalize">
-                  {status === 'pending' ? 'Pendiente' : 
-                   status === 'accepted' ? 'Aceptada' : 
-                   status === 'rejected' ? 'Rechazada' : 'Finalizada'}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium">Envío</h4>
-          <div className="flex flex-wrap gap-3">
-            {Object.entries(deliveryFilters).map(([delivery, checked]) => (
-              <div key={delivery} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`delivery-${delivery}`}
-                  checked={checked}
-                  onCheckedChange={(checked) => 
-                    setDeliveryFilters(prev => ({ ...prev, [delivery]: !!checked }))
-                  }
-                />
-                <label htmlFor={`delivery-${delivery}`} className="text-sm">
-                  {delivery}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Table */}
       <div className="rounded-md border bg-card">
         <div className="overflow-x-auto">
@@ -213,32 +168,34 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
               <TableRow>
                 <TableHead className="w-12"></TableHead>
                 <TableHead>Título</TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-2"
-                    onClick={() => handleSort('price')}
-                  >
-                    Precio
-                    {getSortIcon('price')}
-                  </Button>
-                </TableHead>
+                <TableHead>Precio</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Zona</TableHead>
                 <TableHead>Envío</TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-2"
-                    onClick={() => handleSort('created_at')}
-                  >
-                    Fecha
-                    {getSortIcon('created_at')}
-                  </Button>
+                <TableHead>Fecha</TableHead>
+                <TableHead className="relative">
+                  <div className="flex items-center justify-between">
+                    <span>Usuario</span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
+                          <Filter className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80" align="end">
+                        <FilterControls
+                          statusFilters={statusFilters}
+                          deliveryFilters={deliveryFilters}
+                          sortField={sortField}
+                          sortDirection={sortDirection}
+                          onStatusFilterChange={handleStatusFilterChange}
+                          onDeliveryFilterChange={handleDeliveryFilterChange}
+                          onSortChange={handleSortChange}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </TableHead>
-                <TableHead>Usuario</TableHead>
                 {isOwner && <TableHead>Acciones</TableHead>}
               </TableRow>
             </TableHeader>

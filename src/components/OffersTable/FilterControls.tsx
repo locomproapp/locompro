@@ -1,0 +1,111 @@
+
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowUp, ArrowDown } from 'lucide-react';
+
+interface FilterControlsProps {
+  statusFilters: {
+    pending: boolean;
+    accepted: boolean;
+    rejected: boolean;
+    finalized: boolean;
+  };
+  deliveryFilters: {
+    'En persona': boolean;
+    'Por correo': boolean;
+  };
+  sortField: 'price' | 'created_at';
+  sortDirection: 'asc' | 'desc';
+  onStatusFilterChange: (status: string, checked: boolean) => void;
+  onDeliveryFilterChange: (delivery: string, checked: boolean) => void;
+  onSortChange: (field: 'price' | 'created_at', direction: 'asc' | 'desc') => void;
+}
+
+const FilterControls = ({
+  statusFilters,
+  deliveryFilters,
+  sortField,
+  sortDirection,
+  onStatusFilterChange,
+  onDeliveryFilterChange,
+  onSortChange
+}: FilterControlsProps) => {
+  return (
+    <div className="w-80 space-y-6">
+      {/* Sorting Section */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium">Ordenar por</h4>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Button
+              variant={sortField === 'created_at' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onSortChange('created_at', sortField === 'created_at' && sortDirection === 'desc' ? 'asc' : 'desc')}
+              className="flex-1 justify-between"
+            >
+              Fecha
+              {sortField === 'created_at' && (
+                sortDirection === 'desc' ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />
+              )}
+            </Button>
+            <Button
+              variant={sortField === 'price' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onSortChange('price', sortField === 'price' && sortDirection === 'asc' ? 'desc' : 'asc')}
+              className="flex-1 justify-between"
+            >
+              Precio
+              {sortField === 'price' && (
+                sortDirection === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* State Filters */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium">Estado</h4>
+        <div className="space-y-2">
+          {Object.entries(statusFilters).map(([status, checked]) => (
+            <div key={status} className="flex items-center space-x-2">
+              <Checkbox
+                id={`filter-status-${status}`}
+                checked={checked}
+                onCheckedChange={(checked) => onStatusFilterChange(status, !!checked)}
+              />
+              <label htmlFor={`filter-status-${status}`} className="text-sm">
+                {status === 'pending' ? 'Pendiente' : 
+                 status === 'accepted' ? 'Aceptada' : 
+                 status === 'rejected' ? 'Rechazada' : 'Finalizada'}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Delivery Filters */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium">Envío</h4>
+        <div className="space-y-2">
+          {Object.entries(deliveryFilters).map(([delivery, checked]) => (
+            <div key={delivery} className="flex items-center space-x-2">
+              <Checkbox
+                id={`filter-delivery-${delivery}`}
+                checked={checked}
+                onCheckedChange={(checked) => onDeliveryFilterChange(delivery, !!checked)}
+              />
+              <label htmlFor={`filter-delivery-${delivery}`} className="text-sm">
+                {delivery}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FilterControls;
