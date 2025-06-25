@@ -5,6 +5,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { SendOfferFormData } from './SendOfferForm';
 import { SendOfferPriceInput } from './SendOfferPriceInput';
 import { SendOfferImageUpload } from './SendOfferImageUpload';
@@ -76,17 +77,26 @@ export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Envío</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona el tipo de envío" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="En persona">En persona</SelectItem>
-                <SelectItem value="Por correo">Por correo</SelectItem>
-              </SelectContent>
-            </Select>
+            <FormControl>
+              <RadioGroup
+                onValueChange={field.onChange}
+                value={field.value}
+                className="flex flex-col space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="En persona" id="en-persona" />
+                  <label htmlFor="en-persona" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    En persona
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Por correo" id="por-correo" />
+                  <label htmlFor="por-correo" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Por correo
+                  </label>
+                </div>
+              </RadioGroup>
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}

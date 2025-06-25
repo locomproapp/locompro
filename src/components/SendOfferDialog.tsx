@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -349,17 +350,26 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Envío *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona el tipo de envío" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="En persona">En persona</SelectItem>
-                      <SelectItem value="Por correo">Por correo</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-col space-y-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="En persona" id="dialog-en-persona" />
+                        <label htmlFor="dialog-en-persona" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          En persona
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Por correo" id="dialog-por-correo" />
+                        <label htmlFor="dialog-por-correo" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Por correo
+                        </label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
