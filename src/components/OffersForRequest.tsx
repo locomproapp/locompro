@@ -15,6 +15,11 @@ const OffersForRequest = ({ buyRequestId, buyRequestOwnerId, onOfferUpdate }: Of
   const { user } = useAuth();
   const { offers, loading, refetch } = useOffers(buyRequestId);
 
+  console.log('🔍 OffersForRequest - buyRequestId:', buyRequestId);
+  console.log('🔍 OffersForRequest - buyRequestOwnerId:', buyRequestOwnerId);
+  console.log('🔍 OffersForRequest - offers:', offers);
+  console.log('🔍 OffersForRequest - user:', user);
+
   const handleOfferUpdate = () => {
     refetch();
     onOfferUpdate?.();

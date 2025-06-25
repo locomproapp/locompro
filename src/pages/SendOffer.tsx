@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -32,8 +33,13 @@ const SendOffer = () => {
   const [uploading, setUploading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [isCounterOffer, setIsCounterOffer] = useState(false);
+  const [actualBuyRequestId, setActualBuyRequestId] = useState<string | null>(null);
 
-  const { data: buyRequest, isLoading } = useBuyRequestDetail(buyRequestId || '');
+  console.log('🔍 SendOffer - URL buyRequestId:', buyRequestId);
+  console.log('🔍 SendOffer - editOfferId:', editOfferId);
+
+  // Get the buy request data
+  const { data: buyRequest, isLoading: buyRequestLoading } = useBuyRequestDetail(actualBuyRequestId || buyRequestId || '');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,6 +58,8 @@ const SendOffer = () => {
       if (!editOfferId || !user) return;
 
       try {
+        console.log('🔍 Loading offer data for edit:', editOfferId);
+        
         const { data: offer, error } = await supabase
           .from('offers')
           .select('*')
@@ -65,7 +73,10 @@ const SendOffer = () => {
         }
 
         if (offer) {
-          setIsCounterOffer(true);
+          console.log('🔍 Loaded offer data:', offer);
+          setIsCounterOffer(offer.status === 'rejected');
+          setActualBuyRequestId(offer.buy_request_id);
+          
           form.reset({
             title: offer.title,
             description: offer.description || '',
@@ -146,7 +157,9 @@ const SendOffer = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user || !buyRequestId) {
+    const targetBuyRequestId = actualBuyRequestId || buyRequestId;
+    
+    if (!user || !targetBuyRequestId) {
       toast({
         title: "Error",
         description: "Debes iniciar sesión para enviar una oferta",
@@ -157,6 +170,7 @@ const SendOffer = () => {
 
     try {
       console.log('Enviando oferta con datos:', values);
+      console.log('Target buy request ID:', targetBuyRequestId);
 
       if (isCounterOffer && editOfferId) {
         // Get current offer data to preserve price history
@@ -215,12 +229,36 @@ const SendOffer = () => {
           title: "¡Contraoferta enviada!",
           description: "Tu contraoferta ha sido enviada exitosamente"
         });
+      } else if (editOfferId) {
+        // Regular edit of pending offer
+        const { error } = await supabase
+          .from('offers')
+          .update({
+            title: values.title,
+            description: values.description || null,
+            price: values.price,
+            message: values.message,
+            delivery_time: values.delivery_time,
+            images: images.length > 0 ? images : null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editOfferId);
+
+        if (error) {
+          console.error('Error actualizando oferta:', error);
+          throw error;
+        }
+
+        toast({
+          title: "¡Oferta actualizada!",
+          description: "Tu oferta ha sido actualizada exitosamente"
+        });
       } else {
         // Create new offer
         const { error } = await supabase
           .from('offers')
           .insert({
-            buy_request_id: buyRequestId,
+            buy_request_id: targetBuyRequestId,
             seller_id: user.id,
             title: values.title,
             description: values.description || null,
@@ -242,7 +280,7 @@ const SendOffer = () => {
         });
       }
 
-      navigate(`/buy-request/${buyRequestId}`);
+      navigate(`/buy-request/${targetBuyRequestId}`);
     } catch (error) {
       console.error('Error creating/updating offer:', error);
       toast({
@@ -253,7 +291,7 @@ const SendOffer = () => {
     }
   };
 
-  if (isLoading) {
+  if (buyRequestLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
         <Navigation />
@@ -311,6 +349,8 @@ const SendOffer = () => {
     );
   }
 
+  const targetBuyRequestId = actualBuyRequestId || buyRequestId;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -318,14 +358,14 @@ const SendOffer = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button variant="ghost" asChild className="mb-4">
-            <Link to={`/buy-request/${buyRequestId}`} className="flex items-center gap-2">
+            <Link to={`/buy-request/${targetBuyRequestId}`} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
               Volver a la solicitud
             </Link>
           </Button>
           
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {isCounterOffer ? 'Enviar Contraoferta' : 'Enviar Oferta'}
+            {isCounterOffer ? 'Enviar Contraoferta' : editOfferId ? 'Editar Oferta' : 'Enviar Oferta'}
           </h1>
           <p className="text-lg text-muted-foreground mb-2">
             Para: <span className="font-medium">{buyRequest?.title}</span>
@@ -480,10 +520,10 @@ const SendOffer = () => {
 
               <div className="flex gap-4 pt-6">
                 <Button type="button" variant="outline" asChild className="flex-1">
-                  <Link to={`/buy-request/${buyRequestId}`}>Cancelar</Link>
+                  <Link to={`/buy-request/${targetBuyRequestId}`}>Cancelar</Link>
                 </Button>
                 <Button type="submit" className="flex-1">
-                  {isCounterOffer ? 'Enviar contraoferta' : 'Enviar oferta'}
+                  {isCounterOffer ? 'Enviar contraoferta' : editOfferId ? 'Actualizar oferta' : 'Enviar oferta'}
                 </Button>
               </div>
             </form>
