@@ -44,11 +44,7 @@ export const useFetchOffers = (buyRequestId: string) => {
         return [];
       }
       
-      // Get current user for permission checks
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('🔍 useFetchOffers - Current user:', user?.id);
-      
-      // Fetch all offers for this buy request - no user filtering here
+      // Fetch ALL offers for this buy request - public visibility for everyone
       const { data, error } = await supabase
         .from('offers')
         .select(`
@@ -83,10 +79,6 @@ export const useFetchOffers = (buyRequestId: string) => {
 
       const transformedOffers: Offer[] = data.map(offer => {
         console.log('🔄 useFetchOffers - Transforming offer:', offer.id, offer.title);
-        console.log('🔄 useFetchOffers - Offer seller_id:', offer.seller_id);
-        console.log('🔄 useFetchOffers - Buy request user_id:', offer.buy_requests?.user_id);
-        console.log('🔄 useFetchOffers - Current user:', user?.id);
-        console.log('🔄 useFetchOffers - Public visibility:', offer.public_visibility);
         
         return {
           id: offer.id,

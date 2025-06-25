@@ -52,12 +52,15 @@ const OffersForRequest = ({
         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
           <Package className="h-6 w-6 text-primary" />
         </div>
-        <p className="text-muted-foreground text-sm">Aún no hay ofertas</p>
+        <p className="text-muted-foreground text-sm">Aún no hay ofertas para este producto</p>
+        <p className="text-xs text-muted-foreground mt-2">
+          Las ofertas aparecerán aquí cuando otros usuarios las envíen
+        </p>
       </div>
     );
   }
 
-  console.log('✅ OffersForRequest - Rendering', offers.length, 'offers');
+  console.log('✅ OffersForRequest - Rendering', offers.length, 'offers for all users');
 
   return (
     <div className="space-y-8">
@@ -67,11 +70,14 @@ const OffersForRequest = ({
           <h3 className="font-semibold text-xl">
             Ofertas Recibidas ({offers.length})
           </h3>
+          <p className="text-sm text-muted-foreground">
+            Todas las ofertas públicas para este producto
+          </p>
         </div>
         
         <div className="flex gap-4 overflow-x-auto pb-4">
           {offers.map(offer => {
-            console.log('🎯 OffersForRequest - Rendering offer:', offer.id, offer.title);
+            console.log('🎯 OffersForRequest - Rendering offer card:', offer.id, offer.title);
             return (
               <CompactOfferCard 
                 key={offer.id} 
