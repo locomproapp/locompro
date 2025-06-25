@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -174,30 +175,8 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
 
   return (
     <div className="space-y-4">
-      {/* Table Container with Filter Icon */}
-      <div className="rounded-md border bg-card relative">
-        {/* Filter Icon in top-right corner */}
-        <div className="absolute top-4 right-4 z-10">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto" align="end">
-              <FilterControls
-                statusFilters={statusFilters}
-                deliveryFilters={deliveryFilters}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onStatusFilterChange={handleStatusFilterChange}
-                onDeliveryFilterChange={handleDeliveryFilterChange}
-                onSortChange={handleSortChange}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-
+      {/* Table Container */}
+      <div className="rounded-md border bg-card">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -212,6 +191,28 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                 <TableHead>Usuario</TableHead>
                 <TableHead>Estado</TableHead>
                 {isOwner && <TableHead>Acciones</TableHead>}
+                <TableHead className="w-12 relative">
+                  <div className="flex justify-center">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Filter className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto" align="end">
+                        <FilterControls
+                          statusFilters={statusFilters}
+                          deliveryFilters={deliveryFilters}
+                          sortField={sortField}
+                          sortDirection={sortDirection}
+                          onStatusFilterChange={handleStatusFilterChange}
+                          onDeliveryFilterChange={handleDeliveryFilterChange}
+                          onSortChange={handleSortChange}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -258,6 +259,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                       />
                     </TableCell>
                   )}
+                  <TableCell></TableCell>
                 </TableRow>
               ))}
             </TableBody>
