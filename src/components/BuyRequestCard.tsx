@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -5,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
 import OfferForm from './OfferForm';
 import BuyRequestActions from './BuyRequestActions';
+import { getDisplayName } from '@/utils/displayName';
 
 interface BuyRequest {
   id: string;
@@ -18,6 +20,7 @@ interface BuyRequest {
   created_at: string;
   profiles?: {
     full_name: string | null;
+    email?: string | null;
   } | null;
 }
 
@@ -55,6 +58,8 @@ const BuyRequestCard = ({
       year: 'numeric'
     });
   };
+
+  const displayName = getDisplayName(buyRequest.profiles);
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -118,9 +123,7 @@ const BuyRequestCard = ({
             <Calendar className="h-3 w-3" />
             <span>{formatDate(buyRequest.created_at)}</span>
           </div>
-          {buyRequest.profiles?.full_name && (
-            <span>Por: {buyRequest.profiles.full_name}</span>
-          )}
+          <span>Por: {displayName}</span>
         </div>
 
         {showOfferButton && (

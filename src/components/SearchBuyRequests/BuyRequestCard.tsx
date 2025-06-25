@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Calendar, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getDisplayNameWithLogging } from '@/utils/displayName';
 
 interface BuyRequest {
   id: string;
@@ -43,45 +44,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  // Improved user name display with better fallback logic
-  const getDisplayName = () => {
-    console.log(`👤 [${request.id}] Profile Analysis:`, {
-      request_id: request.id,
-      user_id: request.user_id,
-      profiles_object: request.profiles,
-      profiles_exists: !!request.profiles,
-      profiles_type: typeof request.profiles,
-      full_name_value: request.profiles?.full_name,
-      full_name_type: typeof request.profiles?.full_name,
-      full_name_length: request.profiles?.full_name?.length || 0,
-      email_value: request.profiles?.email,
-      all_profile_keys: request.profiles ? Object.keys(request.profiles) : 'null'
-    });
-    
-    // Check if we have a valid full name that's not just whitespace
-    if (request.profiles?.full_name && request.profiles.full_name.trim() !== '') {
-      console.log(`✅ [${request.id}] Using full name: "${request.profiles.full_name}"`);
-      return request.profiles.full_name.trim();
-    }
-    
-    // Try to use email as fallback (username part before @)
-    if (request.profiles?.email && request.profiles.email.trim() !== '') {
-      const emailUsername = request.profiles.email.split('@')[0];
-      console.log(`📧 [${request.id}] Using email username: "${emailUsername}"`);
-      return emailUsername;
-    }
-    
-    console.log(`⚠️ [${request.id}] No valid name found, using fallback. Reasons:`, {
-      no_profiles: !request.profiles,
-      no_full_name: !request.profiles?.full_name,
-      empty_full_name: request.profiles?.full_name === '',
-      whitespace_only: request.profiles?.full_name?.trim() === '',
-      no_email: !request.profiles?.email,
-      empty_email: request.profiles?.email === ''
-    });
-    
-    return 'Usuario anónimo';
-  };
+  const displayName = getDisplayNameWithLogging(request.profiles, `BuyRequestCard-${request.id}`);
 
   return (
     <Card key={request.id} className="hover:shadow-md transition-shadow">
@@ -116,7 +79,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
         </div>
         <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-muted-foreground">
-            Por: {getDisplayName()}
+            Por: {displayName}
           </p>
           <Button asChild size="sm">
             <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">

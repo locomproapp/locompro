@@ -3,12 +3,14 @@ import React from 'react';
 import { User, Star, ExternalLink } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { getDisplayName } from '@/utils/displayName';
 
 interface Profile {
   full_name: string | null;
   avatar_url?: string | null;
   bio?: string | null;
   location?: string | null;
+  email?: string | null;
 }
 
 interface Post {
@@ -49,8 +51,9 @@ const BuyerInfo = ({ post }: BuyerInfoProps) => {
     );
   };
 
-  const getInitials = (name: string | null) => {
-    if (!name) return 'A';
+  const displayName = getDisplayName(post.profiles);
+
+  const getInitials = (name: string) => {
     return name
       .split(' ')
       .map(word => word.charAt(0))
@@ -90,15 +93,15 @@ const BuyerInfo = ({ post }: BuyerInfoProps) => {
           <Avatar className="h-12 w-12">
             <AvatarImage 
               src={post.profiles?.avatar_url || undefined} 
-              alt={post.profiles?.full_name || 'Usuario'} 
+              alt={displayName} 
             />
             <AvatarFallback className="bg-primary/10 text-primary font-medium">
-              {getInitials(post.profiles?.full_name)}
+              {getInitials(displayName)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <p className="font-medium text-foreground">
-              {post.profiles?.full_name || 'Usuario anónimo'}
+              {displayName}
             </p>
             {post.profiles?.location && (
               <p className="text-sm text-muted-foreground">

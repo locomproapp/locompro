@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getDisplayNameWithLogging } from '@/utils/displayName';
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -12,34 +13,7 @@ const formatDate = (dateString: string) => {
 };
 
 const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
-    console.log('🔍 PublisherCard - Full buyRequest data:', {
-        id: buyRequest.id,
-        user_id: buyRequest.user_id,
-        profiles: buyRequest.profiles,
-        profiles_type: typeof buyRequest.profiles,
-        full_name: buyRequest.profiles?.full_name,
-        full_name_type: typeof buyRequest.profiles?.full_name
-    });
-    
-    // Enhanced name display with comprehensive fallback
-    const getDisplayName = () => {
-        console.log('👤 PublisherCard - Analyzing name for request:', buyRequest.id);
-        
-        if (buyRequest.profiles?.full_name && buyRequest.profiles.full_name.trim() !== '') {
-            console.log('✅ PublisherCard - Found valid name:', buyRequest.profiles.full_name);
-            return buyRequest.profiles.full_name;
-        }
-        
-        // Try email as fallback
-        if (buyRequest.profiles?.email) {
-            const emailName = buyRequest.profiles.email.split('@')[0];
-            console.log('📧 PublisherCard - Using email fallback:', emailName);
-            return emailName;
-        }
-        
-        console.log('⚠️ PublisherCard - No valid name found, using anonymous');
-        return 'Usuario anónimo';
-    };
+    const displayName = getDisplayNameWithLogging(buyRequest.profiles, `PublisherCard-${buyRequest.id}`);
 
     // Get avatar URL
     const getAvatarUrl = () => {
@@ -64,15 +38,15 @@ const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
                     <Avatar className="h-12 w-12">
                         <AvatarImage
                             src={getAvatarUrl()}
-                            alt={getDisplayName()}
+                            alt={displayName}
                         />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                            {getDisplayName().charAt(0).toUpperCase()}
+                            {displayName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                         <p className="font-medium text-foreground">
-                            {getDisplayName()}
+                            {displayName}
                         </p>
                         {getLocation() && (
                             <p className="text-sm text-muted-foreground">

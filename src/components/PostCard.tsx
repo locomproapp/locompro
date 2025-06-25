@@ -3,6 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar } from 'lucide-react';
+import { getDisplayNameWithLogging } from '@/utils/displayName';
 
 interface Post {
   id: string;
@@ -46,29 +47,7 @@ const PostCard = ({ post }: PostCardProps) => {
     });
   };
 
-  // Enhanced user name display with fallbacks
-  const getDisplayName = () => {
-    console.log(`👤 PostCard - Profile data for post ${post.id}:`, {
-      profiles: post.profiles,
-      full_name: post.profiles?.full_name,
-      email: post.profiles?.email
-    });
-
-    if (post.profiles?.full_name && post.profiles.full_name.trim() !== '') {
-      console.log(`✅ PostCard - Displaying name: ${post.profiles.full_name}`);
-      return post.profiles.full_name;
-    }
-
-    // Try email as fallback
-    if (post.profiles?.email) {
-      const emailName = post.profiles.email.split('@')[0];
-      console.log(`📧 PostCard - Using email fallback: ${emailName}`);
-      return emailName;
-    }
-
-    console.log(`⚠️ PostCard - No name found for post ${post.id}`);
-    return 'Usuario anónimo';
-  };
+  const displayName = getDisplayNameWithLogging(post.profiles, `PostCard-${post.id}`);
 
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">
@@ -109,7 +88,7 @@ const PostCard = ({ post }: PostCardProps) => {
             <Calendar className="h-3 w-3" />
             <span>{formatDate(post.created_at)}</span>
           </div>
-          <span>Por: {getDisplayName()}</span>
+          <span>Por: {displayName}</span>
         </div>
       </div>
     </Card>
