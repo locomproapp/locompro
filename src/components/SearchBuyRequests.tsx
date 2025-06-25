@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -73,17 +74,20 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       
       console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
       
-      // Enhanced logging for profile data debugging
+      // Enhanced logging for profile data debugging with raw database response
       data?.forEach((request, index) => {
-        console.log(`🔍 Request ${index + 1} [${request.id}]:`, {
+        console.log(`🔍 Request ${index + 1} [${request.id}] - RAW DATABASE RESPONSE:`, {
           title: request.title,
           user_id: request.user_id,
           has_profiles: !!request.profiles,
-          profile_data: request.profiles,
-          full_name: request.profiles?.full_name,
-          email: request.profiles?.email,
+          profiles_is_array: Array.isArray(request.profiles),
+          raw_profiles_data: request.profiles,
+          profiles_structure: request.profiles ? JSON.stringify(request.profiles, null, 2) : 'null',
+          full_name_from_db: request.profiles?.full_name,
+          email_from_db: request.profiles?.email,
           full_name_type: typeof request.profiles?.full_name,
-          profiles_keys: request.profiles ? Object.keys(request.profiles) : 'null'
+          email_type: typeof request.profiles?.email,
+          all_profile_keys: request.profiles ? Object.keys(request.profiles) : 'null'
         });
       });
       
