@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -52,13 +51,22 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   const formatExactDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${day} ${month}. ${year} ${hours}:${minutes} hs`;
+  };
+
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('es-AR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      useGrouping: true
+    }).replace(/,/g, '.');
   };
 
   const getStatusBadge = () => {
@@ -131,7 +139,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         {/* Price and location */}
         <div className="flex items-center justify-between">
           <div className="text-lg font-bold text-primary">
-            ${offer.price.toLocaleString()}
+            ${formatPrice(offer.price)}
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">
             <MapPin className="h-3 w-3" />

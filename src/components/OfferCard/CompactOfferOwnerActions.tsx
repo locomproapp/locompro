@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -70,16 +71,37 @@ const CompactOfferOwnerActions = ({
             Editar
           </Link>
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleDeleteOffer}
-          disabled={isDeleting}
-          className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
-        >
-          <Trash2 className="h-3 w-3 mr-1" />
-          {isDeleting ? 'Eliminando...' : 'Eliminar'}
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isDeleting}
+              className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
+            >
+              <Trash2 className="h-3 w-3 mr-1" />
+              {isDeleting ? 'Eliminando...' : 'Eliminar'}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteOffer}
+                disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* Counter-offer button only for rejected offers */}
