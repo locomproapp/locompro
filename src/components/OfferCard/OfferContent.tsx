@@ -75,109 +75,117 @@ const OfferContent = ({ offer }: OfferContentProps) => {
 
   return (
     <>
-      {/* Structured Information - reordered as requested */}
-      <div className="space-y-1">
-        {/* Description first */}
-        {offer.description && (
-          <div>
-            <span className="font-medium">Descripción: </span>
-            <span className="text-muted-foreground">{offer.description}</span>
-          </div>
-        )}
+      {/* Side-by-side layout */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* Left side - Text Information */}
+        <div className="flex-1 space-y-3">
+          {/* Structured Information */}
+          <div className="space-y-1">
+            {/* Description first */}
+            {offer.description && (
+              <div>
+                <span className="font-medium">Descripción: </span>
+                <span className="text-muted-foreground">{offer.description}</span>
+              </div>
+            )}
 
-        {/* Estado second */}
-        {offer.contact_info?.condition && (
-          <div>
-            <span className="font-medium">Estado: </span>
-            <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
-          </div>
-        )}
+            {/* Estado second */}
+            {offer.contact_info?.condition && (
+              <div>
+                <span className="font-medium">Estado: </span>
+                <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+              </div>
+            )}
 
-        {/* Zona third */}
-        {offer.contact_info?.zone && (
-          <div>
-            <span className="font-medium">Zona: </span>
-            <span className="text-muted-foreground">{offer.contact_info.zone}</span>
-          </div>
-        )}
+            {/* Zona third */}
+            {offer.contact_info?.zone && (
+              <div>
+                <span className="font-medium">Zona: </span>
+                <span className="text-muted-foreground">{offer.contact_info.zone}</span>
+              </div>
+            )}
 
-        {/* Envío fourth */}
-        {offer.delivery_time && (
-          <div>
-            <span className="font-medium">Envío: </span>
-            <span className="text-muted-foreground">{getDeliveryText(offer.delivery_time)}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Photos section with carousel */}
-      {offer.images && offer.images.length > 0 ? (
-        <div className="border-t pt-3">
-          <div className="font-medium mb-2">Fotos:</div>
-          <div className="relative">
-            {/* Main Image */}
-            <button 
-              onClick={() => setLightboxOpen(true)} 
-              className="w-full rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              aria-label="Ver imagen en tamaño completo"
-            >
-              <img
-                src={offer.images[selectedImageIndex]}
-                alt={`Foto ${selectedImageIndex + 1}`}
-                className="w-full h-48 object-cover rounded border"
-              />
-            </button>
-
-            {/* Navigation Controls - only show if more than 1 image */}
-            {offer.images.length > 1 && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={goToPrevious}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
-                  aria-label="Imagen anterior"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={goToNext}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
-                  aria-label="Imagen siguiente"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-
-                {/* Image Counter */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
-                  {selectedImageIndex + 1} / {offer.images.length}
-                </div>
-              </>
+            {/* Envío fourth */}
+            {offer.delivery_time && (
+              <div>
+                <span className="font-medium">Envío: </span>
+                <span className="text-muted-foreground">{getDeliveryText(offer.delivery_time)}</span>
+              </div>
             )}
           </div>
-        </div>
-      ) : (
-        <div className="border-t pt-3">
-          <div className="font-medium mb-2">Fotos:</div>
-          <div className="w-full h-48 bg-muted rounded border flex items-center justify-center">
-            <div className="text-center">
-              <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-              <span className="text-sm text-muted-foreground">Sin fotos</span>
+
+          {/* Date and Username */}
+          <div className="space-y-1 border-t pt-2">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              <span>{formatDate(offer.created_at)}</span>
+            </div>
+            <div className="text-sm font-medium text-foreground">
+              {offer.profiles?.full_name || 'Usuario anónimo'}
             </div>
           </div>
         </div>
-      )}
 
-      {/* Date and Username */}
-      <div className="space-y-1 border-t pt-2">
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-          <Calendar className="h-3 w-3" />
-          <span>{formatDate(offer.created_at)}</span>
-        </div>
-        <div className="text-sm font-medium text-foreground">
-          {offer.profiles?.full_name || 'Usuario anónimo'}
+        {/* Right side - Photos section with carousel */}
+        <div className="lg:w-1/2">
+          {offer.images && offer.images.length > 0 ? (
+            <div>
+              <div className="font-medium mb-2">Fotos:</div>
+              <div className="relative">
+                {/* Main Image */}
+                <button 
+                  onClick={() => setLightboxOpen(true)} 
+                  className="w-full rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  aria-label="Ver imagen en tamaño completo"
+                >
+                  <img
+                    src={offer.images[selectedImageIndex]}
+                    alt={`Foto ${selectedImageIndex + 1}`}
+                    className="w-full h-48 object-cover rounded border"
+                  />
+                </button>
+
+                {/* Navigation Controls - only show if more than 1 image */}
+                {offer.images.length > 1 && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={goToPrevious}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
+                      aria-label="Imagen anterior"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={goToNext}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
+                      aria-label="Imagen siguiente"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+
+                    {/* Image Counter */}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
+                      {selectedImageIndex + 1} / {offer.images.length}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="font-medium mb-2">Fotos:</div>
+              <div className="w-full h-48 bg-muted rounded border flex items-center justify-center">
+                <div className="text-center">
+                  <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <span className="text-sm text-muted-foreground">Sin fotos</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
