@@ -96,7 +96,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
   });
 
   return (
-    <div className="space-y-4 mb-16">
+    <div className="space-y-4 mb-32">
       {/* Table Container */}
       <div className="rounded-md border bg-card">
         <div className="overflow-x-auto">
