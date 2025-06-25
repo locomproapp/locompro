@@ -16,6 +16,7 @@ interface BuyRequest {
     full_name: string | null;
     avatar_url: string | null;
     location: string | null;
+    email: string | null;
   } | null;
 }
 

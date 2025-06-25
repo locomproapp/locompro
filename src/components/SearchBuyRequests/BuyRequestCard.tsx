@@ -20,6 +20,7 @@ interface BuyRequest {
     full_name: string | null;
     avatar_url: string | null;
     location: string | null;
+    email: string | null;
   } | null;
 }
 
@@ -42,7 +43,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  // Enhanced user name display with comprehensive debugging
+  // Improved user name display with better fallback logic
   const getDisplayName = () => {
     console.log(`👤 [${request.id}] Profile Analysis:`, {
       request_id: request.id,
@@ -53,20 +54,30 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
       full_name_value: request.profiles?.full_name,
       full_name_type: typeof request.profiles?.full_name,
       full_name_length: request.profiles?.full_name?.length || 0,
+      email_value: request.profiles?.email,
       all_profile_keys: request.profiles ? Object.keys(request.profiles) : 'null'
     });
     
-    // Check if we have a valid full name
+    // Check if we have a valid full name that's not just whitespace
     if (request.profiles?.full_name && request.profiles.full_name.trim() !== '') {
-      console.log(`✅ [${request.id}] Displaying name: "${request.profiles.full_name}"`);
-      return request.profiles.full_name;
+      console.log(`✅ [${request.id}] Using full name: "${request.profiles.full_name}"`);
+      return request.profiles.full_name.trim();
+    }
+    
+    // Try to use email as fallback (username part before @)
+    if (request.profiles?.email && request.profiles.email.trim() !== '') {
+      const emailUsername = request.profiles.email.split('@')[0];
+      console.log(`📧 [${request.id}] Using email username: "${emailUsername}"`);
+      return emailUsername;
     }
     
     console.log(`⚠️ [${request.id}] No valid name found, using fallback. Reasons:`, {
       no_profiles: !request.profiles,
       no_full_name: !request.profiles?.full_name,
       empty_full_name: request.profiles?.full_name === '',
-      whitespace_only: request.profiles?.full_name?.trim() === ''
+      whitespace_only: request.profiles?.full_name?.trim() === '',
+      no_email: !request.profiles?.email,
+      empty_email: request.profiles?.email === ''
     });
     
     return 'Usuario anónimo';

@@ -22,6 +22,7 @@ interface BuyRequest {
     full_name: string | null;
     avatar_url: string | null;
     location: string | null;
+    email: string | null;
   } | null;
 }
 
@@ -36,7 +37,7 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   const { data: buyRequests, isLoading, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
-      console.log('🔄 Fetching buy requests with full profile data...');
+      console.log('🔄 Fetching buy requests with complete profile data...');
       let query = supabase
         .from('buy_requests')
         .select(`
@@ -69,8 +70,9 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
           title: request.title,
           user_id: request.user_id,
           has_profiles: !!request.profiles,
-          profile_structure: request.profiles,
+          profile_data: request.profiles,
           full_name: request.profiles?.full_name,
+          email: request.profiles?.email,
           full_name_type: typeof request.profiles?.full_name,
           profiles_keys: request.profiles ? Object.keys(request.profiles) : 'null'
         });

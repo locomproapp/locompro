@@ -17,6 +17,7 @@ interface BuyRequest {
     full_name: string | null;
     avatar_url: string | null;
     location: string | null;
+    email: string | null;
   } | null;
 }
 
@@ -57,14 +58,20 @@ export const useBuyRequests = (searchQuery?: string) => {
       
       console.log(`✅ useBuyRequests - Fetched ${data?.length || 0} buy requests`);
       
-      // Enhanced logging for profile data
+      // Enhanced logging for profile data with name resolution debugging
       data?.forEach((request, index) => {
+        const displayName = request.profiles?.full_name?.trim() || 
+                          request.profiles?.email?.split('@')[0] || 
+                          'Usuario anónimo';
+        
         console.log(`📋 useBuyRequests - Request ${index + 1}:`, {
           id: request.id,
           title: request.title,
           user_id: request.user_id,
           has_profiles: !!request.profiles,
           full_name: request.profiles?.full_name,
+          email: request.profiles?.email,
+          resolved_display_name: displayName,
           profile_keys: request.profiles ? Object.keys(request.profiles) : 'null'
         });
       });
