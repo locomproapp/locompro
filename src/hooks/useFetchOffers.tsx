@@ -44,6 +44,10 @@ export const useFetchOffers = (buyRequestId: string) => {
         return [];
       }
       
+      // Get current user to debug visibility issues
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('🔍 useFetchOffers - Current user:', user?.id);
+      
       const { data, error } = await supabase
         .from('offers')
         .select(`
@@ -78,6 +82,10 @@ export const useFetchOffers = (buyRequestId: string) => {
 
       const transformedOffers: Offer[] = data.map(offer => {
         console.log('🔄 useFetchOffers - Transforming offer:', offer.id, offer.title);
+        console.log('🔄 useFetchOffers - Offer seller_id:', offer.seller_id);
+        console.log('🔄 useFetchOffers - Buy request user_id:', offer.buy_requests?.user_id);
+        console.log('🔄 useFetchOffers - Current user:', user?.id);
+        
         return {
           id: offer.id,
           title: offer.title,
@@ -116,10 +124,9 @@ export const useFetchOffers = (buyRequestId: string) => {
       return transformedOffers;
     },
     enabled: !!buyRequestId,
-    // Force refresh to ensure we get latest offers
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
     staleTime: 0,
-    gcTime: 0 // Prevent caching issues
+    gcTime: 0
   });
 };
