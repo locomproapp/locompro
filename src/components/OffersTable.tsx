@@ -1,14 +1,10 @@
 
-import React, { useState, useMemo } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { Table, TableBody } from '@/components/ui/table';
 import { useAuth } from '@/hooks/useAuth';
-import CompactOfferActions from './OfferCard/CompactOfferActions';
-import FilterControls from './OffersTable/FilterControls';
+import OffersTableHeader from './OffersTable/TableHeader';
+import OffersTableRow from './OffersTable/TableRow';
+import { useOffersFiltering } from './OffersTable/hooks/useOffersFiltering';
 
 interface Offer {
   id: string;
@@ -93,105 +89,14 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
     setDeliveryFilters(prev => ({ ...prev, [delivery]: checked }));
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${day} ${month}. ${year} ${hours}:${minutes} hs`;
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('es-AR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-      useGrouping: true
-    }).replace(/,/g, '.');
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Badge variant="default" className="bg-yellow-100 text-yellow-800">Pendiente</Badge>;
-      case 'accepted':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Aceptada</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive">Rechazada</Badge>;
-      case 'finalized':
-        return <Badge variant="secondary">Finalizada</Badge>;
-      default:
-        return <Badge variant="outline">Desconocido</Badge>;
-    }
-  };
-
-  const getConditionText = (contactInfo: any) => {
-    if (!contactInfo?.condition) return 'No especificada';
-    
-    switch (contactInfo.condition) {
-      case 'nuevo': return 'Nuevo';
-      case 'usado-excelente': return 'Usado - Excelente estado';
-      case 'usado-muy-bueno': return 'Usado - Muy buen estado';
-      case 'usado-bueno': return 'Usado - Buen estado';
-      case 'usado-regular': return 'Usado - Estado regular';
-      case 'refurbished': return 'Reacondicionado';
-      case 'para-repuestos': return 'Para repuestos';
-      default: return contactInfo.condition;
-    }
-  };
-
-  const getDeliveryText = (delivery: string | null, contactInfo: any) => {
-    if (delivery) return delivery;
-    return contactInfo?.delivery || 'No especificado';
-  };
-
-  const filteredAndSortedOffers = useMemo(() => {
-    let filtered = offers.filter(offer => {
-      // Status filter
-      if (!statusFilters[offer.status as keyof typeof statusFilters]) {
-        return false;
-      }
-      
-      // Condition filter
-      const offerCondition = offer.contact_info?.condition || 'nuevo';
-      if (!conditionFilters[offerCondition as keyof typeof conditionFilters]) {
-        return false;
-      }
-      
-      // Delivery filter
-      const deliveryType = getDeliveryText(offer.delivery_time, offer.contact_info);
-      const isPersonal = deliveryType.toLowerCase().includes('persona') || deliveryType === 'En persona';
-      const isMail = deliveryType.toLowerCase().includes('correo') || deliveryType === 'Por correo';
-      
-      if (isPersonal && !deliveryFilters['En persona']) return false;
-      if (isMail && !deliveryFilters['Por correo']) return false;
-      if (!isPersonal && !isMail && (!deliveryFilters['En persona'] && !deliveryFilters['Por correo'])) return false;
-      
-      return true;
-    });
-
-    // Sort
-    return filtered.sort((a, b) => {
-      let aValue: any, bValue: any;
-      
-      if (sortField === 'price') {
-        aValue = a.price;
-        bValue = b.price;
-      } else {
-        aValue = new Date(a.created_at);
-        bValue = new Date(b.created_at);
-      }
-      
-      if (sortDirection === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-  }, [offers, sortField, sortDirection, statusFilters, conditionFilters, deliveryFilters]);
+  const filteredAndSortedOffers = useOffersFiltering({
+    offers,
+    sortField,
+    sortDirection,
+    statusFilters,
+    conditionFilters,
+    deliveryFilters
+  });
 
   return (
     <div className="space-y-4">
@@ -199,90 +104,26 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
       <div className="rounded-md border bg-card">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12"></TableHead>
-                <TableHead>Título</TableHead>
-                <TableHead>Precio</TableHead>
-                <TableHead>Condición</TableHead>
-                <TableHead>Zona</TableHead>
-                <TableHead>Envío</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Usuario</TableHead>
-                <TableHead>Estado</TableHead>
-                {isOwner && <TableHead>Acciones</TableHead>}
-                <TableHead className="w-12 relative">
-                  <div className="flex justify-center">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <Filter className="h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto" align="end">
-                        <FilterControls
-                          statusFilters={statusFilters}
-                          conditionFilters={conditionFilters}
-                          deliveryFilters={deliveryFilters}
-                          sortField={sortField}
-                          sortDirection={sortDirection}
-                          onStatusFilterChange={handleStatusFilterChange}
-                          onConditionFilterChange={handleConditionFilterChange}
-                          onDeliveryFilterChange={handleDeliveryFilterChange}
-                          onSortChange={handleSortChange}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
+            <OffersTableHeader
+              isOwner={isOwner}
+              statusFilters={statusFilters}
+              conditionFilters={conditionFilters}
+              deliveryFilters={deliveryFilters}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onStatusFilterChange={handleStatusFilterChange}
+              onConditionFilterChange={handleConditionFilterChange}
+              onDeliveryFilterChange={handleDeliveryFilterChange}
+              onSortChange={handleSortChange}
+            />
             <TableBody>
               {filteredAndSortedOffers.map((offer) => (
-                <TableRow key={offer.id}>
-                  <TableCell>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={undefined} alt={offer.profiles?.full_name || 'Usuario'} />
-                      <AvatarFallback className="text-xs">
-                        {offer.profiles?.full_name?.charAt(0) || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </TableCell>
-                  <TableCell className="font-medium max-w-48">
-                    <div className="truncate" title={offer.title}>
-                      {offer.title}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-semibold text-primary">
-                    ${formatPrice(offer.price)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {getConditionText(offer.contact_info)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {offer.contact_info?.zone || 'No especificada'}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {getDeliveryText(offer.delivery_time, offer.contact_info)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatDate(offer.created_at)}
-                  </TableCell>
-                  <TableCell>
-                    {offer.profiles?.full_name || 'Usuario anónimo'}
-                  </TableCell>
-                  <TableCell>{getStatusBadge(offer.status)}</TableCell>
-                  {isOwner && (
-                    <TableCell>
-                      <CompactOfferActions
-                        offerId={offer.id}
-                        canAcceptOrReject={isOwner && offer.status === 'pending'}
-                        onStatusUpdate={onOfferUpdate}
-                      />
-                    </TableCell>
-                  )}
-                  <TableCell></TableCell>
-                </TableRow>
+                <OffersTableRow
+                  key={offer.id}
+                  offer={offer}
+                  isOwner={isOwner}
+                  onOfferUpdate={onOfferUpdate}
+                />
               ))}
             </TableBody>
           </Table>
