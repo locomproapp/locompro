@@ -4,14 +4,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, X, MapPin, Calendar, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { Check, X, MapPin, Calendar, Image as ImageIcon, ChevronLeft, ChevronRight, Edit, Trash2, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import RejectOfferDialog from '@/components/RejectOfferDialog';
 import ImageLightbox from '@/components/ImageLightbox';
+import { Link } from 'react-router-dom';
 
 interface Offer {
   id: string;
@@ -54,9 +53,22 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const isOwner = user?.id === buyRequestOwnerId;
+  const isOfferOwner = user?.id === offer.seller_id;
   const canAcceptOrReject = isOwner && offer.status === 'pending';
+
+  const formatExactDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-AR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const getStatusBadge = () => {
     switch (offer.status) {
@@ -150,6 +162,34 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     }
   };
 
+  const handleDeleteOffer = async () => {
+    try {
+      setIsDeleting(true);
+      const { error } = await supabase
+        .from('offers')
+        .delete()
+        .eq('id', offer.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Oferta eliminada',
+        description: 'La oferta ha sido eliminada exitosamente',
+      });
+
+      onStatusUpdate?.();
+    } catch (err) {
+      console.error('Error deleting offer:', err);
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar la oferta',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const goToPrevious = () => {
     if (offer.images && offer.images.length > 0) {
       setSelectedImageIndex((prevIndex) => 
@@ -168,7 +208,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <>
-      <Card className={`w-80 h-96 flex-shrink-0 ${
+      <Card className={`w-80 flex-shrink-0 ${
         offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : 
         offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''
       }`}>
@@ -187,10 +227,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
                 </h4>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  {formatDistanceToNow(new Date(offer.created_at), { 
-                    addSuffix: true, 
-                    locale: es 
-                  })}
+                  {formatExactDate(offer.created_at)}
                 </div>
               </div>
             </div>
@@ -285,15 +322,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
           )}
 
-          {/* Rejection reason */}
-          {offer.status === 'rejected' && offer.rejection_reason && (
-            <div className="bg-red-50 border border-red-200 rounded p-2">
-              <p className="text-xs font-medium text-red-800">Motivo del rechazo:</p>
-              <p className="text-xs text-red-700 mt-1 line-clamp-2">{offer.rejection_reason}</p>
-            </div>
-          )}
-
-          {/* Actions */}
+          {/* Accept/Reject Actions for buy request owner */}
           {canAcceptOrReject && (
             <div className="flex gap-2 mt-auto">
               <Button
@@ -318,6 +347,62 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             </div>
           )}
         </CardContent>
+
+        {/* Rejection reason for rejected offers */}
+        {offer.status === 'rejected' && offer.rejection_reason && (
+          <div className="px-4 pb-3">
+            <div className="bg-red-50 border border-red-200 rounded p-2">
+              <p className="text-xs font-medium text-red-800">Motivo del rechazo:</p>
+              <p className="text-xs text-red-700 mt-1 line-clamp-2">{offer.rejection_reason}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Edit/Delete buttons for offer owner */}
+        {isOfferOwner && (
+          <div className="px-4 pb-4">
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="flex-1 text-xs"
+              >
+                <Link to={`/send-offer/${offer.buy_request_id}?edit=${offer.id}`}>
+                  <Edit className="h-3 w-3 mr-1" />
+                  Editar
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDeleteOffer}
+                disabled={isDeleting}
+                className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
+              >
+                <Trash2 className="h-3 w-3 mr-1" />
+                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </Button>
+            </div>
+
+            {/* Counter-offer button only for rejected offers */}
+            {offer.status === 'rejected' && (
+              <div className="mt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="w-full text-xs text-blue-600 border-blue-200 hover:bg-blue-50"
+                >
+                  <Link to={`/send-offer/${offer.buy_request_id}?edit=${offer.id}`}>
+                    <RefreshCw className="h-3 w-3 mr-1" />
+                    Contraofertar
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
       <RejectOfferDialog
