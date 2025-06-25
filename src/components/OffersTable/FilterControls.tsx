@@ -42,7 +42,7 @@ const FilterControls = ({
   onSortChange
 }: FilterControlsProps) => {
   return (
-    <div className="w-72 space-y-4 p-1">
+    <div className="w-72 space-y-4 p-4">
       {/* Sorting Section */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium">Ordenar por</h4>

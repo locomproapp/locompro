@@ -65,7 +65,16 @@ const OffersTableHeader = ({
                   <Filter className="h-4 w-4" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto" align="end">
+              <PopoverContent 
+                className="w-auto p-0" 
+                align="end" 
+                side="bottom"
+                sideOffset={2}
+                alignOffset={0}
+                avoidCollisions={true}
+                collisionBoundary={undefined}
+                sticky="partial"
+              >
                 <FilterControls
                   statusFilters={statusFilters}
                   conditionFilters={conditionFilters}
