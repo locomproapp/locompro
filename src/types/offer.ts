@@ -15,6 +15,7 @@ export interface Offer {
   contact_info: any;
   status: string;
   rejection_reason: string | null;
+  delivery_time: string | null;
   created_at: string;
   updated_at: string;
   buyer_rating?: number | null;

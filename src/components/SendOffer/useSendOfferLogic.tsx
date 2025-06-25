@@ -48,12 +48,15 @@ export const useSendOfferLogic = () => {
           setIsCounterOffer(offer.status === 'rejected');
           setActualBuyRequestId(offer.buy_request_id);
           
+          // Type-safe access to contact_info properties
+          const contactInfo = offer.contact_info as { zone?: string; condition?: string } | null;
+          
           const formValues: Partial<SendOfferFormData> = {
             title: offer.title,
             description: offer.description || '',
             price: offer.price,
-            zone: offer.contact_info?.zone || '',
-            condition: offer.contact_info?.condition || '',
+            zone: contactInfo?.zone || '',
+            condition: contactInfo?.condition || '',
             delivery_time: offer.delivery_time || '',
             images: offer.images || [],
           };
