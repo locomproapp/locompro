@@ -5,6 +5,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PriceInput } from './PriceInput';
 import { OfferImageUpload } from './OfferImageUpload';
 import { OfferSubmissionData } from './offerSubmissionSchema';
@@ -100,6 +101,37 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
                 <SelectItem value="usado-regular">Usado - Estado regular</SelectItem>
               </SelectContent>
             </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="delivery_time"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Envío</FormLabel>
+            <FormControl>
+              <RadioGroup
+                onValueChange={field.onChange}
+                value={field.value}
+                className="flex flex-col space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="En persona" id="en-persona" />
+                  <label htmlFor="en-persona" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    En persona
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Por correo" id="por-correo" />
+                  <label htmlFor="por-correo" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Por correo
+                  </label>
+                </div>
+              </RadioGroup>
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
