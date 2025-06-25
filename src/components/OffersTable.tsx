@@ -59,6 +59,16 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
     finalized: true
   });
   
+  const [conditionFilters, setConditionFilters] = useState({
+    nuevo: true,
+    'usado-excelente': true,
+    'usado-muy-bueno': true,
+    'usado-bueno': true,
+    'usado-regular': true,
+    refurbished: true,
+    'para-repuestos': true
+  });
+  
   const [deliveryFilters, setDeliveryFilters] = useState({
     'En persona': true,
     'Por correo': true
@@ -73,6 +83,10 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
 
   const handleStatusFilterChange = (status: string, checked: boolean) => {
     setStatusFilters(prev => ({ ...prev, [status]: checked }));
+  };
+
+  const handleConditionFilterChange = (condition: string, checked: boolean) => {
+    setConditionFilters(prev => ({ ...prev, [condition]: checked }));
   };
 
   const handleDeliveryFilterChange = (delivery: string, checked: boolean) => {
@@ -141,6 +155,12 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
         return false;
       }
       
+      // Condition filter
+      const offerCondition = offer.contact_info?.condition || 'nuevo';
+      if (!conditionFilters[offerCondition as keyof typeof conditionFilters]) {
+        return false;
+      }
+      
       // Delivery filter
       const deliveryType = getDeliveryText(offer.delivery_time, offer.contact_info);
       const isPersonal = deliveryType.toLowerCase().includes('persona') || deliveryType === 'En persona';
@@ -171,7 +191,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
         return aValue < bValue ? 1 : -1;
       }
     });
-  }, [offers, sortField, sortDirection, statusFilters, deliveryFilters]);
+  }, [offers, sortField, sortDirection, statusFilters, conditionFilters, deliveryFilters]);
 
   return (
     <div className="space-y-4">
@@ -202,10 +222,12 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                       <PopoverContent className="w-auto" align="end">
                         <FilterControls
                           statusFilters={statusFilters}
+                          conditionFilters={conditionFilters}
                           deliveryFilters={deliveryFilters}
                           sortField={sortField}
                           sortDirection={sortDirection}
                           onStatusFilterChange={handleStatusFilterChange}
+                          onConditionFilterChange={handleConditionFilterChange}
                           onDeliveryFilterChange={handleDeliveryFilterChange}
                           onSortChange={handleSortChange}
                         />
