@@ -58,11 +58,8 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
   const [conditionFilters, setConditionFilters] = useState({
     nuevo: true,
     'usado-excelente': true,
-    'usado-muy-bueno': true,
     'usado-bueno': true,
-    'usado-regular': true,
-    refurbished: true,
-    'para-repuestos': true
+    'usado-regular': true
   });
   
   const [deliveryFilters, setDeliveryFilters] = useState({

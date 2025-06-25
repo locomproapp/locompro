@@ -42,11 +42,8 @@ interface UseOffersFilteringProps {
   conditionFilters: {
     nuevo: boolean;
     'usado-excelente': boolean;
-    'usado-muy-bueno': boolean;
     'usado-bueno': boolean;
     'usado-regular': boolean;
-    refurbished: boolean;
-    'para-repuestos': boolean;
   };
   deliveryFilters: {
     'En persona': boolean;

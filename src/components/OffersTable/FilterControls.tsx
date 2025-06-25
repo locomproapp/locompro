@@ -15,11 +15,8 @@ interface FilterControlsProps {
   conditionFilters: {
     nuevo: boolean;
     'usado-excelente': boolean;
-    'usado-muy-bueno': boolean;
     'usado-bueno': boolean;
     'usado-regular': boolean;
-    refurbished: boolean;
-    'para-repuestos': boolean;
   };
   deliveryFilters: {
     'En persona': boolean;
@@ -110,11 +107,8 @@ const FilterControls = ({
               <label htmlFor={`filter-condition-${condition}`} className="text-sm cursor-pointer">
                 {condition === 'nuevo' ? 'Nuevo' :
                  condition === 'usado-excelente' ? 'Usado - Excelente estado' :
-                 condition === 'usado-muy-bueno' ? 'Usado - Muy buen estado' :
                  condition === 'usado-bueno' ? 'Usado - Buen estado' :
-                 condition === 'usado-regular' ? 'Usado - Estado regular' :
-                 condition === 'refurbished' ? 'Reacondicionado' :
-                 condition === 'para-repuestos' ? 'Para repuestos' : condition}
+                 condition === 'usado-regular' ? 'Usado - Estado regular' : condition}
               </label>
             </div>
           ))}
