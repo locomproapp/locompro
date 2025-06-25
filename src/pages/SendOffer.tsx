@@ -13,15 +13,17 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Upload, X } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Upload, X, ZoomIn, ArrowRight, ArrowLeft as ArrowLeftIcon } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
   description: z.string().optional(),
   price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
-  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-  delivery_time: z.string().min(1, 'El tiempo de entrega es requerido'),
+  delivery_time: z.string().min(1, 'El envío es requerido'),
+  images: z.array(z.string()).min(1, 'Debe subir al menos 1 imagen').max(5, 'Máximo 5 imágenes permitidas'),
 });
 
 const SendOffer = () => {
@@ -34,6 +36,7 @@ const SendOffer = () => {
   const [images, setImages] = useState<string[]>([]);
   const [isCounterOffer, setIsCounterOffer] = useState(false);
   const [actualBuyRequestId, setActualBuyRequestId] = useState<string | null>(null);
+  const [priceDisplayValue, setPriceDisplayValue] = useState('');
 
   console.log('🔍 SendOffer - URL buyRequestId:', buyRequestId);
   console.log('🔍 SendOffer - editOfferId:', editOfferId);
@@ -47,12 +50,33 @@ const SendOffer = () => {
       title: '',
       description: '',
       price: undefined,
-      message: '',
       delivery_time: '',
+      images: [],
     }
   });
 
-  // Load offer data if it's a counteroffer
+  // Price formatting functions
+  const formatPriceDisplay = (value: string): string => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (numericValue === '') return '';
+    const number = parseInt(numericValue);
+    const formatted = number.toLocaleString('es-AR');
+    return `$${formatted}`;
+  };
+
+  const parseFormattedPrice = (formattedValue: string): number | undefined => {
+    const numericValue = formattedValue.replace(/[^\d]/g, '');
+    return numericValue === '' ? undefined : parseInt(numericValue);
+  };
+
+  const handlePriceChange = (inputValue: string) => {
+    const formatted = formatPriceDisplay(inputValue);
+    setPriceDisplayValue(formatted);
+    const numericValue = parseFormattedPrice(formatted);
+    form.setValue('price', numericValue);
+  };
+
+  // Load offer data if it's a counteroffer or edit
   useEffect(() => {
     const loadOfferData = async () => {
       if (!editOfferId || !user) return;
@@ -81,9 +105,12 @@ const SendOffer = () => {
             title: offer.title,
             description: offer.description || '',
             price: offer.price,
-            message: offer.message || '',
             delivery_time: offer.delivery_time || '',
+            images: offer.images || [],
           });
+          
+          // Set price display
+          setPriceDisplayValue(formatPriceDisplay(offer.price.toString()));
           
           if (offer.images) {
             setImages(offer.images);
@@ -97,22 +124,20 @@ const SendOffer = () => {
     loadOfferData();
   }, [editOfferId, user, form]);
 
-  const formatPrice = (value: string): string => {
-    const numericValue = value.replace(/[^\d]/g, '');
-    if (numericValue === '') return '';
-    const number = parseInt(numericValue);
-    const formatted = number.toLocaleString('es-ES');
-    return `$ ${formatted}`;
-  };
-
-  const parseFormattedPrice = (formattedValue: string): number | undefined => {
-    const numericValue = formattedValue.replace(/[^\d]/g, '');
-    return numericValue === '' ? undefined : parseInt(numericValue);
-  };
-
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
+
+    // Check if adding these files would exceed the limit
+    if (images.length + files.length > 5) {
+      toast({
+        title: "Límite de imágenes",
+        description: "Solo podés subir hasta 5 imágenes en total",
+        variant: "destructive"
+      });
+      event.target.value = '';
+      return;
+    }
 
     setUploading(true);
     try {
@@ -121,20 +146,22 @@ const SendOffer = () => {
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
         
         const { data, error } = await supabase.storage
-          .from('offers')
+          .from('offer-images')
           .upload(fileName, file);
 
         if (error) throw error;
 
         const { data: urlData } = supabase.storage
-          .from('offers')
+          .from('offer-images')
           .getPublicUrl(fileName);
 
         return urlData.publicUrl;
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
-      setImages(prev => [...prev, ...uploadedUrls]);
+      const newImages = [...images, ...uploadedUrls];
+      setImages(newImages);
+      form.setValue('images', newImages);
       
       toast({
         title: "Imágenes subidas",
@@ -149,11 +176,24 @@ const SendOffer = () => {
       });
     } finally {
       setUploading(false);
+      event.target.value = '';
     }
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    const newImages = images.filter((_, i) => i !== index);
+    setImages(newImages);
+    form.setValue('images', newImages);
+  };
+
+  const moveImage = (index: number, direction: 'left' | 'right') => {
+    const newImages = [...images];
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newImages.length) return;
+
+    [newImages[index], newImages[targetIndex]] = [newImages[targetIndex], newImages[index]];
+    setImages(newImages);
+    form.setValue('images', newImages);
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -210,9 +250,8 @@ const SendOffer = () => {
             title: values.title,
             description: values.description || null,
             price: values.price,
-            message: values.message,
             delivery_time: values.delivery_time,
-            images: images.length > 0 ? images : null,
+            images: values.images.length > 0 ? values.images : null,
             status: 'pending',
             rejection_reason: null,
             price_history: priceHistory,
@@ -237,9 +276,8 @@ const SendOffer = () => {
             title: values.title,
             description: values.description || null,
             price: values.price,
-            message: values.message,
             delivery_time: values.delivery_time,
-            images: images.length > 0 ? images : null,
+            images: values.images.length > 0 ? values.images : null,
             updated_at: new Date().toISOString()
           })
           .eq('id', editOfferId);
@@ -263,9 +301,8 @@ const SendOffer = () => {
             title: values.title,
             description: values.description || null,
             price: values.price,
-            message: values.message,
             delivery_time: values.delivery_time,
-            images: images.length > 0 ? images : null,
+            images: values.images.length > 0 ? values.images : null,
             status: 'pending'
           });
 
@@ -403,13 +440,10 @@ const SendOffer = () => {
                     <FormControl>
                       <Input 
                         type="text"
-                        placeholder="Ingresa el precio" 
-                        value={field.value ? formatPrice(field.value.toString()) : ''}
-                        onChange={(e) => {
-                          const rawValue = e.target.value;
-                          const numericValue = parseFormattedPrice(rawValue);
-                          field.onChange(numericValue);
-                        }}
+                        inputMode="numeric"
+                        placeholder="$0"
+                        value={priceDisplayValue}
+                        onChange={(e) => handlePriceChange(e.target.value)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -422,28 +456,18 @@ const SendOffer = () => {
                 name="delivery_time"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tiempo de entrega</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ej: 2-3 días, Inmediato, 1 semana" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mensaje al comprador</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Describe tu producto, estado, incluye detalles que puedan interesar al comprador..."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
+                    <FormLabel>Envío</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona el tipo de envío" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="En persona">En persona</SelectItem>
+                        <SelectItem value="Por correo">Por correo</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -466,57 +490,106 @@ const SendOffer = () => {
                 )}
               />
               
-              <div className="space-y-2">
-                <FormLabel>Fotos del producto</FormLabel>
-                <div className="space-y-4">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="hidden"
-                    id="images-upload"
-                  />
-                  <label htmlFor="images-upload">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={uploading}
-                      className="cursor-pointer"
-                      asChild
-                    >
-                      <span className="flex items-center gap-2">
-                        <Upload className="h-4 w-4" />
-                        {uploading ? 'Subiendo...' : 'Subir fotos'}
-                      </span>
-                    </Button>
-                  </label>
-                  
-                  {images.length > 0 && (
-                    <div className="grid grid-cols-3 gap-2">
-                      {images.map((image, index) => (
-                        <div key={index} className="relative">
-                          <img 
-                            src={image} 
-                            alt={`Producto ${index + 1}`} 
-                            className="h-20 w-full object-cover rounded"
-                          />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-1 right-1 h-6 w-6"
-                            onClick={() => removeImage(index)}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fotos del producto</FormLabel>
+                    <div className="space-y-4">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageUpload}
+                        disabled={uploading || images.length >= 5}
+                        className="hidden"
+                        id="images-upload"
+                      />
+                      <label htmlFor="images-upload">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={uploading || images.length >= 5}
+                          className="w-full border-dashed cursor-pointer h-20"
+                          asChild
+                        >
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <Upload className="h-6 w-6" />
+                            <span className="text-sm">
+                              {uploading 
+                                ? 'Subiendo...' 
+                                : images.length >= 5
+                                  ? 'Máximo 5 imágenes permitidas'
+                                  : `Subir fotos desde dispositivo (${images.length}/5)`}
+                            </span>
+                          </div>
+                        </Button>
+                      </label>
+                      
+                      {images.length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center">
+                          Tenés que subir al menos una imagen
+                        </p>
+                      )}
+                      
+                      {images.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {images.map((image, index) => (
+                            <div key={index} className="relative group">
+                              <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
+                                <img 
+                                  src={image} 
+                                  alt={`Producto ${index + 1}`} 
+                                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                />
+                              </div>
+                              
+                              {/* Action buttons */}
+                              <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button type="button" size="sm" variant="secondary" className="h-7 w-7 p-0">
+                                      <ZoomIn className="h-3 w-3" />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-3xl">
+                                    <img src={image} alt={`Producto ${index + 1}`} className="w-full h-auto max-h-[80vh] object-contain" />
+                                  </DialogContent>
+                                </Dialog>
+                                
+                                <Button type="button" size="sm" variant="destructive" onClick={() => removeImage(index)} className="h-7 w-7 p-0">
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                              
+                              {/* Reorder buttons */}
+                              <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button type="button" size="sm" variant="secondary" onClick={() => moveImage(index, 'left')} disabled={index === 0} className="h-7 w-7 p-0">
+                                  <ArrowLeftIcon className="h-3 w-3" />
+                                </Button>
+                                <Button type="button" size="sm" variant="secondary" onClick={() => moveImage(index, 'right')} disabled={index === images.length - 1} className="h-7 w-7 p-0">
+                                  <ArrowRight className="h-3 w-3" />
+                                </Button>
+                              </div>
+
+                              {/* Cover photo indicator */}
+                              {index === 0 && (
+                                <div className="absolute bottom-2 left-2">
+                                  <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
+                                    Principal
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="flex gap-4 pt-6">
                 <Button type="button" variant="outline" asChild className="flex-1">

@@ -29,6 +29,7 @@ interface Offer {
     title: string;
     zone: string;
     status: string;
+    user_id?: string;
   };
 }
 
@@ -36,7 +37,12 @@ export const useFetchOffers = (buyRequestId: string) => {
   return useQuery({
     queryKey: ['offers', buyRequestId],
     queryFn: async () => {
-      console.log('🔍 Fetching offers for buy request:', buyRequestId);
+      console.log('🔍 useFetchOffers - Starting fetch for buyRequestId:', buyRequestId);
+      
+      if (!buyRequestId) {
+        console.log('❌ useFetchOffers - No buyRequestId provided');
+        return [];
+      }
       
       const { data, error } = await supabase
         .from('offers')
@@ -50,57 +56,70 @@ export const useFetchOffers = (buyRequestId: string) => {
           buy_requests!offers_buy_request_id_fkey (
             title,
             zone,
-            status
+            status,
+            user_id
           )
         `)
         .eq('buy_request_id', buyRequestId)
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('❌ Error fetching offers:', error);
+        console.error('❌ useFetchOffers - Database error:', error);
         throw error;
       }
 
-      console.log('✅ Offers data fetched:', data);
+      console.log('✅ useFetchOffers - Raw data from database:', data);
+      console.log('✅ useFetchOffers - Number of offers found:', data?.length || 0);
 
-      const transformedOffers: Offer[] = (data || []).map(offer => ({
-        id: offer.id,
-        title: offer.title,
-        description: offer.description,
-        price: offer.price,
-        delivery_time: offer.delivery_time,
-        contact_info: offer.contact_info,
-        images: offer.images,
-        status: offer.status,
-        created_at: offer.created_at,
-        updated_at: offer.updated_at,
-        seller_id: offer.seller_id,
-        buy_request_id: offer.buy_request_id,
-        message: offer.message,
-        rejection_reason: offer.rejection_reason,
-        buyer_rating: offer.buyer_rating,
-        public_visibility: offer.public_visibility,
-        price_history: Array.isArray(offer.price_history) ? 
-          (offer.price_history as Array<{ price: number; timestamp: string; type: 'initial' | 'rejected' }>) : 
-          null,
-        profiles: {
-          full_name: offer.profiles?.full_name || 'Usuario anónimo',
-          email: offer.profiles?.email || '',
-          location: offer.profiles?.location || undefined
-        },
-        buy_requests: {
-          title: offer.buy_requests?.title || '',
-          zone: offer.buy_requests?.zone || '',
-          status: offer.buy_requests?.status || ''
-        }
-      }));
+      if (!data || data.length === 0) {
+        console.log('ℹ️ useFetchOffers - No offers found for this buy request');
+        return [];
+      }
 
+      const transformedOffers: Offer[] = data.map(offer => {
+        console.log('🔄 useFetchOffers - Transforming offer:', offer.id, offer.title);
+        return {
+          id: offer.id,
+          title: offer.title,
+          description: offer.description,
+          price: offer.price,
+          delivery_time: offer.delivery_time,
+          contact_info: offer.contact_info,
+          images: offer.images,
+          status: offer.status,
+          created_at: offer.created_at,
+          updated_at: offer.updated_at,
+          seller_id: offer.seller_id,
+          buy_request_id: offer.buy_request_id,
+          message: offer.message,
+          rejection_reason: offer.rejection_reason,
+          buyer_rating: offer.buyer_rating,
+          public_visibility: offer.public_visibility,
+          price_history: Array.isArray(offer.price_history) ? 
+            (offer.price_history as Array<{ price: number; timestamp: string; type: 'initial' | 'rejected' }>) : 
+            null,
+          profiles: {
+            full_name: offer.profiles?.full_name || 'Usuario anónimo',
+            email: offer.profiles?.email || '',
+            location: offer.profiles?.location || undefined
+          },
+          buy_requests: {
+            title: offer.buy_requests?.title || '',
+            zone: offer.buy_requests?.zone || '',
+            status: offer.buy_requests?.status || '',
+            user_id: offer.buy_requests?.user_id || undefined
+          }
+        };
+      });
+
+      console.log('✅ useFetchOffers - Transformed offers:', transformedOffers.length, 'offers');
       return transformedOffers;
     },
     enabled: !!buyRequestId,
     // Force refresh to ensure we get latest offers
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
-    staleTime: 0
+    staleTime: 0,
+    gcTime: 0 // Prevent caching issues
   });
 };
