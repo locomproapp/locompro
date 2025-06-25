@@ -41,12 +41,18 @@ const FilterControls = ({
   onDeliveryFilterChange,
   onSortChange
 }: FilterControlsProps) => {
+  // Filter status options to show only pending and rejected
+  const visibleStatusFilters = {
+    pending: statusFilters.pending,
+    rejected: statusFilters.rejected
+  };
+
   return (
     <div className="w-72 space-y-4 p-4">
       {/* Sorting Section */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium">Ordenar por</h4>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <Button
             variant={sortField === 'created_at' ? 'default' : 'outline'}
             size="sm"
@@ -76,7 +82,7 @@ const FilterControls = ({
       <div className="space-y-3">
         <h4 className="text-sm font-medium">Estado</h4>
         <div className="space-y-2">
-          {Object.entries(statusFilters).map(([status, checked]) => (
+          {Object.entries(visibleStatusFilters).map(([status, checked]) => (
             <div key={status} className="flex items-center space-x-2">
               <Checkbox
                 id={`filter-status-${status}`}
@@ -84,9 +90,7 @@ const FilterControls = ({
                 onCheckedChange={(checked) => onStatusFilterChange(status, !!checked)}
               />
               <label htmlFor={`filter-status-${status}`} className="text-sm cursor-pointer">
-                {status === 'pending' ? 'Pendiente' : 
-                 status === 'accepted' ? 'Aceptada' : 
-                 status === 'rejected' ? 'Rechazada' : 'Finalizada'}
+                {status === 'pending' ? 'Pendiente' : 'Rechazada'}
               </label>
             </div>
           ))}
