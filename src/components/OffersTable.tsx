@@ -67,8 +67,6 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
     'Por correo': true
   });
 
-  const isOwner = user?.id === buyRequestOwnerId;
-
   const handleSortChange = (field: SortField, direction: SortDirection) => {
     setSortField(field);
     setSortDirection(direction);
@@ -102,7 +100,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
         <div className="overflow-x-auto">
           <Table>
             <OffersTableHeader
-              isOwner={isOwner}
+              buyRequestOwnerId={buyRequestOwnerId}
               statusFilters={statusFilters}
               conditionFilters={conditionFilters}
               deliveryFilters={deliveryFilters}
@@ -118,7 +116,7 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
                 <OffersTableRow
                   key={offer.id}
                   offer={offer}
-                  isOwner={isOwner}
+                  buyRequestOwnerId={buyRequestOwnerId}
                   onOfferUpdate={onOfferUpdate}
                 />
               ))}

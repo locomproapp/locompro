@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,9 +46,10 @@ interface CompactOfferCardProps {
 const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactOfferCardProps) => {
   const { user } = useAuth();
 
-  const isOwner = user?.id === buyRequestOwnerId;
+  // Determine user permissions
+  const isBuyRequestOwner = user?.id === buyRequestOwnerId;
   const isOfferOwner = user?.id === offer.seller_id;
-  const canAcceptOrReject = isOwner && offer.status === 'pending';
+  const canAcceptOrReject = isBuyRequestOwner && offer.status === 'pending';
 
   const formatExactDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -168,12 +170,14 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
         )}
 
-        {/* Accept/Reject Actions for buy request owner */}
-        <CompactOfferActions
-          offerId={offer.id}
-          canAcceptOrReject={canAcceptOrReject}
-          onStatusUpdate={onStatusUpdate}
-        />
+        {/* Accept/Reject Actions - only for buy request owner */}
+        {canAcceptOrReject && (
+          <CompactOfferActions
+            offerId={offer.id}
+            canAcceptOrReject={canAcceptOrReject}
+            onStatusUpdate={onStatusUpdate}
+          />
+        )}
       </CardContent>
 
       {/* Rejection reason for rejected offers */}
@@ -182,14 +186,16 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         rejectionReason={offer.rejection_reason} 
       />
 
-      {/* Edit/Delete buttons for offer owner */}
-      <CompactOfferOwnerActions
-        offerId={offer.id}
-        buyRequestId={offer.buy_request_id}
-        status={offer.status}
-        isOfferOwner={isOfferOwner}
-        onStatusUpdate={onStatusUpdate}
-      />
+      {/* Edit/Delete buttons - only for offer owner */}
+      {isOfferOwner && (
+        <CompactOfferOwnerActions
+          offerId={offer.id}
+          buyRequestId={offer.buy_request_id}
+          status={offer.status}
+          isOfferOwner={isOfferOwner}
+          onStatusUpdate={onStatusUpdate}
+        />
+      )}
     </Card>
   );
 };

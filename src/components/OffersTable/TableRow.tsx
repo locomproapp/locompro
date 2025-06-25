@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import CompactOfferActions from '../OfferCard/CompactOfferActions';
 import StatusBadge from './StatusBadge';
 import { formatDate, formatPrice, getConditionText, getDeliveryText } from './utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Offer {
   id: string;
@@ -35,11 +36,17 @@ interface Offer {
 
 interface OffersTableRowProps {
   offer: Offer;
-  isOwner: boolean;
+  buyRequestOwnerId?: string;
   onOfferUpdate?: () => void;
 }
 
-const OffersTableRow = ({ offer, isOwner, onOfferUpdate }: OffersTableRowProps) => {
+const OffersTableRow = ({ offer, buyRequestOwnerId, onOfferUpdate }: OffersTableRowProps) => {
+  const { user } = useAuth();
+  
+  // Determine user permissions
+  const isBuyRequestOwner = user?.id === buyRequestOwnerId;
+  const canAcceptOrReject = isBuyRequestOwner && offer.status === 'pending';
+
   return (
     <TableRow key={offer.id}>
       <TableCell>
@@ -76,11 +83,12 @@ const OffersTableRow = ({ offer, isOwner, onOfferUpdate }: OffersTableRowProps) 
       <TableCell>
         <StatusBadge status={offer.status} />
       </TableCell>
-      {isOwner && (
+      {/* Actions column - only show for buy request owner */}
+      {isBuyRequestOwner && (
         <TableCell>
           <CompactOfferActions
             offerId={offer.id}
-            canAcceptOrReject={isOwner && offer.status === 'pending'}
+            canAcceptOrReject={canAcceptOrReject}
             onStatusUpdate={onOfferUpdate}
           />
         </TableCell>

@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Filter } from 'lucide-react';
 import FilterControls from './FilterControls';
+import { useAuth } from '@/hooks/useAuth';
 
 interface TableHeaderProps {
-  isOwner: boolean;
+  buyRequestOwnerId?: string;
   statusFilters: {
     pending: boolean;
     accepted: boolean;
@@ -33,7 +34,7 @@ interface TableHeaderProps {
 }
 
 const OffersTableHeader = ({
-  isOwner,
+  buyRequestOwnerId,
   statusFilters,
   conditionFilters,
   deliveryFilters,
@@ -44,6 +45,9 @@ const OffersTableHeader = ({
   onDeliveryFilterChange,
   onSortChange
 }: TableHeaderProps) => {
+  const { user } = useAuth();
+  const isBuyRequestOwner = user?.id === buyRequestOwnerId;
+
   return (
     <TableHeader>
       <TableRow>
@@ -56,7 +60,8 @@ const OffersTableHeader = ({
         <TableHead>Fecha</TableHead>
         <TableHead>Usuario</TableHead>
         <TableHead>Estado</TableHead>
-        {isOwner && <TableHead>Acciones</TableHead>}
+        {/* Actions column - only show header for buy request owner */}
+        {isBuyRequestOwner && <TableHead>Acciones</TableHead>}
         <TableHead className="w-12">
           <div className="flex justify-center">
             <Popover>
