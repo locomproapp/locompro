@@ -28,24 +28,7 @@ export const getDisplayName = (profiles: ProfileData | null | undefined): string
 };
 
 export const getDisplayNameWithLogging = (profiles: ProfileData | null | undefined, context: string = 'Unknown'): string => {
-  console.log(`👤 [${context}] Profile data detailed analysis:`, {
-    profiles_exists: !!profiles,
-    profiles_is_null: profiles === null,
-    profiles_is_undefined: profiles === undefined,
-    profiles_type: typeof profiles,
-    profiles_keys: profiles ? Object.keys(profiles) : 'N/A',
-    raw_profiles_object: profiles,
-    full_name_value: profiles?.full_name,
-    full_name_type: typeof profiles?.full_name,
-    full_name_length: profiles?.full_name?.length,
-    full_name_trimmed: profiles?.full_name?.trim(),
-    email_value: profiles?.email,
-    email_type: typeof profiles?.email,
-    email_length: profiles?.email?.length,
-    email_trimmed: profiles?.email?.trim(),
-    full_name_valid: !!(profiles?.full_name && profiles.full_name.trim() !== ''),
-    email_valid: !!(profiles?.email && profiles.email.trim() !== '')
-  });
+  console.log(`👤 [${context}] Profile data:`, profiles);
   
   const displayName = getDisplayName(profiles);
   console.log(`✅ [${context}] Resolved display name: "${displayName}"`);
