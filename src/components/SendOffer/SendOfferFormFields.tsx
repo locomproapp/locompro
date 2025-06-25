@@ -81,7 +81,7 @@ export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
               <RadioGroup
                 onValueChange={field.onChange}
                 value={field.value}
-                className="flex flex-col space-y-2"
+                className="flex flex-row gap-6"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="En persona" id="en-persona" />
