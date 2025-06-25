@@ -1,12 +1,18 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import PriceHistory from './PriceHistory';
 
 interface OfferHeaderProps {
   offer: {
     title: string;
     price: number;
     status: string;
+    price_history?: Array<{
+      price: number;
+      timestamp: string;
+      type: 'rejected' | 'initial';
+    }> | null;
   };
 }
 
@@ -34,9 +40,10 @@ const OfferHeader = ({ offer }: OfferHeaderProps) => {
     <div className="flex justify-between items-start">
       <h3 className="font-semibold text-lg flex-1 mr-4">{offer.title}</h3>
       <div className="flex flex-col items-end">
-        <div className="text-xl font-bold text-primary">
-          ${offer.price.toLocaleString('es-AR')}
-        </div>
+        <PriceHistory 
+          currentPrice={offer.price}
+          priceHistory={offer.price_history}
+        />
         <Badge variant={getStatusColor(offer.status)} className="mt-1">
           {getStatusText(offer.status)}
         </Badge>

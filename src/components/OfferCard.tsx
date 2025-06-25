@@ -38,6 +38,7 @@ interface Offer {
     title: string;
     zone: string;
     status: string;
+    user_id?: string;
   } | null;
 }
 
@@ -47,13 +48,20 @@ interface OfferCardProps {
   showPublicInfo?: boolean;
   onStatusUpdate?: () => void;
   currentUserId?: string;
+  buyRequestOwnerId?: string;
 }
 
-const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatusUpdate, currentUserId }: OfferCardProps) => {
-  // Determine user role
+const OfferCard = ({ 
+  offer, 
+  showActions = false, 
+  showPublicInfo = false, 
+  onStatusUpdate, 
+  currentUserId,
+  buyRequestOwnerId 
+}: OfferCardProps) => {
+  // Determine user role more precisely
   const isSeller = currentUserId === offer.seller_id;
-  const isBuyer = showActions && !isSeller;
-  const isOfferOwner = currentUserId === offer.seller_id;
+  const isBuyRequestOwner = currentUserId === buyRequestOwnerId || currentUserId === offer.buy_requests?.user_id;
   const shouldShowChat = offer.status === 'accepted' && currentUserId && !!offer.buy_requests;
 
   return (
@@ -73,8 +81,8 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             </Alert>
           )}
 
-          {/* Owner actions (Edit/Delete) - only for offer owner */}
-          {isOfferOwner && (
+          {/* Owner actions (Edit/Delete) - only for offer owner on pending offers */}
+          {isSeller && offer.status === 'pending' && (
             <OfferOwnerActions
               offerId={offer.id}
               offerTitle={offer.title}
@@ -82,12 +90,12 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             />
           )}
 
-          {/* Actions for buyers (accept/reject) */}
-          {isBuyer && (
+          {/* Actions for buy request owners (accept/reject) - only for pending offers */}
+          {isBuyRequestOwner && offer.status === 'pending' && (
             <OfferActions
               offerId={offer.id}
               status={offer.status}
-              showActions={showActions}
+              showActions={true}
               onStatusUpdate={onStatusUpdate}
             />
           )}
@@ -101,11 +109,12 @@ const OfferCard = ({ offer, showActions = false, showPublicInfo = false, onStatu
             />
           )}
 
-          {/* Actions for sellers (counteroffer/delete) - only for rejected offers */}
+          {/* Actions for sellers (counteroffer) - only for rejected offers */}
           {isSeller && offer.status === 'rejected' && (
             <RejectedOfferActions
               offerId={offer.id}
               currentPrice={offer.price}
+              buyRequestId={offer.buy_request_id}
               onStatusUpdate={onStatusUpdate}
             />
           )}

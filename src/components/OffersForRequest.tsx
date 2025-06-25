@@ -3,13 +3,16 @@ import React from 'react';
 import { useOffers } from '@/hooks/useOffers';
 import OfferCard from './OfferCard';
 import { Package } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface OffersForRequestProps {
   buyRequestId: string;
+  buyRequestOwnerId?: string;
   onOfferUpdate?: () => void;
 }
 
-const OffersForRequest = ({ buyRequestId, onOfferUpdate }: OffersForRequestProps) => {
+const OffersForRequest = ({ buyRequestId, buyRequestOwnerId, onOfferUpdate }: OffersForRequestProps) => {
+  const { user } = useAuth();
   const { offers, loading, refetch } = useOffers(buyRequestId);
 
   const handleOfferUpdate = () => {
@@ -51,6 +54,8 @@ const OffersForRequest = ({ buyRequestId, onOfferUpdate }: OffersForRequestProps
             offer={offer}
             showActions={true}
             onStatusUpdate={handleOfferUpdate}
+            currentUserId={user?.id}
+            buyRequestOwnerId={buyRequestOwnerId}
           />
         ))}
       </div>

@@ -145,6 +145,7 @@ const BuyRequestDetail = () => {
         <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
           <OffersForRequest 
             buyRequestId={buyRequest.id}
+            buyRequestOwnerId={buyRequest.user_id}
             onOfferUpdate={handleOfferSubmitted}
           />
         </div>

@@ -46,7 +46,7 @@ const SendOffer = () => {
     }
   });
 
-  // Cargar datos de la oferta si es una contraoferta
+  // Load offer data if it's a counteroffer
   useEffect(() => {
     const loadOfferData = async () => {
       if (!editOfferId || !user) return;
@@ -159,7 +159,37 @@ const SendOffer = () => {
       console.log('Enviando oferta con datos:', values);
 
       if (isCounterOffer && editOfferId) {
-        // Actualizar oferta existente para contraoferta
+        // Get current offer data to preserve price history
+        const { data: currentOffer, error: fetchError } = await supabase
+          .from('offers')
+          .select('price, price_history')
+          .eq('id', editOfferId)
+          .single();
+
+        if (fetchError) {
+          console.error('Error fetching current offer:', fetchError);
+          throw fetchError;
+        }
+
+        // Create price history array
+        const existingHistory = currentOffer.price_history as Array<{
+          price: number;
+          timestamp: string;
+          type: 'rejected' | 'initial';
+        }> | null;
+        
+        const priceHistory = existingHistory || [];
+        
+        // Only add to history if price actually changed
+        if (currentOffer.price !== values.price) {
+          priceHistory.push({
+            price: currentOffer.price,
+            timestamp: new Date().toISOString(),
+            type: 'rejected'
+          });
+        }
+
+        // Update offer for counteroffer
         const { error } = await supabase
           .from('offers')
           .update({
@@ -170,7 +200,9 @@ const SendOffer = () => {
             delivery_time: values.delivery_time,
             images: images.length > 0 ? images : null,
             status: 'pending',
-            rejection_reason: null // Limpiar el motivo de rechazo
+            rejection_reason: null,
+            price_history: priceHistory,
+            updated_at: new Date().toISOString()
           })
           .eq('id', editOfferId);
 
@@ -184,7 +216,7 @@ const SendOffer = () => {
           description: "Tu contraoferta ha sido enviada exitosamente"
         });
       } else {
-        // Crear nueva oferta
+        // Create new offer
         const { error } = await supabase
           .from('offers')
           .insert({
@@ -296,7 +328,7 @@ const SendOffer = () => {
             {isCounterOffer ? 'Enviar Contraoferta' : 'Enviar Oferta'}
           </h1>
           <p className="text-lg text-muted-foreground mb-2">
-            Para: <span className="font-medium">{buyRequest.title}</span>
+            Para: <span className="font-medium">{buyRequest?.title}</span>
           </p>
           {isCounterOffer && (
             <p className="text-sm text-orange-600 bg-orange-50 p-2 rounded border">
