@@ -6,7 +6,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import OfferHeader from './OfferCard/OfferHeader';
 import OfferContent from './OfferCard/OfferContent';
 import OfferActions from './OfferCard/OfferActions';
-import SellerOfferActions from './OfferCard/SellerOfferActions';
 import RejectedOfferActions from './OfferCard/RejectedOfferActions';
 import OfferOwnerActions from './OfferCard/OfferOwnerActions';
 import OfferChat from './OfferCard/OfferChat';
@@ -81,11 +80,13 @@ const OfferCard = ({
             </Alert>
           )}
 
-          {/* Owner actions (Edit/Delete) - only for offer owner on pending offers */}
-          {isSeller && offer.status === 'pending' && (
+          {/* Owner actions (Edit/Delete) - for pending offers and always show delete */}
+          {isSeller && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
             <OfferOwnerActions
               offerId={offer.id}
               offerTitle={offer.title}
+              buyRequestId={offer.buy_request_id}
+              status={offer.status}
               onUpdate={onStatusUpdate}
             />
           )}
@@ -96,15 +97,6 @@ const OfferCard = ({
               offerId={offer.id}
               status={offer.status}
               showActions={true}
-              onStatusUpdate={onStatusUpdate}
-            />
-          )}
-
-          {/* Actions for sellers (withdraw) - only for pending offers */}
-          {isSeller && offer.status === 'pending' && (
-            <SellerOfferActions
-              offerId={offer.id}
-              status={offer.status}
               onStatusUpdate={onStatusUpdate}
             />
           )}

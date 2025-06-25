@@ -1,19 +1,21 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
 
 interface OfferOwnerActionsProps {
   offerId: string;
   offerTitle: string;
+  buyRequestId: string;
+  status: string;
   onUpdate?: () => void;
 }
 
-const OfferOwnerActions = ({ offerId, offerTitle, onUpdate }: OfferOwnerActionsProps) => {
+const OfferOwnerActions = ({ offerId, offerTitle, buyRequestId, status, onUpdate }: OfferOwnerActionsProps) => {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -52,26 +54,24 @@ const OfferOwnerActions = ({ offerId, offerTitle, onUpdate }: OfferOwnerActionsP
     }
   };
 
-  const handleEdit = () => {
-    // TODO: Implement edit functionality when needed
-    toast({
-      title: "Próximamente",
-      description: "La funcionalidad de edición estará disponible pronto"
-    });
-  };
-
   return (
     <div className="flex gap-2 pt-2">
-      <Button 
-        variant="outline" 
-        size="sm" 
-        onClick={handleEdit}
-        className="flex-1"
-      >
-        <Edit className="h-4 w-4 mr-2" />
-        Editar
-      </Button>
+      {/* Edit button - only show for pending offers */}
+      {status === 'pending' && (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          asChild
+          className="flex-1"
+        >
+          <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </Link>
+        </Button>
+      )}
       
+      {/* Delete button - always visible */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button 
