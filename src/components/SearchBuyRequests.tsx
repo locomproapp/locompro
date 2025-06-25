@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -38,11 +37,21 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
       console.log('🔄 Fetching buy requests with complete profile data...');
+      
+      // Use a more explicit join approach to ensure we get profile data
       let query = supabase
         .from('buy_requests')
         .select(`
-          *,
-          profiles!buy_requests_user_id_fkey (
+          id,
+          title,
+          description,
+          min_price,
+          max_price,
+          reference_image,
+          zone,
+          created_at,
+          user_id,
+          profiles:user_id (
             full_name,
             avatar_url,
             location,

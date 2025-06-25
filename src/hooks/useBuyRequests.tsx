@@ -31,11 +31,21 @@ export const useBuyRequests = (searchQuery?: string) => {
       setLoading(true);
       console.log('🔍 useBuyRequests - Fetching buy requests with complete profile data...');
       
+      // Use explicit join syntax to ensure we get profile data
       let query = supabase
         .from('buy_requests')
         .select(`
-          *,
-          profiles!buy_requests_user_id_fkey (
+          id,
+          title,
+          description,
+          min_price,
+          max_price,
+          reference_image,
+          zone,
+          status,
+          created_at,
+          user_id,
+          profiles:user_id (
             full_name,
             avatar_url,
             location,
