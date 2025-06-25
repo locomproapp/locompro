@@ -96,11 +96,8 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
               <SelectContent>
                 <SelectItem value="nuevo">Nuevo</SelectItem>
                 <SelectItem value="usado-excelente">Usado - Excelente estado</SelectItem>
-                <SelectItem value="usado-muy-bueno">Usado - Muy buen estado</SelectItem>
                 <SelectItem value="usado-bueno">Usado - Buen estado</SelectItem>
                 <SelectItem value="usado-regular">Usado - Estado regular</SelectItem>
-                <SelectItem value="refurbished">Reacondicionado</SelectItem>
-                <SelectItem value="para-repuestos">Para repuestos</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

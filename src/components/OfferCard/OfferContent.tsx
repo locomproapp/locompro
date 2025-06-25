@@ -7,6 +7,7 @@ interface OfferContentProps {
   offer: {
     contact_info: any;
     description: string | null;
+    delivery_time: string | null;
     created_at: string;
     profiles?: {
       full_name: string | null;
@@ -42,6 +43,14 @@ const OfferContent = ({ offer }: OfferContentProps) => {
     }
   };
 
+  const getDeliveryText = (delivery: string) => {
+    switch (delivery) {
+      case 'En persona': return 'En persona';
+      case 'Por correo': return 'Por correo';
+      default: return delivery;
+    }
+  };
+
   return (
     <>
       {/* Structured Information - directly below title */}
@@ -57,6 +66,13 @@ const OfferContent = ({ offer }: OfferContentProps) => {
           <div>
             <span className="font-medium">Estado: </span>
             <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+          </div>
+        )}
+
+        {offer.delivery_time && (
+          <div>
+            <span className="font-medium">Envío: </span>
+            <span className="text-muted-foreground">{getDeliveryText(offer.delivery_time)}</span>
           </div>
         )}
 

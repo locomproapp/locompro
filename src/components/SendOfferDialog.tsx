@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +17,9 @@ const offerSchema = z.object({
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
   description: z.string().optional(),
   price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
+  zone: z.string().min(1, 'La zona es requerida'),
+  condition: z.string().min(1, 'El estado del producto es requerido'),
+  delivery_time: z.string().min(1, 'El envío es requerido'),
   video_link: z.string().url('Debe ser una URL válida').optional().or(z.literal('')),
   contact_info: z.object({
     email: z.string().email('Email inválido').optional().or(z.literal('')),
@@ -47,6 +51,9 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
       title: '',
       description: '',
       price: undefined,
+      zone: '',
+      condition: '',
+      delivery_time: '',
       video_link: '',
       contact_info: {
         email: '',
@@ -166,6 +173,8 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
 
       // Preparar la información de contacto
       const contactInfo = {
+        zone: data.zone,
+        condition: data.condition,
         email: data.contact_info?.email || null,
         phone: data.contact_info?.phone || null,
         whatsapp: data.contact_info?.whatsapp || null,
@@ -178,6 +187,7 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
         title: data.title,
         description: data.description || null,
         price: data.price,
+        delivery_time: data.delivery_time,
         images: imageUrls.length > 0 ? imageUrls : null,
         contact_info: contactInfo,
         status: 'pending'
@@ -290,6 +300,66 @@ const SendOfferDialog = ({ buyRequestId, buyRequestTitle, onOfferSent }: SendOff
                       onChange={(e) => handlePriceChange(e.target.value, field.onChange)}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="zone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Zona *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado del producto *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona el estado" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="nuevo">Nuevo</SelectItem>
+                      <SelectItem value="usado-excelente">Usado - Excelente estado</SelectItem>
+                      <SelectItem value="usado-bueno">Usado - Buen estado</SelectItem>
+                      <SelectItem value="usado-regular">Usado - Estado regular</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="delivery_time"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Envío *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona el tipo de envío" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="En persona">En persona</SelectItem>
+                      <SelectItem value="Por correo">Por correo</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import ImageGallery from '@/components/ImageGallery';
@@ -42,6 +43,14 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
     }
   };
 
+  const getDeliveryText = (delivery: string) => {
+    switch (delivery) {
+      case 'En persona': return 'En persona';
+      case 'Por correo': return 'Por correo';
+      default: return delivery;
+    }
+  };
+
   return (
     <div className="bg-card rounded-lg border border-border p-6">
       <div className="flex items-center gap-2 mb-4">
@@ -71,6 +80,13 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
             <div>
               <span className="font-medium text-foreground">Estado: </span>
               <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+            </div>
+          )}
+
+          {offer.delivery_time && (
+            <div>
+              <span className="font-medium text-foreground">Envío: </span>
+              <span className="text-muted-foreground">{getDeliveryText(offer.delivery_time)}</span>
             </div>
           )}
 

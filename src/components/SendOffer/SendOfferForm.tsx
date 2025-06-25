@@ -12,6 +12,8 @@ const formSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres'),
   description: z.string().optional(),
   price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
+  zone: z.string().min(1, 'La zona es requerida'),
+  condition: z.string().min(1, 'El estado del producto es requerido'),
   delivery_time: z.string().min(1, 'El envío es requerido'),
   images: z.array(z.string()).min(1, 'Debe subir al menos 1 imagen').max(5, 'Máximo 5 imágenes permitidas'),
 });
@@ -39,6 +41,8 @@ export const SendOfferForm = ({
       title: initialValues?.title || '',
       description: initialValues?.description || '',
       price: initialValues?.price || undefined,
+      zone: initialValues?.zone || '',
+      condition: initialValues?.condition || '',
       delivery_time: initialValues?.delivery_time || '',
       images: initialValues?.images || [],
     }

@@ -34,6 +34,44 @@ export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
 
       <FormField
         control={control}
+        name="zone"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Zona</FormLabel>
+            <FormControl>
+              <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="condition"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Estado del producto</FormLabel>
+            <Select onValueChange={field.onChange} value={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona el estado" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="nuevo">Nuevo</SelectItem>
+                <SelectItem value="usado-excelente">Usado - Excelente estado</SelectItem>
+                <SelectItem value="usado-bueno">Usado - Buen estado</SelectItem>
+                <SelectItem value="usado-regular">Usado - Estado regular</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
         name="delivery_time"
         render={({ field }) => (
           <FormItem>

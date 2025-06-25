@@ -52,6 +52,8 @@ export const useSendOfferLogic = () => {
             title: offer.title,
             description: offer.description || '',
             price: offer.price,
+            zone: offer.contact_info?.zone || '',
+            condition: offer.contact_info?.condition || '',
             delivery_time: offer.delivery_time || '',
             images: offer.images || [],
           };
@@ -81,6 +83,12 @@ export const useSendOfferLogic = () => {
     try {
       console.log('Enviando oferta con datos:', values);
       console.log('Target buy request ID:', targetBuyRequestId);
+
+      // Prepare contact_info object
+      const contactInfo = {
+        zone: values.zone,
+        condition: values.condition,
+      };
 
       if (isCounterOffer && editOfferId) {
         // Get current offer data to preserve price history
@@ -121,6 +129,7 @@ export const useSendOfferLogic = () => {
             description: values.description || null,
             price: values.price,
             delivery_time: values.delivery_time,
+            contact_info: contactInfo,
             images: values.images.length > 0 ? values.images : null,
             status: 'pending',
             rejection_reason: null,
@@ -147,6 +156,7 @@ export const useSendOfferLogic = () => {
             description: values.description || null,
             price: values.price,
             delivery_time: values.delivery_time,
+            contact_info: contactInfo,
             images: values.images.length > 0 ? values.images : null,
             updated_at: new Date().toISOString()
           })
@@ -172,6 +182,7 @@ export const useSendOfferLogic = () => {
             description: values.description || null,
             price: values.price,
             delivery_time: values.delivery_time,
+            contact_info: contactInfo,
             images: values.images.length > 0 ? values.images : null,
             status: 'pending'
           });
