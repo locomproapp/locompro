@@ -1,7 +1,9 @@
 
-import React from 'react';
-import { Calendar, Image as ImageIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import RejectionReason from './RejectionReason';
+import ImageLightbox from '@/components/ImageLightbox';
 
 interface OfferContentProps {
   offer: {
@@ -20,6 +22,9 @@ interface OfferContentProps {
 }
 
 const OfferContent = ({ offer }: OfferContentProps) => {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-AR', {
@@ -49,6 +54,22 @@ const OfferContent = ({ offer }: OfferContentProps) => {
       case 'En persona': return 'En persona';
       case 'Por correo': return 'Por correo';
       default: return delivery;
+    }
+  };
+
+  const goToPrevious = () => {
+    if (offer.images && offer.images.length > 0) {
+      setSelectedImageIndex((prevIndex) => 
+        prevIndex === 0 ? offer.images!.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
+  const goToNext = () => {
+    if (offer.images && offer.images.length > 0) {
+      setSelectedImageIndex((prevIndex) => 
+        prevIndex === offer.images!.length - 1 ? 0 : prevIndex + 1
+      );
     }
   };
 
@@ -89,34 +110,62 @@ const OfferContent = ({ offer }: OfferContentProps) => {
         )}
       </div>
 
-      {/* Photos section */}
+      {/* Photos section with carousel */}
       {offer.images && offer.images.length > 0 ? (
         <div className="border-t pt-3">
           <div className="font-medium mb-2">Fotos:</div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {offer.images.slice(0, 6).map((image, index) => (
+          <div className="relative">
+            {/* Main Image */}
+            <button 
+              onClick={() => setLightboxOpen(true)} 
+              className="w-full rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              aria-label="Ver imagen en tamaño completo"
+            >
               <img
-                key={index}
-                src={image}
-                alt={`Foto ${index + 1}`}
-                className="w-full h-20 object-cover rounded border"
+                src={offer.images[selectedImageIndex]}
+                alt={`Foto ${selectedImageIndex + 1}`}
+                className="w-full h-48 object-cover rounded border"
               />
-            ))}
-            {offer.images.length > 6 && (
-              <div className="w-full h-20 bg-muted rounded border flex items-center justify-center">
-                <span className="text-xs text-muted-foreground">
-                  +{offer.images.length - 6} más
-                </span>
-              </div>
+            </button>
+
+            {/* Navigation Controls - only show if more than 1 image */}
+            {offer.images.length > 1 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={goToPrevious}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
+                  aria-label="Imagen anterior"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={goToNext}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-8 w-8"
+                  aria-label="Imagen siguiente"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+
+                {/* Image Counter */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
+                  {selectedImageIndex + 1} / {offer.images.length}
+                </div>
+              </>
             )}
           </div>
         </div>
       ) : (
         <div className="border-t pt-3">
           <div className="font-medium mb-2">Fotos:</div>
-          <div className="w-full h-20 bg-muted rounded border flex items-center justify-center">
-            <ImageIcon className="h-6 w-6 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground ml-2">Sin fotos</span>
+          <div className="w-full h-48 bg-muted rounded border flex items-center justify-center">
+            <div className="text-center">
+              <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+              <span className="text-sm text-muted-foreground">Sin fotos</span>
+            </div>
           </div>
         </div>
       )}
@@ -134,6 +183,16 @@ const OfferContent = ({ offer }: OfferContentProps) => {
 
       {offer.status === 'rejected' && offer.rejection_reason && (
         <RejectionReason rejectionReason={offer.rejection_reason} />
+      )}
+
+      {/* Image Lightbox */}
+      {offer.images && offer.images.length > 0 && (
+        <ImageLightbox
+          images={offer.images}
+          open={lightboxOpen}
+          onOpenChange={setLightboxOpen}
+          startIndex={selectedImageIndex}
+        />
       )}
     </>
   );
