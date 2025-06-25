@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, Image as ImageIcon } from 'lucide-react';
 import RejectionReason from './RejectionReason';
 
 interface OfferContentProps {
@@ -9,6 +9,7 @@ interface OfferContentProps {
     description: string | null;
     delivery_time: string | null;
     created_at: string;
+    images: string[] | null;
     profiles?: {
       full_name: string | null;
       email: string | null;
@@ -53,15 +54,17 @@ const OfferContent = ({ offer }: OfferContentProps) => {
 
   return (
     <>
-      {/* Structured Information - directly below title */}
+      {/* Structured Information - reordered as requested */}
       <div className="space-y-1">
-        {offer.contact_info?.zone && (
+        {/* Description first */}
+        {offer.description && (
           <div>
-            <span className="font-medium">Zona: </span>
-            <span className="text-muted-foreground">{offer.contact_info.zone}</span>
+            <span className="font-medium">Descripción: </span>
+            <span className="text-muted-foreground">{offer.description}</span>
           </div>
         )}
 
+        {/* Estado second */}
         {offer.contact_info?.condition && (
           <div>
             <span className="font-medium">Estado: </span>
@@ -69,20 +72,54 @@ const OfferContent = ({ offer }: OfferContentProps) => {
           </div>
         )}
 
+        {/* Zona third */}
+        {offer.contact_info?.zone && (
+          <div>
+            <span className="font-medium">Zona: </span>
+            <span className="text-muted-foreground">{offer.contact_info.zone}</span>
+          </div>
+        )}
+
+        {/* Envío fourth */}
         {offer.delivery_time && (
           <div>
             <span className="font-medium">Envío: </span>
             <span className="text-muted-foreground">{getDeliveryText(offer.delivery_time)}</span>
           </div>
         )}
-
-        {offer.description && (
-          <div>
-            <span className="font-medium">Descripción: </span>
-            <span className="text-muted-foreground">{offer.description}</span>
-          </div>
-        )}
       </div>
+
+      {/* Photos section */}
+      {offer.images && offer.images.length > 0 ? (
+        <div className="border-t pt-3">
+          <div className="font-medium mb-2">Fotos:</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {offer.images.slice(0, 6).map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Foto ${index + 1}`}
+                className="w-full h-20 object-cover rounded border"
+              />
+            ))}
+            {offer.images.length > 6 && (
+              <div className="w-full h-20 bg-muted rounded border flex items-center justify-center">
+                <span className="text-xs text-muted-foreground">
+                  +{offer.images.length - 6} más
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="border-t pt-3">
+          <div className="font-medium mb-2">Fotos:</div>
+          <div className="w-full h-20 bg-muted rounded border flex items-center justify-center">
+            <ImageIcon className="h-6 w-6 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground ml-2">Sin fotos</span>
+          </div>
+        </div>
+      )}
 
       {/* Date and Username */}
       <div className="space-y-1 border-t pt-2">
