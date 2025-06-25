@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -175,17 +174,17 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
 
   return (
     <div className="space-y-4">
-      {/* Table Container with properly aligned Filter Icon */}
+      {/* Table Container with Filter Icon */}
       <div className="rounded-md border bg-card relative">
-        {/* Filter Icon positioned in top-right corner with proper spacing */}
-        <div className="absolute top-3 right-3 z-10">
+        {/* Filter Icon in top-right corner */}
+        <div className="absolute top-4 right-4 z-10">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-muted">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 <Filter className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
+            <PopoverContent className="w-auto" align="end">
               <FilterControls
                 statusFilters={statusFilters}
                 deliveryFilters={deliveryFilters}
