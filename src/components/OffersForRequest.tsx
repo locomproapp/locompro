@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useOffers } from '@/hooks/useOffers';
-import OfferCard from './OfferCard';
+import CompactOfferCard from './OfferCard/CompactOfferCard';
 import { Package } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -59,25 +59,36 @@ const OffersForRequest = ({
   console.log('✅ OffersForRequest - Rendering', offers.length, 'offers');
 
   return (
-    <div className="space-y-4">
-      <h3 className="font-semibold">
-        {offers.length} {offers.length === 1 ? 'oferta recibida' : 'ofertas recibidas'}
-      </h3>
-      <div className="space-y-3">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-xl">
+          Ofertas Recibidas ({offers.length})
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Compara las ofertas lado a lado
+        </p>
+      </div>
+      
+      {/* Horizontal scrollable container for offers */}
+      <div className="flex gap-4 overflow-x-auto pb-4">
         {offers.map(offer => {
           console.log('🎯 OffersForRequest - Rendering offer:', offer.id, offer.title);
           return (
-            <OfferCard 
-              key={offer.id} 
-              offer={offer} 
-              showActions={true} 
-              onStatusUpdate={handleOfferUpdate} 
-              currentUserId={user?.id} 
-              buyRequestOwnerId={buyRequestOwnerId} 
+            <CompactOfferCard
+              key={offer.id}
+              offer={offer}
+              buyRequestOwnerId={buyRequestOwnerId}
+              onStatusUpdate={handleOfferUpdate}
             />
           );
         })}
       </div>
+      
+      {offers.length > 3 && (
+        <p className="text-xs text-muted-foreground text-center">
+          Desplázate horizontalmente para ver más ofertas
+        </p>
+      )}
     </div>
   );
 };
