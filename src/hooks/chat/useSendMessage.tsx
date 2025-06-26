@@ -37,18 +37,18 @@ export const useSendMessage = (chatId: string | undefined) => {
       return data;
     },
     onSuccess: (data) => {
-      console.log('Message mutation successful');
-      // Optimistically update the local state immediately
+      console.log('Message mutation successful, updating local state');
+      
+      // Immediately update the local state for instant feedback
       queryClient.setQueryData(['chat-messages', chatId], (oldMessages: ChatMessage[] = []) => {
         const messageExists = oldMessages.some(msg => msg.id === data.id);
         if (!messageExists) {
+          console.log('Adding sent message to local state:', data);
           return [...oldMessages, data];
         }
+        console.log('Sent message already exists in local state');
         return oldMessages;
       });
-      
-      // Also invalidate to ensure consistency
-      queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] });
     },
     onError: (error) => {
       console.error('Error sending message:', error);

@@ -26,22 +26,45 @@ export const useChatRealtimeSubscription = (chatId: string | undefined) => {
           console.log('New message received via real-time:', payload);
           const newMessage = payload.new as ChatMessage;
           
-          // Optimistically update the query data
+          // Immediately update the query data without checking for duplicates first
           queryClient.setQueryData(['chat-messages', chatId], (oldMessages: ChatMessage[] = []) => {
             // Check if message already exists to avoid duplicates
             const messageExists = oldMessages.some(msg => msg.id === newMessage.id);
             if (!messageExists) {
+              console.log('Adding new message to local state:', newMessage);
               return [...oldMessages, newMessage];
             }
+            console.log('Message already exists, skipping duplicate:', newMessage.id);
             return oldMessages;
           });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `chat_id=eq.${chatId}`
+        },
+        (payload) => {
+          console.log('Message updated via real-time:', payload);
+          const updatedMessage = payload.new as ChatMessage;
           
-          // Also trigger a refetch to ensure synchronization
-          queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] });
+          queryClient.setQueryData(['chat-messages', chatId], (oldMessages: ChatMessage[] = []) => {
+            return oldMessages.map(msg => 
+              msg.id === updatedMessage.id ? updatedMessage : msg
+            );
+          });
         }
       )
       .subscribe((status) => {
         console.log('Chat real-time subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to chat real-time updates');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Error with chat real-time subscription');
+        }
       });
 
     return () => {

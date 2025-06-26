@@ -17,10 +17,18 @@ interface ChatMessagesProps {
 const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to new messages
+  // Auto-scroll to new messages only within the chat container
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current && messagesContainerRef.current) {
+      // Only scroll within the messages container, not the entire page
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest'
+      });
+    }
   }, [messages]);
 
   const formatTime = (dateString: string) => {
@@ -43,14 +51,14 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
     return (
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground">
-          ¡Inicia la conversación con el vendedor!
+          ¡Inicia la conversación!
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div ref={messagesContainerRef} className="space-y-3">
       {messages.map((message) => (
         <div
           key={message.id}
