@@ -3,9 +3,8 @@ import React from 'react';
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Filter, Check, X } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import FilterControls from './FilterControls';
-import { useAuth } from '@/hooks/useAuth';
 
 interface TableHeaderProps {
   buyRequestOwnerId?: string;
@@ -34,7 +33,6 @@ interface TableHeaderProps {
 }
 
 const OffersTableHeader = ({
-  buyRequestOwnerId,
   statusFilters,
   conditionFilters,
   deliveryFilters,
@@ -45,9 +43,6 @@ const OffersTableHeader = ({
   onDeliveryFilterChange,
   onSortChange
 }: TableHeaderProps) => {
-  const { user } = useAuth();
-  const isBuyRequestOwner = user?.id === buyRequestOwnerId;
-
   return (
     <TableHeader>
       <TableRow>
@@ -60,7 +55,7 @@ const OffersTableHeader = ({
         <TableHead>Usuario</TableHead>
         <TableHead>Estado</TableHead>
         <TableHead className="w-16">
-          <div className="flex justify-center items-center gap-1">
+          <div className="flex justify-center items-center">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -90,17 +85,6 @@ const OffersTableHeader = ({
                 />
               </PopoverContent>
             </Popover>
-            {/* Show action icons in header for buy request owners */}
-            {isBuyRequestOwner && (
-              <div className="flex gap-0.5 ml-1">
-                <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center">
-                  <Check className="h-2.5 w-2.5 text-white" />
-                </div>
-                <div className="w-4 h-4 bg-red-500 rounded-sm flex items-center justify-center">
-                  <X className="h-2.5 w-2.5 text-white" />
-                </div>
-              </div>
-            )}
           </div>
         </TableHead>
       </TableRow>
