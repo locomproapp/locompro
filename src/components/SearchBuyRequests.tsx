@@ -34,74 +34,73 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
   const queryClient = useQueryClient();
   const location = useLocation();
 
-  const { data: buyRequests, isLoading, refetch } = useQuery({
+  const { data: buyRequests, isLoading, error, refetch } = useQuery({
     queryKey: ['buy-requests', searchQuery],
     queryFn: async () => {
-      console.log('🔄 Fetching buy requests with complete profile data...');
+      console.log('🔄 SearchBuyRequests - Starting fetch with searchQuery:', searchQuery);
       
-      let query = supabase
-        .from('buy_requests')
-        .select(`
-          id,
-          title,
-          description,
-          min_price,
-          max_price,
-          reference_image,
-          zone,
-          created_at,
-          user_id,
-          profiles:user_id (
-            full_name,
-            avatar_url,
-            location,
-            email
-          )
-        `)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+      try {
+        let query = supabase
+          .from('buy_requests')
+          .select(`
+            id,
+            title,
+            description,
+            min_price,
+            max_price,
+            reference_image,
+            zone,
+            created_at,
+            user_id,
+            profiles:user_id (
+              full_name,
+              avatar_url,
+              location,
+              email
+            )
+          `)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
 
-      if (searchQuery && searchQuery.trim()) {
-        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-      }
+        if (searchQuery && searchQuery.trim()) {
+          query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+        }
 
-      const { data, error } = await query;
-      
-      if (error) {
-        console.error('❌ Error fetching buy requests:', error);
-        throw error;
-      }
-      
-      console.log(`✅ Fetched ${data?.length || 0} buy requests from database`);
-      
-      // Log profile data for verification
-      data?.forEach((request, index) => {
-        console.log(`🔍 Request ${index + 1} [${request.id}]:`, {
+        console.log('🔍 SearchBuyRequests - Executing query...');
+        const { data, error } = await query;
+        
+        if (error) {
+          console.error('❌ SearchBuyRequests - Query error:', error);
+          throw error;
+        }
+        
+        console.log(`✅ SearchBuyRequests - Query successful, got ${data?.length || 0} results`);
+        console.log('📊 SearchBuyRequests - Sample data:', data?.slice(0, 2));
+        
+        const transformedData: BuyRequest[] = (data || []).map(request => ({
+          id: request.id,
           title: request.title,
+          description: request.description,
+          min_price: request.min_price,
+          max_price: request.max_price,
+          reference_image: request.reference_image,
+          zone: request.zone,
+          created_at: request.created_at,
           user_id: request.user_id,
-          has_profiles: !!request.profiles,
-          full_name: request.profiles?.full_name,
-          email: request.profiles?.email
-        });
-      });
-      
-      return (data || []).map(request => ({
-        id: request.id,
-        title: request.title,
-        description: request.description,
-        min_price: request.min_price,
-        max_price: request.max_price,
-        reference_image: request.reference_image,
-        zone: request.zone,
-        created_at: request.created_at,
-        user_id: request.user_id,
-        profiles: request.profiles
-      })) as BuyRequest[];
+          profiles: request.profiles
+        }));
+        
+        console.log('🔄 SearchBuyRequests - Data transformation complete');
+        return transformedData;
+      } catch (err) {
+        console.error('💥 SearchBuyRequests - Fetch failed:', err);
+        throw err;
+      }
     },
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Handle refresh when coming from a deletion
@@ -184,6 +183,28 @@ const SearchBuyRequests: React.FC<SearchBuyRequestsProps> = ({ searchQuery = '' 
       window.removeEventListener('buyRequestUpdated', handleBuyRequestUpdated);
     };
   }, [queryClient, refetch]);
+
+  console.log('🎯 SearchBuyRequests - Render state:', {
+    isLoading,
+    hasError: !!error,
+    dataLength: buyRequests?.length || 0,
+    searchQuery
+  });
+
+  if (error) {
+    console.error('❌ SearchBuyRequests - Rendering error state:', error);
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-500">Error cargando publicaciones: {error.message}</p>
+        <button 
+          onClick={() => refetch()} 
+          className="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/80"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
