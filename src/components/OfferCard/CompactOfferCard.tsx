@@ -122,7 +122,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full">
-      <Card className={`w-[400px] flex-shrink-0 ${getCardClassName()}`} style={{ height: '500px' }}>
+      <Card className={`w-80 flex-shrink-0 ${getCardClassName()}`}>
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -191,9 +191,6 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
           )}
 
-          {/* Spacer to push content to bottom */}
-          <div className="flex-1"></div>
-
           {/* Accept/Reject Actions - only for buy request owner */}
           {canAcceptOrReject && (
             <CompactOfferActions
@@ -210,18 +207,16 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           rejectionReason={offer.rejection_reason} 
         />
 
-        {/* Edit/Delete/Counteroffer buttons - only for offer owner - fixed height container */}
-        <div style={{ minHeight: '60px' }} className="flex items-end">
-          {isOfferOwner && (
-            <CompactOfferOwnerActions
-              offerId={offer.id}
-              buyRequestId={offer.buy_request_id}
-              status={offer.status}
-              isOfferOwner={isOfferOwner}
-              onStatusUpdate={onStatusUpdate}
-            />
-          )}
-        </div>
+        {/* Edit/Delete/Counteroffer buttons - only for offer owner */}
+        {isOfferOwner && (
+          <CompactOfferOwnerActions
+            offerId={offer.id}
+            buyRequestId={offer.buy_request_id}
+            status={offer.status}
+            isOfferOwner={isOfferOwner}
+            onStatusUpdate={onStatusUpdate}
+          />
+        )}
       </Card>
 
       {/* Chat section for accepted offers - matches full width of container/table */}
