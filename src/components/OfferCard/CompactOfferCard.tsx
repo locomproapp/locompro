@@ -122,7 +122,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full">
-      <Card className={`w-96 flex-shrink-0 ${getCardClassName()}`} style={{ height: '580px' }}>
+      <Card className={`w-[420px] flex-shrink-0 ${getCardClassName()}`} style={{ height: '620px' }}>
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -211,7 +211,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         />
 
         {/* Edit/Delete/Counteroffer buttons - only for offer owner - fixed height container */}
-        <div style={{ minHeight: '60px' }}>
+        <div style={{ minHeight: '72px' }} className="flex items-end">
           {isOfferOwner && (
             <CompactOfferOwnerActions
               offerId={offer.id}
