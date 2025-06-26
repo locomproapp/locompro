@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -7,11 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Package, Clock, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 const MyOffers = () => {
   const {
     data: offers = [],
     isLoading: loading
   } = useUserOffers();
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -24,6 +27,7 @@ const MyOffers = () => {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-AR', {
@@ -32,7 +36,9 @@ const MyOffers = () => {
       year: 'numeric'
     });
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -43,12 +49,15 @@ const MyOffers = () => {
           <p className="text-muted-foreground">Gestioná todas las ofertas que has enviado</p>
         </div>
 
-        {loading ? <div className="text-center py-12">
+        {loading ? (
+          <div className="text-center py-12">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <Package className="h-6 w-6 text-primary animate-pulse" />
             </div>
             <p className="text-muted-foreground">Cargando ofertas...</p>
-          </div> : offers.length === 0 ? <div className="text-center py-12">
+          </div>
+        ) : offers.length === 0 ? (
+          <div className="text-center py-12">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <Package className="h-6 w-6 text-primary" />
             </div>
@@ -57,10 +66,13 @@ const MyOffers = () => {
             </h3>
             <p className="text-muted-foreground mb-6">Cuando envíes ofertas van a aparecer aquí</p>
             <Button asChild>
-              <Link to="/marketplace">Explorar solicitudes</Link>
+              <Link to="/marketplace">Explorar publicaciones</Link>
             </Button>
-          </div> : <div className="grid gap-6">
-            {offers.map(offer => <Card key={offer.id}>
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {offers.map(offer => (
+              <Card key={offer.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
@@ -87,16 +99,20 @@ const MyOffers = () => {
                     </p>
                     <Button asChild variant="outline">
                       <Link to={`/buy-request/${offer.buy_request_id}`}>
-                        Ver solicitud
+                        Ver publicación
                       </Link>
                     </Button>
                   </div>
                 </CardContent>
-              </Card>)}
-          </div>}
+              </Card>
+            ))}
+          </div>
+        )}
       </main>
 
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default MyOffers;
