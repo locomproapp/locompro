@@ -31,8 +31,14 @@ const MyRequests = () => {
     );
   }
 
-  // Filter requests to ensure they belong to the current user (additional safety check)
-  const userOwnedRequests = buyRequests.filter(request => request.user_id === user.id);
+  // Triple check - only show requests that are 100% owned by the current user
+  const strictlyUserOwnedRequests = buyRequests.filter(request => {
+    const isStrictlyOwned = request.user_id === user.id && request.user_id != null;
+    console.log(`Final filter - Request ${request.id}: owned=${isStrictlyOwned}`);
+    return isStrictlyOwned;
+  });
+
+  console.log('Final requests to display:', strictlyUserOwnedRequests.length);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
@@ -60,15 +66,15 @@ const MyRequests = () => {
             </div>
             <p className="text-muted-foreground">Cargando tus solicitudes...</p>
           </div>
-        ) : userOwnedRequests.length > 0 ? (
+        ) : strictlyUserOwnedRequests.length > 0 ? (
           <>
             <div className="mb-6">
               <p className="text-muted-foreground">
-                {userOwnedRequests.length} {userOwnedRequests.length === 1 ? 'solicitud' : 'solicitudes'}
+                {strictlyUserOwnedRequests.length} {strictlyUserOwnedRequests.length === 1 ? 'solicitud' : 'solicitudes'}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userOwnedRequests.map((request) => (
+              {strictlyUserOwnedRequests.map((request) => (
                 <BuyRequestCard 
                   key={request.id} 
                   buyRequest={request}

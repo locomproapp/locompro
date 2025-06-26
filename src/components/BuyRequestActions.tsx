@@ -28,11 +28,22 @@ const BuyRequestActions = ({
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Security check - only show actions if the user owns the request
-  const canPerformActions = user && buyRequestUserId && user.id === buyRequestUserId;
+  // Extremely strict security check - only show actions if the user owns the request
+  const canPerformActions = user && 
+                           buyRequestUserId && 
+                           user.id === buyRequestUserId && 
+                           buyRequestUserId !== null && 
+                           buyRequestUserId !== undefined;
+
+  console.log('BuyRequestActions security check:', {
+    hasUser: !!user,
+    userId: user?.id,
+    buyRequestUserId,
+    canPerformActions
+  });
 
   if (!canPerformActions) {
-    console.warn('User does not have permissions to perform actions on this request');
+    console.warn('User does not have permissions to perform actions on this request - actions hidden');
     return null;
   }
 

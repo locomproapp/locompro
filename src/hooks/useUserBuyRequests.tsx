@@ -24,6 +24,7 @@ export const useUserBuyRequests = () => {
 
   const fetchUserBuyRequests = async () => {
     if (!user) {
+      console.log('No user logged in, clearing buy requests');
       setBuyRequests([]);
       setLoading(false);
       return;
@@ -44,19 +45,28 @@ export const useUserBuyRequests = () => {
         throw error;
       }
 
-      console.log('Fetched buy requests:', data?.length || 0);
+      console.log('Raw fetched data:', data);
       
-      // Additional safety check to ensure all requests belong to the current user
-      const userRequests = (data || []).filter(request => request.user_id === user.id);
+      // Strict filtering - only show requests that belong to the current user
+      const userRequests = (data || []).filter(request => {
+        const isOwner = request.user_id === user.id;
+        console.log(`Request ${request.id}: user_id=${request.user_id}, current_user=${user.id}, isOwner=${isOwner}`);
+        return isOwner;
+      });
       
-      if (userRequests.length !== (data || []).length) {
-        console.warn('Some requests were filtered out for security reasons');
+      console.log('Filtered user requests:', userRequests.length);
+      
+      // Additional security check - if any request doesn't belong to user, log it
+      const invalidRequests = (data || []).filter(request => request.user_id !== user.id);
+      if (invalidRequests.length > 0) {
+        console.error('WARNING: Found requests that do not belong to current user:', invalidRequests);
       }
       
       setBuyRequests(userRequests);
     } catch (err) {
       console.error('Error fetching user buy requests:', err);
       setError(err instanceof Error ? err.message : 'Error desconocido');
+      setBuyRequests([]); // Clear requests on error
     } finally {
       setLoading(false);
     }
@@ -96,8 +106,8 @@ export const useUserBuyRequests = () => {
         throw error;
       }
       
-      // Update the local list
-      setBuyRequests(prev => prev.filter(request => request.id !== id));
+      // Update the local list - only remove if it actually belonged to the user
+      setBuyRequests(prev => prev.filter(request => request.id !== id && request.user_id === user.id));
       return { success: true };
     } catch (err) {
       console.error('Error deleting buy request:', err);
