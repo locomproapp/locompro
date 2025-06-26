@@ -14,6 +14,10 @@ interface BuyRequest {
   status: string;
   created_at: string;
   user_id: string;
+  profiles?: {
+    full_name: string | null;
+    email?: string | null;
+  } | null;
 }
 
 export const useUserBuyRequests = () => {
@@ -36,7 +40,13 @@ export const useUserBuyRequests = () => {
       
       const { data, error } = await supabase
         .from('buy_requests')
-        .select('*')
+        .select(`
+          *,
+          profiles (
+            full_name,
+            email
+          )
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -45,7 +55,7 @@ export const useUserBuyRequests = () => {
         throw error;
       }
 
-      console.log('Raw fetched data:', data);
+      console.log('Raw fetched data with profiles:', data);
       
       // Strict filtering - only show requests that belong to the current user
       const userRequests = (data || []).filter(request => {
