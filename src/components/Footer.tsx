@@ -52,10 +52,9 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Comprar</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              {/* "Explorar mercado" eliminado */}
-              <li><a href="/market" className="hover:text-primary">Crear búsqueda</a></li>
-              <li><a href="/my-requests" className="hover:text-primary">Mis solicitudes</a></li>
-              <li><a href="#" className="hover:text-primary">Cómo funciona</a></li>
+              <li><a href="/create-buy-request" className="hover:text-primary">Crear publicación</a></li>
+              <li><a href="/my-posts" className="hover:text-primary">Mis publicaciones</a></li>
+              <li><a href="/" className="hover:text-primary">Cómo funciona</a></li>
             </ul>
           </div>
 
@@ -63,7 +62,7 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Vender</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="/market" className="hover:text-primary">Ver intereses</a></li>
+              <li><a href="/marketplace" className="hover:text-primary">Ver mercado</a></li>
               <li><a href="/my-offers" className="hover:text-primary">Mis ofertas</a></li>
               <li><a href="#" className="hover:text-primary">Mis chats</a></li>
               <li><a href="#" className="hover:text-primary">Consultas</a></li>
