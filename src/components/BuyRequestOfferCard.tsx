@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import RejectOfferDialog from '@/components/RejectOfferDialog';
+import AcceptOfferDialog from '@/components/AcceptOfferDialog';
 import OfferHeader from './BuyRequestOfferCard/OfferHeader';
 import OfferContent from './BuyRequestOfferCard/OfferContent';
 import OfferActions from './BuyRequestOfferCard/OfferActions';
@@ -21,6 +22,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   const { user } = useAuth();
   const { toast } = useToast();
   const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
 
@@ -45,6 +47,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         description: 'La oferta ha sido aceptada exitosamente',
       });
 
+      setShowAcceptDialog(false);
       onUpdate();
     } catch (err) {
       console.error('Error accepting offer:', err);
@@ -120,8 +123,15 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           canAcceptOrReject={canAcceptOrReject}
           isAccepting={isAccepting}
           isRejecting={isRejecting}
-          onAccept={acceptOffer}
+          onAccept={() => setShowAcceptDialog(true)}
           onReject={() => setShowRejectDialog(true)}
+        />
+
+        <AcceptOfferDialog
+          open={showAcceptDialog}
+          onOpenChange={setShowAcceptDialog}
+          onConfirm={acceptOffer}
+          isLoading={isAccepting}
         />
 
         <RejectOfferDialog

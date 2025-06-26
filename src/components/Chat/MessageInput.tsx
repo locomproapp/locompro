@@ -30,13 +30,32 @@ const MessageInput = ({ onSendMessage, isSending }: MessageInputProps) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       e.stopPropagation();
+      // Prevent any default browser behavior that might cause scrolling
+      e.nativeEvent.preventDefault();
+      e.nativeEvent.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+      
       handleSendMessage();
+      
+      // Ensure focus stays on input and prevent any scroll behavior
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.nativeEvent.preventDefault();
+    e.nativeEvent.stopPropagation();
+    
+    handleSendMessage();
   };
 
   return (
     <div className="p-4 border-t w-full">
-      <form onSubmit={handleSendMessage} className="w-full">
+      <form onSubmit={handleFormSubmit} className="w-full">
         <div className="flex gap-2 w-full">
           <Input
             ref={inputRef}
@@ -46,16 +65,12 @@ const MessageInput = ({ onSendMessage, isSending }: MessageInputProps) => {
             placeholder="Escribe tu mensaje..."
             disabled={isSending}
             className="flex-1"
+            autoComplete="off"
           />
           <Button 
             type="submit" 
             size="icon"
             disabled={!newMessage.trim() || isSending}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleSendMessage();
-            }}
           >
             <Send className="h-4 w-4" />
           </Button>

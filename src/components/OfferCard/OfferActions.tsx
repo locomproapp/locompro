@@ -5,6 +5,7 @@ import { Check, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import RejectOfferDialog from '@/components/RejectOfferDialog';
+import AcceptOfferDialog from '@/components/AcceptOfferDialog';
 
 interface OfferActionsProps {
   offerId: string;
@@ -16,6 +17,7 @@ interface OfferActionsProps {
 const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferActionsProps) => {
   const { toast } = useToast();
   const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const acceptOffer = async () => {
@@ -129,6 +131,9 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
       window.dispatchEvent(new CustomEvent('offerStatusChanged', { 
         detail: { offerId, newStatus: 'accepted' } 
       }));
+
+      // Close the dialog
+      setShowAcceptDialog(false);
 
     } catch (err) {
       console.error('ENHANCED ACCEPT: Error accepting offer:', err);
@@ -260,13 +265,13 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
     <>
       <div className="flex gap-2 pt-2">
         <Button
-          onClick={acceptOffer}
+          onClick={() => setShowAcceptDialog(true)}
           className="flex-1"
           size="sm"
           disabled={isUpdating}
         >
           <Check className="h-4 w-4 mr-1" />
-          {isUpdating ? 'Aceptando...' : 'Aceptar'}
+          Aceptar
         </Button>
         <Button
           onClick={() => setShowRejectDialog(true)}
@@ -279,6 +284,13 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
           Rechazar
         </Button>
       </div>
+
+      <AcceptOfferDialog
+        open={showAcceptDialog}
+        onOpenChange={setShowAcceptDialog}
+        onConfirm={acceptOffer}
+        isLoading={isUpdating}
+      />
 
       <RejectOfferDialog
         open={showRejectDialog}

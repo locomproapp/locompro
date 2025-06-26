@@ -91,7 +91,7 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
       return data as ChatMessage[];
     },
     enabled: !!chat?.id,
-    refetchInterval: 1000 // More frequent polling as backup
+    refetchInterval: 2000 // Polling fallback
   });
 
   // Subscribe to real-time messages
@@ -114,10 +114,7 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
           console.log('New message received via real-time:', payload);
           const newMessage = payload.new as ChatMessage;
           
-          // Immediately invalidate and refetch messages to ensure sync
-          queryClient.invalidateQueries({ queryKey: ['chat-messages', chat.id] });
-          
-          // Also optimistically update to show message immediately
+          // Optimistically update the query data
           queryClient.setQueryData(['chat-messages', chat.id], (oldMessages: ChatMessage[] = []) => {
             // Check if message already exists to avoid duplicates
             const messageExists = oldMessages.some(msg => msg.id === newMessage.id);
@@ -126,6 +123,9 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
             }
             return oldMessages;
           });
+          
+          // Also trigger a refetch to ensure synchronization
+          queryClient.invalidateQueries({ queryKey: ['chat-messages', chat.id] });
         }
       )
       .subscribe((status) => {
@@ -168,9 +168,6 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
     },
     onSuccess: (data) => {
       console.log('Message mutation successful');
-      // Force a refetch to ensure messages are synchronized
-      queryClient.invalidateQueries({ queryKey: ['chat-messages', chat?.id] });
-      
       // Optimistically update the local state immediately
       queryClient.setQueryData(['chat-messages', chat?.id], (oldMessages: ChatMessage[] = []) => {
         const messageExists = oldMessages.some(msg => msg.id === data.id);
@@ -179,6 +176,9 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
         }
         return oldMessages;
       });
+      
+      // Also invalidate to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ['chat-messages', chat?.id] });
     },
     onError: (error) => {
       console.error('Error sending message:', error);
