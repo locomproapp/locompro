@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -109,6 +110,7 @@ const BuyRequestCard = ({
             <BuyRequestActions
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
+              buyRequestUserId={buyRequest.user_id}
               onDelete={onDelete}
               onUpdate={onUpdate}
             />

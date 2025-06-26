@@ -5,19 +5,36 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import EditBuyRequestDialog from './EditBuyRequestDialog';
 
 interface BuyRequestActionsProps {
   buyRequestId: string;
   buyRequestTitle: string;
+  buyRequestUserId?: string;
   onDelete: (id: string) => Promise<{ success: boolean; error?: string }>;
   onUpdate: () => void;
 }
 
-const BuyRequestActions = ({ buyRequestId, buyRequestTitle, onDelete, onUpdate }: BuyRequestActionsProps) => {
+const BuyRequestActions = ({ 
+  buyRequestId, 
+  buyRequestTitle, 
+  buyRequestUserId,
+  onDelete, 
+  onUpdate 
+}: BuyRequestActionsProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Security check - only show actions if the user owns the request
+  const canPerformActions = user && buyRequestUserId && user.id === buyRequestUserId;
+
+  if (!canPerformActions) {
+    console.warn('User does not have permissions to perform actions on this request');
+    return null;
+  }
 
   const handleDelete = async () => {
     setIsDeleting(true);

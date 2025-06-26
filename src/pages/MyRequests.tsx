@@ -31,6 +31,9 @@ const MyRequests = () => {
     );
   }
 
+  // Filter requests to ensure they belong to the current user (additional safety check)
+  const userOwnedRequests = buyRequests.filter(request => request.user_id === user.id);
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
@@ -57,15 +60,15 @@ const MyRequests = () => {
             </div>
             <p className="text-muted-foreground">Cargando tus solicitudes...</p>
           </div>
-        ) : buyRequests.length > 0 ? (
+        ) : userOwnedRequests.length > 0 ? (
           <>
             <div className="mb-6">
               <p className="text-muted-foreground">
-                {buyRequests.length} {buyRequests.length === 1 ? 'solicitud' : 'solicitudes'}
+                {userOwnedRequests.length} {userOwnedRequests.length === 1 ? 'solicitud' : 'solicitudes'}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {buyRequests.map((request) => (
+              {userOwnedRequests.map((request) => (
                 <BuyRequestCard 
                   key={request.id} 
                   buyRequest={request}
