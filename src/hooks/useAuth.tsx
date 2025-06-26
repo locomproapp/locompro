@@ -49,10 +49,17 @@ export const useAuth = () => {
   };
 
   useEffect(() => {
-    // Set up auth state listener
+    console.log('🔐 Auth hook initializing...');
+    
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.id);
+        console.log('🔐 Auth state change:', {
+          event,
+          userId: session?.user?.id,
+          domain: window.location.hostname,
+          hasSession: !!session
+        });
         
         // Update state immediately
         setSession(session);
@@ -60,7 +67,7 @@ export const useAuth = () => {
         setLoading(false);
 
         // Handle profile creation for sign-in events only
-        if (session?.user && event === 'SIGNED_IN') {
+        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
           try {
             await ensureProfileExists(session.user);
           } catch (error) {
@@ -73,9 +80,17 @@ export const useAuth = () => {
     // Get initial session
     const getInitialSession = async () => {
       try {
+        console.log('🔐 Getting initial session...');
         const { data: { session }, error } = await supabase.auth.getSession();
+        
         if (error) {
-          console.error('Error getting initial session:', error);
+          console.error('❌ Error getting initial session:', error);
+        } else {
+          console.log('✅ Initial session retrieved:', {
+            hasSession: !!session,
+            userId: session?.user?.id,
+            domain: window.location.hostname
+          });
         }
         
         setSession(session);
@@ -91,7 +106,7 @@ export const useAuth = () => {
           }
         }
       } catch (error) {
-        console.error('Error in getInitialSession:', error);
+        console.error('❌ Error in getInitialSession:', error);
         setLoading(false);
       }
     };
@@ -99,30 +114,36 @@ export const useAuth = () => {
     getInitialSession();
 
     return () => {
+      console.log('🔐 Auth hook cleanup');
       subscription.unsubscribe();
     };
   }, []);
 
   const signOut = async () => {
     try {
-      console.log('Starting logout process...');
+      console.log('🚪 Starting logout process...', {
+        domain: window.location.hostname,
+        hasUser: !!user
+      });
       
       // Clear local state first
       setUser(null);
       setSession(null);
       
       // Sign out from Supabase
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut({
+        scope: 'local' // Only sign out locally to avoid cross-domain conflicts
+      });
       
       if (error) {
-        console.error('Error during logout:', error);
+        console.error('❌ Error during logout:', error);
         // Even if there's an error, we've cleared local state
         // so the user appears logged out in the UI
       } else {
-        console.log('Logout successful');
+        console.log('✅ Logout successful');
       }
     } catch (error) {
-      console.error('Unexpected error during logout:', error);
+      console.error('💥 Unexpected error during logout:', error);
       // Clear local state even if there's an error
       setUser(null);
       setSession(null);
