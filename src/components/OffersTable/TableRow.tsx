@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import CompactOfferActions from '../OfferCard/CompactOfferActions';
+import { Button } from '@/components/ui/button';
+import { Check, X } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 import { formatDate, formatPrice, getConditionText, getDeliveryText } from './utils';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface Offer {
   id: string;
@@ -42,21 +44,67 @@ interface OffersTableRowProps {
 
 const OffersTableRow = ({ offer, buyRequestOwnerId, onOfferUpdate }: OffersTableRowProps) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   
   // Determine user permissions
   const isBuyRequestOwner = user?.id === buyRequestOwnerId;
   const canAcceptOrReject = isBuyRequestOwner && offer.status === 'pending';
 
+  const handleAccept = async () => {
+    try {
+      const { error } = await supabase
+        .from('offers')
+        .update({ status: 'accepted' })
+        .eq('id', offer.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Oferta aceptada',
+        description: 'La oferta ha sido aceptada exitosamente',
+      });
+
+      onOfferUpdate?.();
+    } catch (err) {
+      console.error('Error accepting offer:', err);
+      toast({
+        title: 'Error',
+        description: 'No se pudo aceptar la oferta',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const { error } = await supabase
+        .from('offers')
+        .update({ 
+          status: 'rejected',
+          rejection_reason: 'Rechazada por el comprador'
+        })
+        .eq('id', offer.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Oferta rechazada',
+        description: 'La oferta ha sido rechazada',
+      });
+
+      onOfferUpdate?.();
+    } catch (err) {
+      console.error('Error rejecting offer:', err);
+      toast({
+        title: 'Error',
+        description: 'No se pudo rechazar la oferta',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <TableRow key={offer.id}>
-      <TableCell>
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={undefined} alt={offer.profiles?.full_name || 'Usuario'} />
-          <AvatarFallback className="text-xs">
-            {offer.profiles?.full_name?.charAt(0) || 'U'}
-          </AvatarFallback>
-        </Avatar>
-      </TableCell>
       <TableCell className="font-medium max-w-48">
         <div className="truncate" title={offer.title}>
           {offer.title}
@@ -83,17 +131,34 @@ const OffersTableRow = ({ offer, buyRequestOwnerId, onOfferUpdate }: OffersTable
       <TableCell>
         <StatusBadge status={offer.status} />
       </TableCell>
-      {/* Actions column - only show for buy request owner */}
-      {isBuyRequestOwner && (
-        <TableCell>
-          <CompactOfferActions
-            offerId={offer.id}
-            canAcceptOrReject={canAcceptOrReject}
-            onStatusUpdate={onOfferUpdate}
-          />
-        </TableCell>
-      )}
-      <TableCell></TableCell>
+      <TableCell className="w-16">
+        <div className="flex justify-center items-center">
+          {canAcceptOrReject && (
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-blue-100"
+                onClick={handleAccept}
+              >
+                <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center">
+                  <Check className="h-2.5 w-2.5 text-white" />
+                </div>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-red-100"
+                onClick={handleReject}
+              >
+                <div className="w-4 h-4 bg-red-500 rounded-sm flex items-center justify-center">
+                  <X className="h-2.5 w-2.5 text-white" />
+                </div>
+              </Button>
+            </div>
+          )}
+        </div>
+      </TableCell>
     </TableRow>
   );
 };
