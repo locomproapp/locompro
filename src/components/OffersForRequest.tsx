@@ -62,9 +62,7 @@ const OffersForRequest = ({
           <h3 className="font-semibold text-xl">
             Ofertas Recibidas ({offers.length})
           </h3>
-          <p className="text-sm text-muted-foreground">
-            Todas las ofertas públicas para este producto
-          </p>
+          
         </div>
         
         <div className="flex gap-4 overflow-x-auto pb-4">
