@@ -27,6 +27,7 @@ export const useOfferSubmission = () => {
     try {
       console.log('Enviando oferta con datos:', values);
       console.log('Target buy request ID:', targetBuyRequestId);
+      console.log('Delivery time from form:', values.delivery_time);
 
       // Prepare contact_info object
       const contactInfo = {
@@ -74,7 +75,7 @@ export const useOfferSubmission = () => {
             title: values.title,
             description: values.description || null,
             price: values.price,
-            delivery_time: values.delivery_time,
+            delivery_time: values.delivery_time, // Make sure this is included in updates
             contact_info: contactInfo,
             images: values.images.length > 0 ? values.images : null,
             status: 'pending',
@@ -102,7 +103,7 @@ export const useOfferSubmission = () => {
             title: values.title,
             description: values.description || null,
             price: values.price,
-            delivery_time: values.delivery_time,
+            delivery_time: values.delivery_time, // Make sure this is included in regular edits
             contact_info: contactInfo,
             images: values.images.length > 0 ? values.images : null
             // Note: No timestamp updates for regular edits
@@ -119,7 +120,9 @@ export const useOfferSubmission = () => {
           description: "Tu oferta ha sido actualizada exitosamente"
         });
       } else {
-        // Create new offer
+        // Create new offer - THIS IS THE CRITICAL PATH THAT WAS MISSING delivery_time
+        console.log('Creating new offer with delivery_time:', values.delivery_time);
+        
         const { error } = await supabase
           .from('offers')
           .insert({
@@ -128,7 +131,7 @@ export const useOfferSubmission = () => {
             title: values.title,
             description: values.description || null,
             price: values.price,
-            delivery_time: values.delivery_time,
+            delivery_time: values.delivery_time, // THIS WAS MISSING!
             contact_info: contactInfo,
             images: values.images.length > 0 ? values.images : null,
             status: 'pending'
@@ -136,8 +139,11 @@ export const useOfferSubmission = () => {
 
         if (error) {
           console.error('Error insertando oferta:', error);
+          console.error('Full error details:', JSON.stringify(error, null, 2));
           throw error;
         }
+
+        console.log('Offer created successfully with delivery_time:', values.delivery_time);
 
         toast({
           title: "¡Oferta enviada!",

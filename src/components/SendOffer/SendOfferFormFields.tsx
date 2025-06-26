@@ -76,10 +76,13 @@ export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
         name="delivery_time"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Envío</FormLabel>
+            <FormLabel>Envío *</FormLabel>
             <FormControl>
               <RadioGroup
-                onValueChange={field.onChange}
+                onValueChange={(value) => {
+                  console.log('Delivery time selected:', value);
+                  field.onChange(value);
+                }}
                 value={field.value}
                 className="flex flex-row gap-6"
               >
