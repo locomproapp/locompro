@@ -124,7 +124,9 @@ export const useSendOfferLogic = () => {
           });
         }
 
-        // Update offer for counteroffer
+        const now = new Date().toISOString();
+
+        // Update offer for counteroffer - update both updated_at AND created_at to reflect counteroffer time
         const { error } = await supabase
           .from('offers')
           .update({
@@ -137,7 +139,8 @@ export const useSendOfferLogic = () => {
             status: 'pending',
             rejection_reason: null,
             price_history: priceHistory,
-            updated_at: new Date().toISOString()
+            updated_at: now,
+            created_at: now // Update created_at to reflect counteroffer time for proper sorting
           })
           .eq('id', editOfferId);
 
@@ -151,7 +154,7 @@ export const useSendOfferLogic = () => {
           description: "Tu contraoferta ha sido enviada exitosamente"
         });
       } else if (editOfferId) {
-        // Regular edit of pending offer
+        // Regular edit of pending offer - don't update timestamps
         const { error } = await supabase
           .from('offers')
           .update({
@@ -160,8 +163,8 @@ export const useSendOfferLogic = () => {
             price: values.price,
             delivery_time: values.delivery_time,
             contact_info: contactInfo,
-            images: values.images.length > 0 ? values.images : null,
-            updated_at: new Date().toISOString()
+            images: values.images.length > 0 ? values.images : null
+            // Note: No timestamp updates for regular edits
           })
           .eq('id', editOfferId);
 
