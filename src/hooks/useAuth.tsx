@@ -49,43 +49,84 @@ export const useAuth = () => {
   };
 
   useEffect(() => {
-    // Configurar listener de cambios de autenticación
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, session?.user?.id);
+        
+        // Update state immediately
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Ensure profile exists when user signs in
-        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-          // Use setTimeout to avoid blocking the auth state change
-          setTimeout(() => {
-            ensureProfileExists(session.user);
-          }, 0);
+        // Handle profile creation for sign-in events only
+        if (session?.user && event === 'SIGNED_IN') {
+          try {
+            await ensureProfileExists(session.user);
+          } catch (error) {
+            console.error('Error ensuring profile exists:', error);
+          }
         }
       }
     );
 
-    // Verificar sesión actual
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    // Get initial session
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting initial session:', error);
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-      // Ensure profile exists for current session
-      if (session?.user) {
-        setTimeout(() => {
-          ensureProfileExists(session.user);
-        }, 0);
+        // Ensure profile exists for initial session
+        if (session?.user) {
+          try {
+            await ensureProfileExists(session.user);
+          } catch (error) {
+            console.error('Error ensuring profile exists for initial session:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Error in getInitialSession:', error);
+        setLoading(false);
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    getInitialSession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      console.log('Starting logout process...');
+      
+      // Clear local state first
+      setUser(null);
+      setSession(null);
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error during logout:', error);
+        // Even if there's an error, we've cleared local state
+        // so the user appears logged out in the UI
+      } else {
+        console.log('Logout successful');
+      }
+    } catch (error) {
+      console.error('Unexpected error during logout:', error);
+      // Clear local state even if there's an error
+      setUser(null);
+      setSession(null);
+    }
   };
 
   return {
