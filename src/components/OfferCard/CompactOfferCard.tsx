@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import CompactOfferImageCarousel from './CompactOfferImageCarousel';
 import CompactOfferActions from './CompactOfferActions';
 import CompactOfferOwnerActions from './CompactOfferOwnerActions';
@@ -57,6 +58,13 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   const isOfferOwner = user?.id === offer.seller_id;
   const canAcceptOrReject = isBuyRequestOwner && offer.status === 'pending';
 
+  // Get display name with "(Yo)" for current user
+  const displayName = getDisplayNameWithCurrentUser(
+    offer.profiles,
+    offer.seller_id,
+    user?.id
+  );
+
   const formatExactDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -106,14 +114,14 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={undefined} alt={offer.profiles?.full_name || 'Usuario'} />
+              <AvatarImage src={undefined} alt={displayName || 'Usuario'} />
               <AvatarFallback className="text-xs">
-                {offer.profiles?.full_name?.charAt(0) || 'U'}
+                {displayName?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
             <div>
               <h4 className="font-medium text-sm text-foreground">
-                {offer.profiles?.full_name || 'Usuario anónimo'}
+                {displayName || 'Usuario anónimo'}
               </h4>
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
