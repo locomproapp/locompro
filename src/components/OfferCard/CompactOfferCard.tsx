@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -122,8 +121,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full">
-      <Card className={`w-80 flex-shrink-0 ${getCardClassName()}`}>
-        <CardHeader className="pb-2">
+      <Card className={`w-80 flex-shrink-0 h-[440px] flex flex-col ${getCardClassName()}`}>
+        <CardHeader className="pb-2 flex-shrink-0">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
@@ -150,73 +149,83 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           </h3>
         </CardHeader>
 
-        <CardContent className="space-y-3 flex-1 flex flex-col">
-          {/* Image section */}
-          <CompactOfferImageCarousel 
-            images={offer.images} 
-            title={offer.title} 
-          />
-
-          {/* Price and location */}
-          <div className="flex items-center justify-between">
-            <CompactOfferPrice 
-              currentPrice={offer.price}
-              priceHistory={offer.price_history}
-              status={offer.status}
+        <CardContent className="flex-1 flex flex-col justify-between p-4 pt-0">
+          <div className="space-y-3 flex-1">
+            {/* Image section */}
+            <CompactOfferImageCarousel 
+              images={offer.images} 
+              title={offer.title} 
             />
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              <span className="text-xs">{offer.contact_info?.zone || 'No especificada'}</span>
+
+            {/* Price and location */}
+            <div className="flex items-center justify-between">
+              <CompactOfferPrice 
+                currentPrice={offer.price}
+                priceHistory={offer.price_history}
+                status={offer.status}
+              />
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                <span className="text-xs">{offer.contact_info?.zone || 'No especificada'}</span>
+              </div>
             </div>
-          </div>
 
-          {/* Condition and delivery */}
-          <div className="space-y-1 text-xs">
-            {offer.contact_info?.condition && (
-              <div>
-                <span className="font-medium">Estado: </span>
-                <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
-              </div>
-            )}
-            {offer.delivery_time && (
-              <div>
-                <span className="font-medium">Envío: </span>
-                <span className="text-muted-foreground">{offer.delivery_time}</span>
-              </div>
+            {/* Condition and delivery */}
+            <div className="space-y-1 text-xs">
+              {offer.contact_info?.condition && (
+                <div>
+                  <span className="font-medium">Estado: </span>
+                  <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+                </div>
+              )}
+              {offer.delivery_time && (
+                <div>
+                  <span className="font-medium">Envío: </span>
+                  <span className="text-muted-foreground">{offer.delivery_time}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Description */}
+            {offer.description && (
+              <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
             )}
           </div>
-
-          {/* Description */}
-          {offer.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
-          )}
 
           {/* Accept/Reject Actions - only for buy request owner */}
           {canAcceptOrReject && (
-            <CompactOfferActions
-              offerId={offer.id}
-              canAcceptOrReject={canAcceptOrReject}
-              onStatusUpdate={onStatusUpdate}
-            />
+            <div className="mt-3 flex-shrink-0">
+              <CompactOfferActions
+                offerId={offer.id}
+                canAcceptOrReject={canAcceptOrReject}
+                onStatusUpdate={onStatusUpdate}
+              />
+            </div>
           )}
         </CardContent>
 
         {/* Rejection reason for rejected offers */}
-        <CompactOfferRejectionReason 
-          status={offer.status} 
-          rejectionReason={offer.rejection_reason} 
-        />
-
-        {/* Edit/Delete/Counteroffer buttons - only for offer owner */}
-        {isOfferOwner && (
-          <CompactOfferOwnerActions
-            offerId={offer.id}
-            buyRequestId={offer.buy_request_id}
-            status={offer.status}
-            isOfferOwner={isOfferOwner}
-            onStatusUpdate={onStatusUpdate}
-          />
+        {offer.status === 'rejected' && offer.rejection_reason && (
+          <div className="px-4 pb-2 flex-shrink-0">
+            <CompactOfferRejectionReason 
+              status={offer.status} 
+              rejectionReason={offer.rejection_reason} 
+            />
+          </div>
         )}
+
+        {/* Edit/Delete buttons - reserved space at bottom, only show content for offer owner */}
+        <div className="h-16 flex-shrink-0">
+          {isOfferOwner && (
+            <CompactOfferOwnerActions
+              offerId={offer.id}
+              buyRequestId={offer.buy_request_id}
+              status={offer.status}
+              isOfferOwner={isOfferOwner}
+              onStatusUpdate={onStatusUpdate}
+            />
+          )}
+        </div>
       </Card>
 
       {/* Chat section for accepted offers - matches full width of container/table */}
