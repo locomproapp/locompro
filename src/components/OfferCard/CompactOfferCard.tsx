@@ -100,7 +100,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   };
 
   return (
-    <Card className={`w-80 flex-shrink-0 ${
+    <Card className={`w-80 flex-shrink-0 flex flex-col ${
       offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : 
       offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''
     }`}>
@@ -170,21 +170,25 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
         )}
 
-        {/* Accept/Reject Actions - only for buy request owner */}
+        {/* Accept/Reject Actions - positioned at the bottom for buy request owner */}
         {canAcceptOrReject && (
-          <CompactOfferActions
-            offerId={offer.id}
-            canAcceptOrReject={canAcceptOrReject}
-            onStatusUpdate={onStatusUpdate}
-          />
+          <div className="mt-auto pt-3">
+            <CompactOfferActions
+              offerId={offer.id}
+              canAcceptOrReject={canAcceptOrReject}
+              onStatusUpdate={onStatusUpdate}
+            />
+          </div>
         )}
       </CardContent>
 
       {/* Rejection reason for rejected offers */}
-      <CompactOfferRejectionReason 
-        status={offer.status} 
-        rejectionReason={offer.rejection_reason} 
-      />
+      {offer.status === 'rejected' && offer.rejection_reason && (
+        <CompactOfferRejectionReason 
+          status={offer.status} 
+          rejectionReason={offer.rejection_reason} 
+        />
+      )}
 
       {/* Edit/Delete buttons - only for offer owner */}
       {isOfferOwner && (
