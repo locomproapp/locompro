@@ -21,7 +21,14 @@ interface ChatContainerProps {
 const ChatContainer = ({ messages, messagesLoading, sendMessage, isSending }: ChatContainerProps) => {
   return (
     <CardContent className="p-0">
-      <div className="h-80 overflow-y-auto p-4 bg-gray-50 w-full">
+      <div 
+        className="h-80 overflow-y-auto p-4 bg-gray-50 w-full"
+        style={{
+          scrollBehavior: 'smooth',
+          overscrollBehavior: 'contain',
+          position: 'relative'
+        }}
+      >
         <ChatMessages 
           messages={messages}
           isLoading={messagesLoading}

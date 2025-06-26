@@ -22,12 +22,12 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   // Auto-scroll to new messages only within the chat container
   useEffect(() => {
     if (messagesEndRef.current && messagesContainerRef.current) {
-      // Only scroll within the messages container, not the entire page
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'end',
-        inline: 'nearest'
-      });
+      // Use scrollTop instead of scrollIntoView to prevent page scrolling
+      const container = messagesContainerRef.current;
+      const endElement = messagesEndRef.current;
+      
+      // Scroll within the container only
+      container.scrollTop = container.scrollHeight;
     }
   }, [messages]);
 
@@ -60,7 +60,14 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   console.log('Rendering messages:', messages.length, 'Current user:', user?.id);
 
   return (
-    <div ref={messagesContainerRef} className="space-y-3">
+    <div 
+      ref={messagesContainerRef} 
+      className="space-y-3"
+      style={{ 
+        overflowAnchor: 'none',
+        scrollBehavior: 'smooth' 
+      }}
+    >
       {messages.map((message) => {
         const isOwnMessage = message.sender_id === user?.id;
         console.log('Message:', message.id, 'Sender:', message.sender_id, 'Is own:', isOwnMessage);
@@ -87,7 +94,7 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
           </div>
         );
       })}
-      <div ref={messagesEndRef} />
+      <div ref={messagesEndRef} style={{ height: '1px' }} />
     </div>
   );
 };
