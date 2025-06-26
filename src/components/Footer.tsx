@@ -52,9 +52,9 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Comprar</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="/" className="hover:text-primary">Cómo funciona</a></li>
               <li><a href="/create-buy-request" className="hover:text-primary">Crear publicación</a></li>
               <li><a href="/my-posts" className="hover:text-primary">Mis publicaciones</a></li>
+              <li><a href="/" className="hover:text-primary">Cómo funciona</a></li>
             </ul>
           </div>
 
