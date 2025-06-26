@@ -55,9 +55,7 @@ const MyOffers = () => {
             <h3 className="text-lg font-semibold text-foreground mb-2">
               No has enviado ofertas
             </h3>
-            <p className="text-muted-foreground mb-6">
-              Cuando envíes ofertas aparecerán aquí
-            </p>
+            <p className="text-muted-foreground mb-6">Cuando envíes ofertas van a aparecer aquí</p>
             <Button asChild>
               <Link to="/marketplace">Explorar solicitudes</Link>
             </Button>
