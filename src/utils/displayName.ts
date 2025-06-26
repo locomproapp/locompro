@@ -35,3 +35,34 @@ export const getDisplayNameWithLogging = (profiles: ProfileData | null | undefin
   
   return displayName;
 };
+
+export const getDisplayNameWithCurrentUser = (
+  profiles: ProfileData | null | undefined, 
+  profileUserId?: string | null,
+  currentUserId?: string | null
+): string => {
+  const displayName = getDisplayName(profiles);
+  
+  // Add "(Yo)" if this is the current user's profile
+  if (profileUserId && currentUserId && profileUserId === currentUserId) {
+    return `${displayName} (Yo)`;
+  }
+  
+  return displayName;
+};
+
+export const getDisplayNameWithCurrentUserAndLogging = (
+  profiles: ProfileData | null | undefined, 
+  profileUserId?: string | null,
+  currentUserId?: string | null,
+  context: string = 'Unknown'
+): string => {
+  console.log(`👤 [${context}] Profile data:`, profiles);
+  console.log(`👤 [${context}] Profile user ID:`, profileUserId);
+  console.log(`👤 [${context}] Current user ID:`, currentUserId);
+  
+  const displayName = getDisplayNameWithCurrentUser(profiles, profileUserId, currentUserId);
+  console.log(`✅ [${context}] Resolved display name: "${displayName}"`);
+  
+  return displayName;
+};

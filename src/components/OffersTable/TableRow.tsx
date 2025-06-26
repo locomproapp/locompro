@@ -1,8 +1,9 @@
-
 import React from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import StatusBadge from './StatusBadge';
 import { formatDate, formatPrice, getConditionText, getDeliveryText } from './utils';
+import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Offer {
   id: string;
@@ -38,6 +39,14 @@ interface OffersTableRowProps {
 }
 
 const OffersTableRow = ({ offer }: OffersTableRowProps) => {
+  const { user } = useAuth();
+  
+  const displayName = getDisplayNameWithCurrentUser(
+    offer.profiles,
+    offer.seller_id,
+    user?.id
+  );
+
   return (
     <TableRow key={offer.id}>
       <TableCell className="font-medium max-w-48">
@@ -61,7 +70,7 @@ const OffersTableRow = ({ offer }: OffersTableRowProps) => {
         {formatDate(offer.created_at)}
       </TableCell>
       <TableCell>
-        {offer.profiles?.full_name || 'Usuario anónimo'}
+        {displayName || 'Usuario anónimo'}
       </TableCell>
       <TableCell>
         <StatusBadge status={offer.status} />

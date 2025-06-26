@@ -1,11 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Calendar, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getDisplayNameWithLogging } from '@/utils/displayName';
+import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
+import { useAuth } from '@/hooks/useAuth';
 
 interface BuyRequest {
   id: string;
@@ -30,6 +30,8 @@ interface BuyRequestCardProps {
 }
 
 const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
+  const { user } = useAuth();
+
   const formatPrice = (min: number, max: number) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (min === max) return format(min);
@@ -44,7 +46,11 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
     });
   };
 
-  const displayName = getDisplayNameWithLogging(request.profiles, `BuyRequestCard-${request.id}`);
+  const displayName = getDisplayNameWithCurrentUser(
+    request.profiles,
+    request.user_id,
+    user?.id
+  );
 
   return (
     <Card key={request.id} className="hover:shadow-md transition-shadow">

@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getDisplayNameWithLogging } from '@/utils/displayName';
+import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
+import { useAuth } from '@/hooks/useAuth';
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -13,7 +13,13 @@ const formatDate = (dateString: string) => {
 };
 
 const PublisherCard = ({ buyRequest }: { buyRequest: any }) => {
-    const displayName = getDisplayNameWithLogging(buyRequest.profiles, `PublisherCard-${buyRequest.id}`);
+    const { user } = useAuth();
+    
+    const displayName = getDisplayNameWithCurrentUser(
+        buyRequest.profiles,
+        buyRequest.user_id,
+        user?.id
+    );
 
     // Get avatar URL
     const getAvatarUrl = () => {

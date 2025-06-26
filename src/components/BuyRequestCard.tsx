@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
 import OfferForm from './OfferForm';
 import BuyRequestActions from './BuyRequestActions';
-import { getDisplayName } from '@/utils/displayName';
+import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
+import { useAuth } from '@/hooks/useAuth';
 
 interface BuyRequest {
   id: string;
@@ -17,6 +18,7 @@ interface BuyRequest {
   zone: string;
   status: string;
   created_at: string;
+  user_id?: string;
   profiles?: {
     full_name: string | null;
     email?: string | null;
@@ -40,6 +42,8 @@ const BuyRequestCard = ({
   onUpdate,
   hideBuscoTag = false,
 }: BuyRequestCardProps) => {
+  const { user } = useAuth();
+
   const formatPrice = (min: number | null, max: number | null) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
     if (!min && !max) return 'Presupuesto abierto';
@@ -58,7 +62,11 @@ const BuyRequestCard = ({
     });
   };
 
-  const displayName = getDisplayName(buyRequest.profiles);
+  const displayName = getDisplayNameWithCurrentUser(
+    buyRequest.profiles,
+    buyRequest.user_id,
+    user?.id
+  );
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
