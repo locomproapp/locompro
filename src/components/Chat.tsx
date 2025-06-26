@@ -27,7 +27,7 @@ const Chat = ({ buyRequestId, sellerId, offerId }: ChatProps) => {
   }
 
   return (
-    <Card>
+    <Card className="w-full">
       <ChatHeader />
       <ChatContainer
         messages={messages}

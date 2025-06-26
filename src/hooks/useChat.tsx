@@ -91,7 +91,7 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
       return data as ChatMessage[];
     },
     enabled: !!chat?.id,
-    refetchInterval: 2000 // Poll every 2 seconds as backup
+    refetchInterval: 1000 // More frequent polling as backup
   });
 
   // Subscribe to real-time messages
@@ -112,11 +112,16 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
         },
         (payload) => {
           console.log('New message received via real-time:', payload);
-          // Immediately update the query data
+          const newMessage = payload.new as ChatMessage;
+          
+          // Immediately invalidate and refetch messages to ensure sync
+          queryClient.invalidateQueries({ queryKey: ['chat-messages', chat.id] });
+          
+          // Also optimistically update to show message immediately
           queryClient.setQueryData(['chat-messages', chat.id], (oldMessages: ChatMessage[] = []) => {
-            const newMessage = payload.new as ChatMessage;
             // Check if message already exists to avoid duplicates
-            if (!oldMessages.find(msg => msg.id === newMessage.id)) {
+            const messageExists = oldMessages.some(msg => msg.id === newMessage.id);
+            if (!messageExists) {
               return [...oldMessages, newMessage];
             }
             return oldMessages;
@@ -163,10 +168,13 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
     },
     onSuccess: (data) => {
       console.log('Message mutation successful');
-      // Optimistically add the message to the query data immediately
+      // Force a refetch to ensure messages are synchronized
+      queryClient.invalidateQueries({ queryKey: ['chat-messages', chat?.id] });
+      
+      // Optimistically update the local state immediately
       queryClient.setQueryData(['chat-messages', chat?.id], (oldMessages: ChatMessage[] = []) => {
-        // Check if message already exists to avoid duplicates
-        if (!oldMessages.find(msg => msg.id === data.id)) {
+        const messageExists = oldMessages.some(msg => msg.id === data.id);
+        if (!messageExists) {
           return [...oldMessages, data];
         }
         return oldMessages;
