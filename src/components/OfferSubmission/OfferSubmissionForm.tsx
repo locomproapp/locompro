@@ -27,6 +27,7 @@ export const OfferSubmissionForm = ({
       zone: '',
       condition: '',
       description: '',
+      delivery_time: '',
       images: [],
     },
   });
@@ -37,6 +38,7 @@ export const OfferSubmissionForm = ({
   });
 
   const handleSubmit = (data: OfferSubmissionData) => {
+    console.log('Form data being submitted:', data);
     submitOffer(data);
   };
 
