@@ -8,7 +8,7 @@ const ChatHeader = () => {
     <CardHeader>
       <CardTitle className="flex items-center gap-2">
         <MessageCircle className="h-5 w-5" />
-        Chat con el vendedor
+        Chat
       </CardTitle>
     </CardHeader>
   );

@@ -57,29 +57,36 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
     );
   }
 
+  console.log('Rendering messages:', messages.length, 'Current user:', user?.id);
+
   return (
     <div ref={messagesContainerRef} className="space-y-3">
-      {messages.map((message) => (
-        <div
-          key={message.id}
-          className={`flex gap-2 ${
-            message.sender_id === user?.id ? 'justify-end' : 'justify-start'
-          }`}
-        >
+      {messages.map((message) => {
+        const isOwnMessage = message.sender_id === user?.id;
+        console.log('Message:', message.id, 'Sender:', message.sender_id, 'Is own:', isOwnMessage);
+        
+        return (
           <div
-            className={`max-w-xs rounded-lg p-3 ${
-              message.sender_id === user?.id
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted'
+            key={message.id}
+            className={`flex gap-2 ${
+              isOwnMessage ? 'justify-end' : 'justify-start'
             }`}
           >
-            <p className="text-sm">{message.message}</p>
-            <p className={`text-xs mt-1 opacity-70`}>
-              {formatTime(message.created_at)}
-            </p>
+            <div
+              className={`max-w-xs rounded-lg p-3 ${
+                isOwnMessage
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted'
+              }`}
+            >
+              <p className="text-sm">{message.message}</p>
+              <p className={`text-xs mt-1 opacity-70`}>
+                {formatTime(message.created_at)}
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <div ref={messagesEndRef} />
     </div>
   );

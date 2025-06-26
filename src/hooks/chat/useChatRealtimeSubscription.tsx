@@ -26,17 +26,22 @@ export const useChatRealtimeSubscription = (chatId: string | undefined) => {
           console.log('New message received via real-time:', payload);
           const newMessage = payload.new as ChatMessage;
           
-          // Immediately update the query data without checking for duplicates first
           queryClient.setQueryData(['chat-messages', chatId], (oldMessages: ChatMessage[] = []) => {
             // Check if message already exists to avoid duplicates
             const messageExists = oldMessages.some(msg => msg.id === newMessage.id);
             if (!messageExists) {
               console.log('Adding new message to local state:', newMessage);
-              return [...oldMessages, newMessage];
+              const updatedMessages = [...oldMessages, newMessage].sort((a, b) => 
+                new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+              );
+              return updatedMessages;
             }
             console.log('Message already exists, skipping duplicate:', newMessage.id);
             return oldMessages;
           });
+
+          // Also invalidate and refetch to ensure consistency
+          queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] });
         }
       )
       .on(

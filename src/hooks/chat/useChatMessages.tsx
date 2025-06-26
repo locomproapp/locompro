@@ -26,6 +26,8 @@ export const useChatMessages = (chatId: string | undefined) => {
       return data as ChatMessage[];
     },
     enabled: !!chatId,
-    refetchInterval: 2000 // Polling fallback
+    refetchInterval: 5000, // Increased polling interval as backup
+    staleTime: 1000, // Consider data stale after 1 second
+    gcTime: 30000 // Keep in cache for 30 seconds
   });
 };
