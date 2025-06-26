@@ -59,8 +59,8 @@ const CompactOfferOwnerActions = ({
 
   return (
     <div className="px-4 pb-4">
-      {/* For pending offers: show Edit and Delete buttons */}
-      {status === 'pending' && (
+      {/* For pending and rejected offers: show consistent button layout */}
+      {(status === 'pending' || status === 'rejected') && (
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -69,8 +69,17 @@ const CompactOfferOwnerActions = ({
             className="flex-1 text-xs"
           >
             <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
-              <Edit className="h-3 w-3 mr-1" />
-              Editar
+              {status === 'pending' ? (
+                <>
+                  <Edit className="h-3 w-3 mr-1" />
+                  Editar
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  Contraofertar
+                </>
+              )}
             </Link>
           </Button>
           <AlertDialog>
@@ -104,56 +113,6 @@ const CompactOfferOwnerActions = ({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
-      )}
-
-      {/* For rejected offers: show Delete and Counteroffer buttons */}
-      {status === 'rejected' && (
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isDeleting}
-                  className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
-                >
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  {isDeleting ? 'Eliminando...' : 'Eliminar'}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteOffer}
-                    disabled={isDeleting}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {isDeleting ? 'Eliminando...' : 'Eliminar'}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="w-full text-xs text-blue-600 border-blue-200 hover:bg-blue-50"
-          >
-            <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
-              <RefreshCw className="h-3 w-3 mr-1" />
-              Contraofertar
-            </Link>
-          </Button>
         </div>
       )}
 
