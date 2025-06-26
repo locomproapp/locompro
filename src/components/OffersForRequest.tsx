@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useOffers } from '@/hooks/useOffers';
 import CompactOfferCard from './OfferCard/CompactOfferCard';
@@ -65,10 +66,16 @@ const OffersForRequest = ({
           
         </div>
         
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex gap-6 overflow-x-auto pb-4 px-2 md:px-0" style={{ scrollSnapType: 'x mandatory' }}>
           {offers.map(offer => {
           console.log('🎯 OffersForRequest - Rendering offer card:', offer.id, offer.title);
-          return <CompactOfferCard key={offer.id} offer={offer} buyRequestOwnerId={buyRequestOwnerId} onStatusUpdate={handleOfferUpdate} />;
+          return <div key={offer.id} className="flex-shrink-0" style={{ scrollSnapAlign: 'start' }}>
+              <CompactOfferCard 
+                offer={offer} 
+                buyRequestOwnerId={buyRequestOwnerId} 
+                onStatusUpdate={handleOfferUpdate} 
+              />
+            </div>;
         })}
         </div>
         

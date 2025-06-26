@@ -120,8 +120,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   };
 
   return (
-    <div className="space-y-4 w-full">
-      <Card className={`w-80 flex-shrink-0 h-[410px] flex flex-col ${getCardClassName()}`}>
+    <div className="space-y-4 w-full min-w-[320px] max-w-[320px] md:min-w-[320px] md:max-w-[320px]">
+      <Card className={`w-full flex-shrink-0 h-[410px] flex flex-col border-2 ${getCardClassName()}`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
