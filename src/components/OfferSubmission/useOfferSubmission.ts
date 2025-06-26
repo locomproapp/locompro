@@ -37,6 +37,7 @@ export const useOfferSubmission = ({ buyRequestId, onSuccess }: UseOfferSubmissi
         description: data.description,
         images: data.images,
         status: 'pending',
+        delivery_time: data.delivery_time, // This was missing!
         contact_info: {
           zone: data.zone,
           condition: data.condition,
