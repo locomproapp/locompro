@@ -90,7 +90,8 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
       console.log('Fetched messages:', data);
       return data as ChatMessage[];
     },
-    enabled: !!chat?.id
+    enabled: !!chat?.id,
+    refetchInterval: 2000 // Poll every 2 seconds as backup
   });
 
   // Subscribe to real-time messages
@@ -111,7 +112,15 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
         },
         (payload) => {
           console.log('New message received via real-time:', payload);
-          queryClient.invalidateQueries({ queryKey: ['chat-messages', chat.id] });
+          // Immediately update the query data
+          queryClient.setQueryData(['chat-messages', chat.id], (oldMessages: ChatMessage[] = []) => {
+            const newMessage = payload.new as ChatMessage;
+            // Check if message already exists to avoid duplicates
+            if (!oldMessages.find(msg => msg.id === newMessage.id)) {
+              return [...oldMessages, newMessage];
+            }
+            return oldMessages;
+          });
         }
       )
       .subscribe((status) => {
@@ -153,8 +162,15 @@ export const useChat = (buyRequestId: string, sellerId: string, offerId: string)
       return data;
     },
     onSuccess: (data) => {
-      console.log('Message mutation successful, invalidating queries');
-      queryClient.invalidateQueries({ queryKey: ['chat-messages', chat?.id] });
+      console.log('Message mutation successful');
+      // Optimistically add the message to the query data immediately
+      queryClient.setQueryData(['chat-messages', chat?.id], (oldMessages: ChatMessage[] = []) => {
+        // Check if message already exists to avoid duplicates
+        if (!oldMessages.find(msg => msg.id === data.id)) {
+          return [...oldMessages, data];
+        }
+        return oldMessages;
+      });
     },
     onError: (error) => {
       console.error('Error sending message:', error);

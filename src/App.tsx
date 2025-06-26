@@ -15,7 +15,6 @@ import Marketplace from "./pages/Marketplace";
 import MyRequests from "./pages/MyRequests";
 import MyOffers from "./pages/MyOffers";
 import MyPosts from "./pages/MyPosts";
-import Market from "./pages/Market";
 import PostDetail from "./pages/PostDetail";
 import SendOffer from "./pages/SendOffer";
 import OfferDetail from "./pages/OfferDetail";
@@ -40,7 +39,6 @@ const App = () => (
             <Route path="/my-requests" element={<MyRequests />} />
             <Route path="/my-offers" element={<MyOffers />} />
             <Route path="/my-posts" element={<MyPosts />} />
-            <Route path="/market" element={<Market />} />
             <Route path="/post-detail/:id" element={<PostDetail />} />
             <Route path="/send-offer/:buyRequestId" element={<SendOffer />} />
             <Route path="/offer/:id" element={<OfferDetail />} />
