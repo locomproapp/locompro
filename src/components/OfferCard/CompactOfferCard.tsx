@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, Calendar } from 'lucide-react';
+import { MapPin, Calendar, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import CompactOfferImageCarousel from './CompactOfferImageCarousel';
@@ -11,6 +11,7 @@ import CompactOfferActions from './CompactOfferActions';
 import CompactOfferOwnerActions from './CompactOfferOwnerActions';
 import CompactOfferRejectionReason from './CompactOfferRejectionReason';
 import CompactOfferPrice from './CompactOfferPrice';
+import Chat from '@/components/Chat';
 
 interface Offer {
   id: string;
@@ -57,6 +58,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   const isBuyRequestOwner = user?.id === buyRequestOwnerId;
   const isOfferOwner = user?.id === offer.seller_id;
   const canAcceptOrReject = isBuyRequestOwner && offer.status === 'pending';
+  const shouldShowChat = offer.status === 'accepted' && user && (isBuyRequestOwner || isOfferOwner);
 
   // Get display name with "(Yo)" for current user
   const displayName = getDisplayNameWithCurrentUser(
@@ -86,7 +88,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
       case 'rejected':
         return <Badge variant="destructive">Rechazada</Badge>;
       case 'finalized':
-        return <Badge variant="secondary">Finalizada</Badge>;
+        return <Badge variant="outline" className="bg-gray-100 text-gray-600">Finalizada</Badge>;
       default:
         return <Badge variant="outline">Desconocido</Badge>;
     }
@@ -105,106 +107,135 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     }
   };
 
+  const getCardClassName = () => {
+    switch (offer.status) {
+      case 'rejected':
+        return 'ring-1 ring-red-200 bg-red-50';
+      case 'accepted':
+        return 'ring-1 ring-green-200 bg-green-50';
+      case 'finalized':
+        return 'ring-1 ring-gray-200 bg-gray-50';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <Card className={`w-80 flex-shrink-0 ${
-      offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : 
-      offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''
-    }`}>
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={undefined} alt={displayName || 'Usuario'} />
-              <AvatarFallback className="text-xs">
-                {displayName?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h4 className="font-medium text-sm text-foreground">
-                {displayName || 'Usuario anónimo'}
-              </h4>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
-                {formatExactDate(offer.created_at)}
+    <div className="space-y-4">
+      <Card className={`w-80 flex-shrink-0 ${getCardClassName()}`}>
+        <CardHeader className="pb-2">
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={undefined} alt={displayName || 'Usuario'} />
+                <AvatarFallback className="text-xs">
+                  {displayName?.charAt(0) || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h4 className="font-medium text-sm text-foreground">
+                  {displayName || 'Usuario anónimo'}
+                </h4>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="h-3 w-3" />
+                  {formatExactDate(offer.created_at)}
+                </div>
               </div>
             </div>
+            {getStatusBadge()}
           </div>
-          {getStatusBadge()}
-        </div>
-        
-        <h3 className="font-semibold text-sm text-foreground line-clamp-2 mb-1">
-          {offer.title}
-        </h3>
-      </CardHeader>
+          
+          <h3 className="font-semibold text-sm text-foreground line-clamp-2 mb-1">
+            {offer.title}
+          </h3>
+        </CardHeader>
 
-      <CardContent className="space-y-3 flex-1 flex flex-col">
-        {/* Image section */}
-        <CompactOfferImageCarousel 
-          images={offer.images} 
-          title={offer.title} 
+        <CardContent className="space-y-3 flex-1 flex flex-col">
+          {/* Image section */}
+          <CompactOfferImageCarousel 
+            images={offer.images} 
+            title={offer.title} 
+          />
+
+          {/* Price and location */}
+          <div className="flex items-center justify-between">
+            <CompactOfferPrice 
+              currentPrice={offer.price}
+              priceHistory={offer.price_history}
+              status={offer.status}
+            />
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              <span className="text-xs">{offer.contact_info?.zone || 'No especificada'}</span>
+            </div>
+          </div>
+
+          {/* Condition and delivery */}
+          <div className="space-y-1 text-xs">
+            {offer.contact_info?.condition && (
+              <div>
+                <span className="font-medium">Estado: </span>
+                <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
+              </div>
+            )}
+            {offer.delivery_time && (
+              <div>
+                <span className="font-medium">Envío: </span>
+                <span className="text-muted-foreground">{offer.delivery_time}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          {offer.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
+          )}
+
+          {/* Accept/Reject Actions - only for buy request owner */}
+          {canAcceptOrReject && (
+            <CompactOfferActions
+              offerId={offer.id}
+              canAcceptOrReject={canAcceptOrReject}
+              onStatusUpdate={onStatusUpdate}
+            />
+          )}
+        </CardContent>
+
+        {/* Rejection reason for rejected offers */}
+        <CompactOfferRejectionReason 
+          status={offer.status} 
+          rejectionReason={offer.rejection_reason} 
         />
 
-        {/* Price and location */}
-        <div className="flex items-center justify-between">
-          <CompactOfferPrice 
-            currentPrice={offer.price}
-            priceHistory={offer.price_history}
-            status={offer.status}
-          />
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <MapPin className="h-3 w-3" />
-            <span className="text-xs">{offer.contact_info?.zone || 'No especificada'}</span>
-          </div>
-        </div>
-
-        {/* Condition and delivery */}
-        <div className="space-y-1 text-xs">
-          {offer.contact_info?.condition && (
-            <div>
-              <span className="font-medium">Estado: </span>
-              <span className="text-muted-foreground">{getConditionText(offer.contact_info.condition)}</span>
-            </div>
-          )}
-          {offer.delivery_time && (
-            <div>
-              <span className="font-medium">Envío: </span>
-              <span className="text-muted-foreground">{offer.delivery_time}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Description */}
-        {offer.description && (
-          <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
-        )}
-
-        {/* Accept/Reject Actions - only for buy request owner */}
-        {canAcceptOrReject && (
-          <CompactOfferActions
+        {/* Edit/Delete/Counteroffer buttons - only for offer owner */}
+        {isOfferOwner && (
+          <CompactOfferOwnerActions
             offerId={offer.id}
-            canAcceptOrReject={canAcceptOrReject}
+            buyRequestId={offer.buy_request_id}
+            status={offer.status}
+            isOfferOwner={isOfferOwner}
             onStatusUpdate={onStatusUpdate}
           />
         )}
-      </CardContent>
+      </Card>
 
-      {/* Rejection reason for rejected offers */}
-      <CompactOfferRejectionReason 
-        status={offer.status} 
-        rejectionReason={offer.rejection_reason} 
-      />
-
-      {/* Edit/Delete/Counteroffer buttons - only for offer owner */}
-      {isOfferOwner && (
-        <CompactOfferOwnerActions
-          offerId={offer.id}
-          buyRequestId={offer.buy_request_id}
-          status={offer.status}
-          isOfferOwner={isOfferOwner}
-          onStatusUpdate={onStatusUpdate}
-        />
+      {/* Chat section for accepted offers */}
+      {shouldShowChat && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <MessageCircle className="h-5 w-5 text-green-600" />
+            <h4 className="font-medium text-green-800">
+              {isOfferOwner ? '¡Oferta aceptada! Chatea con el comprador' : '¡Oferta aceptada! Chatea con el vendedor'}
+            </h4>
+          </div>
+          <Chat 
+            buyRequestId={offer.buy_request_id}
+            sellerId={offer.seller_id}
+            offerId={offer.id}
+          />
+        </div>
       )}
-    </Card>
+    </div>
   );
 };
 

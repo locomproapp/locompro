@@ -29,6 +29,7 @@ import { useAuth } from "@/hooks/useAuth";
 import SearchBar from "@/components/SearchBar";
 import { Badge } from "@/components/ui/badge";
 import { useSellerNotifications } from '@/hooks/useSellerNotifications';
+import ChatListDialog from './ChatListDialog';
 
 interface MobileLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   to: string;

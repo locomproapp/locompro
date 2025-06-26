@@ -23,7 +23,29 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
       setIsUpdating(true);
       console.log('ENHANCED ACCEPT: Starting accept process for offer:', offerId);
       
-      const { data: updateData, error } = await supabase
+      // First, get the offer details and buy request info
+      const { data: offerData, error: offerError } = await supabase
+        .from('offers')
+        .select(`
+          id,
+          buy_request_id,
+          seller_id,
+          buy_requests!inner (
+            user_id
+          )
+        `)
+        .eq('id', offerId)
+        .single();
+
+      if (offerError) {
+        console.error('ENHANCED ACCEPT: Error fetching offer data:', offerError);
+        throw offerError;
+      }
+
+      console.log('ENHANCED ACCEPT: Offer data:', offerData);
+
+      // Update the accepted offer status
+      const { data: updateData, error: updateError } = await supabase
         .from('offers')
         .update({ 
           status: 'accepted',
@@ -32,16 +54,68 @@ const OfferActions = ({ offerId, status, showActions, onStatusUpdate }: OfferAct
         .eq('id', offerId)
         .select();
 
-      if (error) {
-        console.error('ENHANCED ACCEPT: Database error:', error);
-        throw error;
+      if (updateError) {
+        console.error('ENHANCED ACCEPT: Database error:', updateError);
+        throw updateError;
       }
 
       console.log('ENHANCED ACCEPT: Database update successful:', updateData);
 
+      // Mark all other offers for this buy request as 'finalized'
+      const { error: finalizeError } = await supabase
+        .from('offers')
+        .update({ 
+          status: 'finalized',
+          updated_at: new Date().toISOString()
+        })
+        .eq('buy_request_id', offerData.buy_request_id)
+        .neq('id', offerId)
+        .eq('status', 'pending');
+
+      if (finalizeError) {
+        console.error('ENHANCED ACCEPT: Error finalizing other offers:', finalizeError);
+        throw finalizeError;
+      }
+
+      // Create or get chat between buyer and seller
+      const buyerId = offerData.buy_requests.user_id;
+      const sellerId = offerData.seller_id;
+
+      console.log('ENHANCED ACCEPT: Creating chat between buyer:', buyerId, 'and seller:', sellerId);
+
+      // Check if chat already exists
+      const { data: existingChat } = await supabase
+        .from('chats')
+        .select('id')
+        .eq('buy_request_id', offerData.buy_request_id)
+        .eq('buyer_id', buyerId)
+        .eq('seller_id', sellerId)
+        .single();
+
+      if (!existingChat) {
+        // Create new chat
+        const { error: chatError } = await supabase
+          .from('chats')
+          .insert({
+            buy_request_id: offerData.buy_request_id,
+            buyer_id: buyerId,
+            seller_id: sellerId,
+            offer_id: offerId
+          });
+
+        if (chatError) {
+          console.error('ENHANCED ACCEPT: Error creating chat:', chatError);
+          throw chatError;
+        }
+
+        console.log('ENHANCED ACCEPT: Chat created successfully');
+      } else {
+        console.log('ENHANCED ACCEPT: Chat already exists');
+      }
+
       toast({
         title: 'Oferta aceptada',
-        description: 'La oferta ha sido aceptada exitosamente',
+        description: 'La oferta ha sido aceptada exitosamente. Se ha creado un chat para coordinar la transacción.',
       });
 
       // Force immediate callback

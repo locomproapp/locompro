@@ -21,7 +21,25 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
   const acceptOffer = async () => {
     try {
       setIsAccepting(true);
-      const { error } = await supabase
+      
+      // First, get the offer details and buy request info
+      const { data: offerData, error: offerError } = await supabase
+        .from('offers')
+        .select(`
+          id,
+          buy_request_id,
+          seller_id,
+          buy_requests!inner (
+            user_id
+          )
+        `)
+        .eq('id', offerId)
+        .single();
+
+      if (offerError) throw offerError;
+
+      // Update the accepted offer status
+      const { error: updateError } = await supabase
         .from('offers')
         .update({ 
           status: 'accepted',
@@ -29,11 +47,51 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
         })
         .eq('id', offerId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      // Mark all other offers for this buy request as 'finalized'
+      const { error: finalizeError } = await supabase
+        .from('offers')
+        .update({ 
+          status: 'finalized',
+          updated_at: new Date().toISOString()
+        })
+        .eq('buy_request_id', offerData.buy_request_id)
+        .neq('id', offerId)
+        .eq('status', 'pending');
+
+      if (finalizeError) throw finalizeError;
+
+      // Create or get chat between buyer and seller
+      const buyerId = offerData.buy_requests.user_id;
+      const sellerId = offerData.seller_id;
+
+      // Check if chat already exists
+      const { data: existingChat } = await supabase
+        .from('chats')
+        .select('id')
+        .eq('buy_request_id', offerData.buy_request_id)
+        .eq('buyer_id', buyerId)
+        .eq('seller_id', sellerId)
+        .single();
+
+      if (!existingChat) {
+        // Create new chat
+        const { error: chatError } = await supabase
+          .from('chats')
+          .insert({
+            buy_request_id: offerData.buy_request_id,
+            buyer_id: buyerId,
+            seller_id: sellerId,
+            offer_id: offerId
+          });
+
+        if (chatError) throw chatError;
+      }
 
       toast({
         title: 'Oferta aceptada',
-        description: 'La oferta ha sido aceptada exitosamente',
+        description: 'La oferta ha sido aceptada exitosamente. Se ha creado un chat para coordinar la transacción.',
       });
 
       onStatusUpdate?.();

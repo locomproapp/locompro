@@ -57,6 +57,11 @@ const CompactOfferOwnerActions = ({
     return null;
   }
 
+  // Don't show any actions for accepted offers (no delete button)
+  if (status === 'accepted') {
+    return null;
+  }
+
   return (
     <div className="px-4 pb-4">
       {/* For pending and rejected offers: show consistent button layout */}
@@ -116,8 +121,8 @@ const CompactOfferOwnerActions = ({
         </div>
       )}
 
-      {/* For accepted offers: show Delete button only */}
-      {status === 'accepted' && (
+      {/* For finalized offers: show Delete button only */}
+      {status === 'finalized' && (
         <div className="flex gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
