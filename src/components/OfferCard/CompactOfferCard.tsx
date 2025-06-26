@@ -122,7 +122,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full">
-      <Card className={`w-80 flex-shrink-0 ${getCardClassName()}`}>
+      <Card className={`w-96 h-[540px] flex-shrink-0 flex flex-col ${getCardClassName()}`}>
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -191,13 +191,23 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
           )}
 
+          {/* Spacer to push buttons to bottom */}
+          <div className="flex-1" />
+
           {/* Accept/Reject Actions - only for buy request owner */}
           {canAcceptOrReject && (
-            <CompactOfferActions
-              offerId={offer.id}
-              canAcceptOrReject={canAcceptOrReject}
-              onStatusUpdate={onStatusUpdate}
-            />
+            <div className="mt-auto">
+              <CompactOfferActions
+                offerId={offer.id}
+                canAcceptOrReject={canAcceptOrReject}
+                onStatusUpdate={onStatusUpdate}
+              />
+            </div>
+          )}
+
+          {/* Blank space for consistent height when no buttons */}
+          {!canAcceptOrReject && !isOfferOwner && (
+            <div className="h-10" />
           )}
         </CardContent>
 
