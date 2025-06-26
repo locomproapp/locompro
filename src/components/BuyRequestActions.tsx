@@ -53,8 +53,8 @@ const BuyRequestActions = ({
       const result = await onDelete(buyRequestId);
       if (result.success) {
         toast({
-          title: "Solicitud eliminada",
-          description: "La solicitud ha sido eliminada exitosamente"
+          title: "Publicación eliminada",
+          description: "La publicación ha sido eliminada exitosamente"
         });
         
         // Dispatch global event to update marketplace and other views
@@ -64,7 +64,7 @@ const BuyRequestActions = ({
       } else {
         toast({
           title: "Error",
-          description: result.error || "No se pudo eliminar la solicitud",
+          description: result.error || "No se pudo eliminar la publicación",
           variant: "destructive"
         });
       }
@@ -111,7 +111,7 @@ const BuyRequestActions = ({
               <AlertDialogHeader>
                 <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Esta acción eliminará permanentemente la solicitud "{buyRequestTitle}" y todas las ofertas asociadas.
+                  Esta acción eliminará permanentemente la publicación "{buyRequestTitle}" y todas las ofertas asociadas.
                   Esta acción no se puede deshacer.
                 </AlertDialogDescription>
               </AlertDialogHeader>

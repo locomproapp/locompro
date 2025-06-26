@@ -21,12 +21,12 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          Crear Solicitud
+          Crear Publicación
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Crear Nueva Solicitud</DialogTitle>
+          <DialogTitle>Crear Nueva Publicación</DialogTitle>
         </DialogHeader>
         
         <CreateBuyRequestForm onCancel={handleCancel} />
