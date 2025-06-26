@@ -20,30 +20,68 @@ const ChatList = ({ onChatSelect }: ChatListProps) => {
     queryFn: async () => {
       if (!user) return [];
 
-      const { data, error } = await supabase
+      // First get the chats for the user
+      const { data: chatData, error: chatError } = await supabase
         .from('chats')
-        .select(`
-          *,
-          buyer_profile:profiles!chats_buyer_id_fkey (
-            full_name,
-            email
-          ),
-          seller_profile:profiles!chats_seller_id_fkey (
-            full_name,
-            email
-          ),
-          buy_requests (
-            title
-          ),
-          offers (
-            title
-          )
-        `)
+        .select('*')
         .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
-      return data || [];
+      if (chatError) throw chatError;
+      if (!chatData || chatData.length === 0) return [];
+
+      // Get all unique user IDs to fetch profiles
+      const userIds = new Set<string>();
+      const buyRequestIds = new Set<string>();
+      
+      chatData.forEach(chat => {
+        userIds.add(chat.buyer_id);
+        userIds.add(chat.seller_id);
+        buyRequestIds.add(chat.buy_request_id);
+      });
+
+      // Fetch profiles for all users
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', Array.from(userIds));
+
+      if (profileError) throw profileError;
+
+      // Fetch buy requests
+      const { data: buyRequests, error: buyRequestError } = await supabase
+        .from('buy_requests')
+        .select('id, title')
+        .in('id', Array.from(buyRequestIds));
+
+      if (buyRequestError) throw buyRequestError;
+
+      // Fetch offers to get titles if buy request doesn't have one
+      const offerIds = chatData.map(chat => chat.offer_id).filter(Boolean);
+      let offers = [];
+      if (offerIds.length > 0) {
+        const { data: offerData, error: offerError } = await supabase
+          .from('offers')
+          .select('id, title')
+          .in('id', offerIds);
+
+        if (offerError) throw offerError;
+        offers = offerData || [];
+      }
+
+      // Create lookup maps
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const buyRequestMap = new Map(buyRequests?.map(br => [br.id, br]) || []);
+      const offerMap = new Map(offers.map(o => [o.id, o]));
+
+      // Combine data
+      return chatData.map(chat => ({
+        ...chat,
+        buyer_profile: profileMap.get(chat.buyer_id) || null,
+        seller_profile: profileMap.get(chat.seller_id) || null,
+        buy_requests: buyRequestMap.get(chat.buy_request_id) || null,
+        offers: chat.offer_id ? offerMap.get(chat.offer_id) || null : null
+      }));
     },
     enabled: !!user
   });
