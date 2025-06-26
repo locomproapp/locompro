@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, X } from 'lucide-react';
@@ -146,26 +145,28 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
 
   return (
     <>
-      <div className="flex gap-2 mt-auto">
-        <Button
-          onClick={acceptOffer}
-          disabled={isAccepting || isRejecting}
-          size="sm"
-          className="flex-1 text-xs"
-        >
-          <Check className="h-3 w-3 mr-1" />
-          {isAccepting ? 'Aceptando...' : 'Aceptar'}
-        </Button>
-        <Button
-          variant="destructive"
-          onClick={() => setShowRejectDialog(true)}
-          disabled={isAccepting || isRejecting}
-          size="sm"
-          className="flex-1 text-xs"
-        >
-          <X className="h-3 w-3 mr-1" />
-          Rechazar
-        </Button>
+      <div className="px-4 pb-4">
+        <div className="flex gap-2">
+          <Button
+            onClick={acceptOffer}
+            disabled={isAccepting || isRejecting}
+            size="sm"
+            className="flex-1 text-xs"
+          >
+            <Check className="h-3 w-3 mr-1" />
+            {isAccepting ? 'Aceptando...' : 'Aceptar'}
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => setShowRejectDialog(true)}
+            disabled={isAccepting || isRejecting}
+            size="sm"
+            className="flex-1 text-xs"
+          >
+            <X className="h-3 w-3 mr-1" />
+            Rechazar
+          </Button>
+        </div>
       </div>
 
       <RejectOfferDialog

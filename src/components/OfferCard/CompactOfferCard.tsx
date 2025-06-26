@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +9,6 @@ import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import CompactOfferImageCarousel from './CompactOfferImageCarousel';
 import CompactOfferActions from './CompactOfferActions';
 import CompactOfferOwnerActions from './CompactOfferOwnerActions';
-import CompactOfferRejectionReason from './CompactOfferRejectionReason';
 import CompactOfferPrice from './CompactOfferPrice';
 import Chat from '@/components/Chat';
 
@@ -191,31 +191,17 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
               <p className="text-xs text-muted-foreground line-clamp-2">{offer.description}</p>
             )}
           </div>
-
-          {/* Accept/Reject Actions - only for buy request owner */}
-          {canAcceptOrReject && (
-            <div className="mt-3 flex-shrink-0">
-              <CompactOfferActions
-                offerId={offer.id}
-                canAcceptOrReject={canAcceptOrReject}
-                onStatusUpdate={onStatusUpdate}
-              />
-            </div>
-          )}
         </CardContent>
 
-        {/* Rejection reason for rejected offers */}
-        {offer.status === 'rejected' && offer.rejection_reason && (
-          <div className="px-4 pb-2 flex-shrink-0">
-            <CompactOfferRejectionReason 
-              status={offer.status} 
-              rejectionReason={offer.rejection_reason} 
-            />
-          </div>
-        )}
-
-        {/* Edit/Delete buttons - reserved space at bottom, only show content for offer owner */}
+        {/* Action buttons section - matches edit/delete button layout */}
         <div className="h-12 flex-shrink-0">
+          {canAcceptOrReject && (
+            <CompactOfferActions
+              offerId={offer.id}
+              canAcceptOrReject={canAcceptOrReject}
+              onStatusUpdate={onStatusUpdate}
+            />
+          )}
           {isOfferOwner && (
             <CompactOfferOwnerActions
               offerId={offer.id}
@@ -227,6 +213,14 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           )}
         </div>
       </Card>
+
+      {/* Rejection reason - separate box below the main card */}
+      {offer.status === 'rejected' && offer.rejection_reason && (
+        <div className="w-full max-w-[320px] bg-red-50 border border-red-200 rounded-lg p-3">
+          <p className="text-xs font-medium text-red-800 mb-1">Motivo del rechazo:</p>
+          <p className="text-xs text-red-700">{offer.rejection_reason}</p>
+        </div>
+      )}
 
       {/* Chat section for accepted offers - matches full width of container/table */}
       {shouldShowChat && (
