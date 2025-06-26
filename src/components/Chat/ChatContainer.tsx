@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { CardContent } from '@/components/ui/card';
 import ChatMessages from '@/components/Chat/ChatMessages';
 import MessageInput from '@/components/Chat/MessageInput';
@@ -19,9 +19,24 @@ interface ChatContainerProps {
 }
 
 const ChatContainer = ({ messages, messagesLoading, sendMessage, isSending }: ChatContainerProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      // Smooth scroll to bottom
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [messages]);
+
   return (
     <CardContent className="p-0">
       <div 
+        ref={scrollContainerRef}
         className="h-80 overflow-y-auto p-4 bg-gray-50 w-full"
         style={{
           scrollBehavior: 'smooth',

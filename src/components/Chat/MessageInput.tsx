@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,11 +27,10 @@ const MessageInput = ({ onSendMessage, isSending }: MessageInputProps) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      // Immediately prevent all default behaviors
+      // Prevent all default behaviors and event propagation
       e.preventDefault();
       e.stopPropagation();
       
-      // Prevent native event propagation
       if (e.nativeEvent) {
         e.nativeEvent.preventDefault();
         e.nativeEvent.stopPropagation();
@@ -41,16 +39,6 @@ const MessageInput = ({ onSendMessage, isSending }: MessageInputProps) => {
       
       // Send the message
       handleSendMessage();
-      
-      // Ensure the input doesn't lose focus and no scrolling occurs
-      if (inputRef.current) {
-        inputRef.current.blur();
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.focus();
-          }
-        }, 0);
-      }
       
       return false;
     }
@@ -64,7 +52,7 @@ const MessageInput = ({ onSendMessage, isSending }: MessageInputProps) => {
   };
 
   return (
-    <div className="p-4 border-t w-full" style={{ position: 'relative' }}>
+    <div className="p-4 border-t w-full">
       <form onSubmit={handleFormSubmit} className="w-full" noValidate>
         <div className="flex gap-2 w-full">
           <Input
@@ -76,17 +64,6 @@ const MessageInput = ({ onSendMessage, isSending }: MessageInputProps) => {
             disabled={isSending}
             className="flex-1"
             autoComplete="off"
-            style={{ 
-              outline: 'none',
-              scrollBehavior: 'auto'
-            }}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-              }
-            }}
           />
           <Button 
             type="submit" 

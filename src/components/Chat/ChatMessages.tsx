@@ -17,19 +17,6 @@ interface ChatMessagesProps {
 const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll to new messages only within the chat container
-  useEffect(() => {
-    if (messagesEndRef.current && messagesContainerRef.current) {
-      // Use scrollTop instead of scrollIntoView to prevent page scrolling
-      const container = messagesContainerRef.current;
-      const endElement = messagesEndRef.current;
-      
-      // Scroll within the container only
-      container.scrollTop = container.scrollHeight;
-    }
-  }, [messages]);
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -60,14 +47,7 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
   console.log('Rendering messages:', messages.length, 'Current user:', user?.id);
 
   return (
-    <div 
-      ref={messagesContainerRef} 
-      className="space-y-3"
-      style={{ 
-        overflowAnchor: 'none',
-        scrollBehavior: 'smooth' 
-      }}
-    >
+    <div className="space-y-3">
       {messages.map((message) => {
         const isOwnMessage = message.sender_id === user?.id;
         console.log('Message:', message.id, 'Sender:', message.sender_id, 'Is own:', isOwnMessage);
