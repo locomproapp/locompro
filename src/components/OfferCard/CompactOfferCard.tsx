@@ -121,7 +121,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full">
-      <Card className={`w-80 flex-shrink-0 h-[440px] flex flex-col ${getCardClassName()}`}>
+      <Card className={`w-80 flex-shrink-0 h-[410px] flex flex-col ${getCardClassName()}`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           </h3>
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col justify-between p-4 pt-0">
+        <CardContent className="flex-1 flex flex-col justify-between p-4 pt-0 min-h-0">
           <div className="space-y-3 flex-1">
             {/* Image section */}
             <CompactOfferImageCarousel 
@@ -215,7 +215,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         )}
 
         {/* Edit/Delete buttons - reserved space at bottom, only show content for offer owner */}
-        <div className="h-16 flex-shrink-0">
+        <div className="h-12 flex-shrink-0">
           {isOfferOwner && (
             <CompactOfferOwnerActions
               offerId={offer.id}
