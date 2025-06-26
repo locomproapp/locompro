@@ -9,6 +9,7 @@ import CompactOfferImageCarousel from './CompactOfferImageCarousel';
 import CompactOfferActions from './CompactOfferActions';
 import CompactOfferOwnerActions from './CompactOfferOwnerActions';
 import CompactOfferRejectionReason from './CompactOfferRejectionReason';
+import CompactOfferPrice from './CompactOfferPrice';
 
 interface Offer {
   id: string;
@@ -17,6 +18,11 @@ interface Offer {
   title: string;
   description: string | null;
   price: number;
+  price_history?: Array<{
+    price: number;
+    timestamp: string;
+    type: 'rejected' | 'initial';
+  }> | null;
   images: string[] | null;
   contact_info: any;
   status: string;
@@ -61,14 +67,6 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     const minutes = date.getMinutes().toString().padStart(2, '0');
     
     return `${day} ${month}. ${year} ${hours}:${minutes} hs`;
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('es-AR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-      useGrouping: true
-    }).replace(/,/g, '.');
   };
 
   const getStatusBadge = () => {
@@ -140,9 +138,11 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
         {/* Price and location */}
         <div className="flex items-center justify-between">
-          <div className="text-lg font-bold text-primary">
-            ${formatPrice(offer.price)}
-          </div>
+          <CompactOfferPrice 
+            currentPrice={offer.price}
+            priceHistory={offer.price_history}
+            status={offer.status}
+          />
           <div className="flex items-center gap-1 text-muted-foreground">
             <MapPin className="h-3 w-3" />
             <span className="text-xs">{offer.contact_info?.zone || 'No especificada'}</span>
@@ -186,7 +186,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         rejectionReason={offer.rejection_reason} 
       />
 
-      {/* Edit/Delete buttons - only for offer owner */}
+      {/* Edit/Delete/Counteroffer buttons - only for offer owner */}
       {isOfferOwner && (
         <CompactOfferOwnerActions
           offerId={offer.id}

@@ -59,54 +59,90 @@ const CompactOfferOwnerActions = ({
 
   return (
     <div className="px-4 pb-4">
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          asChild
-          className="flex-1 text-xs"
-        >
-          <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
-            <Edit className="h-3 w-3 mr-1" />
-            Editar
-          </Link>
-        </Button>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={isDeleting}
-              className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              {isDeleting ? 'Eliminando...' : 'Eliminar'}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDeleteOffer}
+      {/* For pending offers: show Edit and Delete buttons */}
+      {status === 'pending' && (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="flex-1 text-xs"
+          >
+            <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
+              <Edit className="h-3 w-3 mr-1" />
+              Editar
+            </Link>
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
                 disabled={isDeleting}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
               >
+                <Trash2 className="h-3 w-3 mr-1" />
                 {isDeleting ? 'Eliminando...' : 'Eliminar'}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteOffer}
+                  disabled={isDeleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
 
-      {/* Counter-offer button only for rejected offers */}
+      {/* For rejected offers: show Delete and Counteroffer buttons */}
       {status === 'rejected' && (
-        <div className="mt-2">
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isDeleting}
+                  className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteOffer}
+                    disabled={isDeleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
           <Button
             variant="outline"
             size="sm"
@@ -118,6 +154,43 @@ const CompactOfferOwnerActions = ({
               Contraofertar
             </Link>
           </Button>
+        </div>
+      )}
+
+      {/* For accepted offers: show Delete button only */}
+      {status === 'accepted' && (
+        <div className="flex gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isDeleting}
+                className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
+              >
+                <Trash2 className="h-3 w-3 mr-1" />
+                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteOffer}
+                  disabled={isDeleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
     </div>
