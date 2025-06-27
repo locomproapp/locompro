@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import { CreateBuyRequestDialog } from '@/components/BuyRequest';
@@ -42,7 +43,7 @@ const MyRequests = () => {
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full min-h-[80vh]">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full min-h-[calc(100vh-4rem)]">
         {/* Header - Desktop */}
         <div className="mb-8 hidden sm:block">
           <div className="flex justify-between items-center">
