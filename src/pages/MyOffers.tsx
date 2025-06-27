@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -41,7 +42,7 @@ const MyOffers = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
         {/* Header - Desktop */}
         <div className="mb-8 hidden sm:block">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
