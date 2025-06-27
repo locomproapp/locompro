@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -29,8 +30,8 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full flex-1">
-        <div className="text-center mb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full flex-1">
+        <div className="text-center mb-8 sm:mb-16">
           <h1 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground" style={{
             fontFamily: 'inherit',
             letterSpacing: '0em',
@@ -40,14 +41,14 @@ const Index = () => {
             LoCompro
           </h1>
           {/* Desktop subheader */}
-          <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto hidden sm:block">
+          <p className="text-xl text-muted-foreground mb-6 sm:mb-8 mt-4 sm:mt-7 max-w-3xl mx-auto hidden sm:block">
             La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
           </p>
           {/* Mobile subheader */}
-          <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto block sm:hidden">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 mt-4 sm:mt-7 max-w-3xl mx-auto block sm:hidden">
             Donde los compradores dicen qué buscan y los vendedores ofrecen.
           </p>
-          <div className="mb-10 flex justify-center">
+          <div className="mb-6 sm:mb-10 flex justify-center">
             <div className="w-full max-w-2xl mx-auto">
               <form onSubmit={handleSubmit} className="relative">
                 <div className="relative flex items-center">
@@ -69,11 +70,12 @@ const Index = () => {
               </form>
             </div>
           </div>
-          <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-12 px-2">
+          <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-8 sm:mb-12 px-2">
             <Button asChild size="sm" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[180px] sm:max-w-none">
               <Link to="/marketplace">
                 <ShoppingBag className="mr-2 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
-                <span className="text-base sm:text-lg">Mercado</span>
+                <span className="text-base sm:text-lg block sm:hidden">Mercado</span>
+                <span className="text-base sm:text-lg hidden sm:block">Explorar Mercado</span>
               </Link>
             </Button>
             <Button asChild size="sm" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[180px] sm:max-w-none">
@@ -89,9 +91,9 @@ const Index = () => {
 
         {/* Mobile section with static title */}
         <div className="block md:hidden mb-6">
-          <h2 className="text-2xl font-bold text-center mb-6">¿Cómo Funciona?</h2>
+          <h2 className="text-2xl font-bold text-center mb-4">¿Cómo Funciona?</h2>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="bg-white rounded-lg shadow-sm border border-border p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
