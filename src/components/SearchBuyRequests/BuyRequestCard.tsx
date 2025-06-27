@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -53,7 +54,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
   );
 
   return (
-    <Card key={request.id} className="hover:shadow-md transition-shadow">
+    <Card key={request.id} className="hover:shadow-md transition-shadow h-auto sm:min-h-[320px]">
       <CardHeader className="space-y-2">
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg line-clamp-2">
@@ -71,19 +72,21 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
-        {request.reference_image && (
-          <img
-            src={request.reference_image}
-            alt="Referencia"
-            className="w-full h-32 object-cover rounded"
-          />
-        )}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <MapPin className="h-3 w-3" />
-          {request.zone}
+      <CardContent className="flex flex-col gap-3 sm:min-h-[180px] sm:justify-between">
+        <div className="space-y-3">
+          {request.reference_image && (
+            <img
+              src={request.reference_image}
+              alt="Referencia"
+              className="w-full h-32 object-cover rounded"
+            />
+          )}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <MapPin className="h-3 w-3" />
+            {request.zone}
+          </div>
         </div>
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-2 mt-auto">
           <p className="text-xs text-muted-foreground">
             Por: {displayName}
           </p>
