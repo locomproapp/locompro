@@ -81,6 +81,20 @@ export default function Navigation() {
     }
   };
 
+  // Prevent body scroll when menu is open
+  React.useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [open]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-14 items-center">
@@ -142,7 +156,10 @@ export default function Navigation() {
               <span className="sr-only">Alternar menú</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80 bg-sidebar border-sidebar-border p-0 flex flex-col">
+          <SheetContent 
+            side="left" 
+            className="w-80 bg-sidebar border-sidebar-border p-0 flex flex-col fixed inset-y-0 left-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
+          >
             {/* Header with logo and close button */}
             <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
               <div className="flex items-center">
