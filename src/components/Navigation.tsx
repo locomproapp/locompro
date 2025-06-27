@@ -254,11 +254,16 @@ export default function Navigation() {
 
         {/* Espaciador */}
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {/* Mobile profile icon */}
-          <div className="flex items-center space-x-2 md:hidden">
-            <Button variant="ghost" size="icon" asChild>
+          {/* Mobile profile avatar - positioned at far right */}
+          <div className="flex items-center space-x-2 md:hidden ml-auto">
+            <Button variant="ghost" size="icon" asChild className="h-8 w-8 rounded-full p-0">
               <Link to={handleProfileClick()}>
-                <User className="h-5 w-5" />
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.user_metadata?.avatar_url} alt="Avatar" />
+                  <AvatarFallback className="text-sm">
+                    {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                  </AvatarFallback>
+                </Avatar>
               </Link>
             </Button>
           </div>
