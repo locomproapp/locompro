@@ -3,7 +3,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <div className="text-center mb-8 sm:mb-16 mt-2 sm:mt-8">
+    <div className="text-center mb-8 sm:mb-16 mt-6 sm:mt-8">
       <div className="flex items-center justify-center mb-6 sm:mb-9">
         <img 
           src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
@@ -27,7 +27,7 @@ const HeroSection = () => {
         La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
       </p>
       {/* Mobile subheader */}
-      <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 mt-2 sm:mt-11 max-w-3xl mx-auto block sm:hidden">
+      <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 mt-6 sm:mt-11 max-w-3xl mx-auto block sm:hidden">
         Donde los compradores dicen qué buscan y los vendedores ofrecen.
       </p>
     </div>
