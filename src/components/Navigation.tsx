@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -9,7 +10,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
-import { Package, Menu, ShoppingCart, Tag, LogOut, Home, Bell, User } from "lucide-react";
+import { Package, Menu, ShoppingCart, Tag, LogOut, Home, Bell, User, History, ChevronDown, ChevronRight } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -30,6 +31,7 @@ import SearchBar from "@/components/SearchBar";
 import { Badge } from "@/components/ui/badge";
 import { useSellerNotifications } from '@/hooks/useSellerNotifications';
 import ChatListDialog from './ChatListDialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface MobileLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   to: string;
@@ -62,9 +64,11 @@ export default function Navigation() {
   const { user, signOut } = useAuth();
   const { notificationCount } = useSellerNotifications();
   const [open, setOpen] = React.useState(false);
+  const [historialOpen, setHistorialOpen] = React.useState(false);
 
   const handleSignOut = async () => {
     await signOut();
+    setOpen(false);
   };
 
   return (
@@ -130,22 +134,46 @@ export default function Navigation() {
           </SheetTrigger>
           <SheetContent side="left" className="w-80 bg-sidebar border-sidebar-border p-0">
             <div className="flex flex-col h-full">
-              <div className="flex items-center p-6 border-b border-sidebar-border">
-                <img 
-                  src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
-                  alt="LoCompro" 
-                  className="h-8 w-8 object-contain mr-3"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <Package className="mr-3 h-6 w-6 text-sidebar-primary hidden" />
-                <span className="text-xl font-bold text-sidebar-foreground">LoCompro</span>
+              {/* Header with logo and close button */}
+              <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+                <div className="flex items-center">
+                  <img 
+                    src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                    alt="LoCompro" 
+                    className="h-6 w-6 object-contain mr-2"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                  <Package className="mr-2 h-5 w-5 text-sidebar-primary hidden" />
+                  <span className="text-lg font-bold text-sidebar-foreground">LoCompro</span>
+                </div>
               </div>
               
+              {/* User info header */}
+              {user && (
+                <div className="flex items-center gap-3 p-4 border-b border-sidebar-border bg-sidebar-accent/30">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user.user_metadata?.avatar_url} />
+                    <AvatarFallback>
+                      {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate text-sidebar-foreground">
+                      {user.user_metadata?.full_name || 'Usuario'}
+                    </p>
+                    <p className="text-xs text-sidebar-foreground/70 truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               <ScrollArea className="flex-1 p-4">
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-1">
+                  {/* Main navigation items */}
                   <MobileLink 
                     to="/" 
                     onOpenChange={setOpen}
@@ -159,92 +187,103 @@ export default function Navigation() {
                     onOpenChange={setOpen}
                     icon={<Package className="h-5 w-5" />}
                   >
-                    Marketplace
+                    Mercado
                   </MobileLink>
                   
-                  <MobileLink 
-                    to="/market" 
-                    onOpenChange={setOpen}
-                    icon={<ShoppingCart className="h-5 w-5" />}
-                  >
-                    Solicitudes de Compra
-                  </MobileLink>
-                  
+                  {/* Historial collapsible section */}
                   {user && (
-                    <>
-                      <div className="border-t border-sidebar-border my-4 pt-4">
-                        <h4 className="text-sm font-semibold text-sidebar-foreground/70 mb-3 px-3">
-                          Mi Cuenta
-                        </h4>
-                        
-                        <MobileLink 
-                          to="/profile" 
-                          onOpenChange={setOpen}
-                          icon={<User className="h-5 w-5" />}
-                        >
-                          Mi perfil
-                        </MobileLink>
-
+                    <Collapsible open={historialOpen} onOpenChange={setHistorialOpen}>
+                      <CollapsibleTrigger className="flex items-center justify-between w-full gap-3 text-base font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md p-3 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <History className="h-5 w-5" />
+                          <span>Historial</span>
+                        </div>
+                        {historialOpen ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="ml-8 space-y-1">
                         <MobileLink 
                           to="/my-requests" 
                           onOpenChange={setOpen}
-                          icon={<ShoppingCart className="h-5 w-5" />}
+                          icon={<ShoppingCart className="h-4 w-4" />}
                         >
                           Mis publicaciones
                         </MobileLink>
                         
-                        <MobileLink 
-                          to="/my-offers" 
-                          onOpenChange={setOpen}
-                          icon={<Tag className="h-5 w-5" />}
-                        >
-                          <span className="flex items-center justify-between w-full">
-                            <span>Mis Ofertas</span>
-                            {notificationCount > 0 && (
-                              <Badge variant="destructive" className="text-xs">
-                                {notificationCount}
-                              </Badge>
-                            )}
-                          </span>
-                        </MobileLink>
-                        
-                        <div className="flex items-center gap-3 p-3 mt-4 rounded-md bg-sidebar-accent/50">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={user.user_metadata?.avatar_url} />
-                            <AvatarFallback>
-                              {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">
-                              {user.user_metadata?.full_name || 'Usuario'}
-                            </p>
-                            <p className="text-xs text-sidebar-foreground/70 truncate">
-                              {user.email}
-                            </p>
-                          </div>
+                        <div className="flex items-center justify-between w-full">
+                          <MobileLink 
+                            to="/my-offers" 
+                            onOpenChange={setOpen}
+                            icon={<Tag className="h-4 w-4" />}
+                            className="flex-1"
+                          >
+                            <span className="flex items-center justify-between w-full">
+                              <span>Mis Ofertas</span>
+                              {notificationCount > 0 && (
+                                <Badge variant="destructive" className="text-xs ml-2">
+                                  {notificationCount}
+                                </Badge>
+                              )}
+                            </span>
+                          </MobileLink>
                         </div>
-                      </div>
-                    </>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+                  
+                  {/* Mi Perfil */}
+                  {user && (
+                    <MobileLink 
+                      to="/profile" 
+                      onOpenChange={setOpen}
+                      icon={<User className="h-5 w-5" />}
+                    >
+                      Mi perfil
+                    </MobileLink>
+                  )}
+                  
+                  {/* Show market link for non-authenticated users */}
+                  {!user && (
+                    <MobileLink 
+                      to="/market" 
+                      onOpenChange={setOpen}
+                      icon={<ShoppingCart className="h-5 w-5" />}
+                    >
+                      Solicitudes de Compra
+                    </MobileLink>
                   )}
                 </div>
               </ScrollArea>
               
-              {user && (
-                <div className="p-4 border-t border-sidebar-border">
+              {/* Footer section with sign out or auth buttons */}
+              <div className="p-4 border-t border-sidebar-border">
+                {user ? (
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => {
-                      handleSignOut();
-                      setOpen(false);
-                    }}
+                    onClick={handleSignOut}
                   >
                     <LogOut className="mr-3 h-5 w-5" />
-                    Cerrar Sesión
+                    Cerrar sesión
                   </Button>
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-2">
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/auth" onClick={() => setOpen(false)}>
+                        Iniciar Sesión
+                      </Link>
+                    </Button>
+                    <Button asChild className="w-full">
+                      <Link to="/auth?signup=true" onClick={() => setOpen(false)}>
+                        Registrarse
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </SheetContent>
         </Sheet>
