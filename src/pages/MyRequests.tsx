@@ -42,7 +42,7 @@ const MyRequests = () => {
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full min-h-[80vh]">
         {/* Header - Desktop */}
         <div className="mb-8 hidden sm:block">
           <div className="flex justify-between items-center">
@@ -104,8 +104,6 @@ const MyRequests = () => {
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     Aún no tienes publicaciones
                   </h3>
-                  <p className="text-muted-foreground mb-6">Crea tu primera publicación de compra y recibe ofertas de vendedores.</p>
-                  
                   <p className="text-muted-foreground">
                     Crea tu primera publicación de compra y recibe ofertas de vendedores.
                   </p>
