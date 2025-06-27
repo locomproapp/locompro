@@ -13,7 +13,7 @@ interface SearchSectionProps {
 const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionProps) => {
   return (
     <>
-      <div className="mb-6 sm:mb-10 mt-16 flex justify-center">
+      <div className="mb-6 sm:mb-10 mt-12 flex justify-center">
         <div className="w-full max-w-2xl mx-auto">
           <form onSubmit={onSubmit} className="relative">
             <div className="relative flex items-center">
