@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const HeroSection = () => {
@@ -12,11 +13,11 @@ const HeroSection = () => {
         LoCompro
       </h1>
       {/* Desktop subheader */}
-      <p className="text-xl text-muted-foreground mb-6 sm:mb-8 mt-4 sm:mt-7 max-w-3xl mx-auto hidden sm:block">
+      <p className="text-xl text-muted-foreground mb-6 sm:mb-8 mt-8 sm:mt-11 max-w-3xl mx-auto hidden sm:block">
         La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
       </p>
       {/* Mobile subheader */}
-      <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 mt-4 sm:mt-7 max-w-3xl mx-auto block sm:hidden">
+      <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 mt-8 sm:mt-11 max-w-3xl mx-auto block sm:hidden">
         Donde los compradores dicen qué buscan y los vendedores ofrecen.
       </p>
     </div>
