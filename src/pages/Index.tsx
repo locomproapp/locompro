@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Plus, Search, Package, Handshake, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingBag, Plus, Search, Package, Handshake } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSteps, setShowSteps] = useState(false);
 
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
@@ -24,10 +23,6 @@ const Index = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-  };
-
-  const toggleSteps = () => {
-    setShowSteps(!showSteps);
   };
 
   return (
@@ -74,77 +69,65 @@ const Index = () => {
               </form>
             </div>
           </div>
-          <div className="flex flex-row gap-1 sm:gap-4 justify-center mb-12 px-1">
-            <Button asChild size="sm" className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none">
+          <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-12 px-2">
+            <Button asChild size="sm" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[180px] sm:max-w-none">
               <Link to="/marketplace">
-                <ShoppingBag className="mr-2 sm:mr-2 h-5 w-5 sm:h-5 sm:w-5" />
-                <span className="text-sm sm:text-lg">Mercado</span>
+                <ShoppingBag className="mr-2 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
+                <span className="text-base sm:text-lg">Mercado</span>
               </Link>
             </Button>
-            <Button asChild size="sm" className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none">
+            <Button asChild size="sm" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[180px] sm:max-w-none">
               <Link to="/create-buy-request" state={{
                 from: "/"
               }}>
-                <Plus className="mr-2 sm:mr-2 h-5 w-5 sm:h-5 sm:w-5" />
-                <span className="text-sm sm:text-lg">Crear Búsqueda</span>
+                <Plus className="mr-2 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
+                <span className="text-base sm:text-lg">Crear Búsqueda</span>
               </Link>
             </Button>
           </div>
         </div>
 
-        {/* Mobile collapsible section */}
-        <div className="block md:hidden mb-8">
-          <button
-            onClick={toggleSteps}
-            className="w-full bg-white rounded-lg shadow-sm border border-border p-4 flex items-center justify-between text-left hover:bg-muted/50 transition-colors"
-          >
-            <span className="text-lg font-semibold">¿Cómo Funciona?</span>
-            {showSteps ? (
-              <ChevronUp className="h-5 w-5 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="h-5 w-5 text-muted-foreground" />
-            )}
-          </button>
+        {/* Mobile section with static title */}
+        <div className="block md:hidden mb-6">
+          <h2 className="text-2xl font-bold text-center mb-6">¿Cómo Funciona?</h2>
           
-          {showSteps && (
-            <div className="mt-4 space-y-4">
-              <div className="bg-white rounded-lg shadow-sm border border-border p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <Search className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Publicá el producto que buscás</h3>
-                    <p className="text-sm text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
-                  </div>
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <Search className="h-5 w-5 text-primary" />
                 </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-sm border border-border p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <Package className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Recibí ofertas</h3>
-                    <p className="text-sm text-muted-foreground">La gente que tenga lo que buscás te lo va a ofrecer.</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-sm border border-border p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <Handshake className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Elegí la mejor</h3>
-                    <p className="text-sm text-muted-foreground">Compará las ofertas y quedate con la que más te sirva.</p>
-                  </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Publicá el producto que buscás</h3>
+                  <p className="text-sm text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
                 </div>
               </div>
             </div>
-          )}
+            
+            <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <Package className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Recibí ofertas</h3>
+                  <p className="text-sm text-muted-foreground">La gente que tenga lo que buscás te lo va a ofrecer.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <Handshake className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Elegí la mejor</h3>
+                  <p className="text-sm text-muted-foreground">Compará las ofertas y quedate con la que más te sirva.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Desktop section - unchanged */}
