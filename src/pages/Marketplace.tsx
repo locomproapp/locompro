@@ -53,7 +53,7 @@ const Marketplace = () => {
         </div>
 
         {/* Resultados de búsqueda */}
-        <div className="mt-6 mb-8">
+        <div className="mt-6 mb-8 sm:mb-16">
           <SearchBuyRequests searchQuery={searchQuery} />
         </div>
       </main>
