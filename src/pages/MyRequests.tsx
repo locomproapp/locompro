@@ -126,7 +126,6 @@ const MyRequests = () => {
                 <p className="text-muted-foreground mb-6">
                   Crea tu primera publicación de compra y recibe ofertas de vendedores.
                 </p>
-                <CreateBuyRequestDialog onRequestCreated={refetch} />
               </div>
             </div>
           </div>
