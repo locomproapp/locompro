@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
+import { ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -127,6 +128,16 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center px-4">
+      {/* Back Arrow - positioned absolutely in top left */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate('/')}
+        className="absolute top-4 left-4 z-10 hover:bg-white/10"
+      >
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+
       <div className="w-full max-w-md">
         <div className="bg-card p-8 rounded-lg shadow-lg border border-border">
           <div className="text-center mb-8">
