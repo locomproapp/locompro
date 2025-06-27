@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -35,19 +36,19 @@ const Index = () => {
           <div className="mb-10 flex justify-center">
             <SearchBar placeholder="Producto que quieras vender" onSearch={handleSearch} />
           </div>
-          <div className="flex flex-row gap-4 justify-center mb-12">
-            <Button asChild size="lg" className="text-lg px-8 py-6 flex-1 sm:flex-none">
+          <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-12 px-2">
+            <Button asChild size="sm" className="text-sm sm:text-lg px-3 py-4 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[170px] sm:max-w-none">
               <Link to="/marketplace">
-                <ShoppingBag className="mr-2 h-5 w-5" />
-                Explorar Mercado
+                <ShoppingBag className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-xs sm:text-lg">Explorar Mercado</span>
               </Link>
             </Button>
-            <Button asChild size="lg" className="text-lg px-8 py-6 flex-1 sm:flex-none">
+            <Button asChild size="sm" className="text-sm sm:text-lg px-3 py-4 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[170px] sm:max-w-none">
               <Link to="/create-buy-request" state={{
                 from: "/"
               }}>
-                <Plus className="mr-2 h-5 w-5" />
-                Crear Búsqueda
+                <Plus className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-xs sm:text-lg">Crear Búsqueda</span>
               </Link>
             </Button>
           </div>
@@ -87,3 +88,4 @@ const Index = () => {
 };
 
 export default Index;
+
