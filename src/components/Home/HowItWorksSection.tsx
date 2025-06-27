@@ -39,7 +39,7 @@ const HowItWorksSection = ({ isOpen, onToggle }: HowItWorksSectionProps) => {
   };
 
   return (
-    <div className="block md:hidden mb-16 mt-12" style={{ minHeight: 'calc(100vh - 600px)' }}>
+    <div className="block md:hidden mb-16 mt-8 sm:mt-12" style={{ minHeight: 'calc(100vh - 600px)' }}>
       <Collapsible open={isOpen} onOpenChange={handleToggle}>
         <CollapsibleTrigger asChild>
           <div className="bg-white rounded-lg shadow-sm border border-border p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow">
