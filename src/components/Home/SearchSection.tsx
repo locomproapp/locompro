@@ -47,7 +47,7 @@ const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionPr
           <Link to="/create-buy-request" state={{
             from: "/"
           }}>
-            <Plus className="mr-2 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
+            <Plus className="mr-1 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
             <span className="text-base sm:text-lg">Crear Búsqueda</span>
           </Link>
         </Button>
