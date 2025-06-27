@@ -1,15 +1,17 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Plus, Search, Package, Handshake } from 'lucide-react';
+import { ShoppingBag, Plus, Search, Package, Handshake, ChevronDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const howItWorksRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
@@ -24,6 +26,27 @@ const Index = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleHowItWorksToggle = (open: boolean) => {
+    setIsHowItWorksOpen(open);
+    
+    if (open && howItWorksRef.current) {
+      // Small delay to allow the content to render
+      setTimeout(() => {
+        if (howItWorksRef.current) {
+          const rect = howItWorksRef.current.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+          const elementHeight = rect.height;
+          const scrollTop = window.pageYOffset + rect.top - (viewportHeight - elementHeight) / 2;
+          
+          window.scrollTo({
+            top: Math.max(0, scrollTop),
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    }
   };
 
   return (
@@ -89,47 +112,58 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Mobile section with static title */}
-        <div className="block md:hidden mb-6">
-          <h2 className="text-2xl font-bold text-center mb-4">¿Cómo Funciona?</h2>
-          
-          <div className="space-y-3">
-            <div className="bg-white rounded-lg shadow-sm border border-border p-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Search className="h-5 w-5 text-primary" />
+        {/* Mobile collapsible section */}
+        <div className="block md:hidden mb-8" style={{ minHeight: 'calc(100vh - 600px)' }}>
+          <Collapsible open={isHowItWorksOpen} onOpenChange={handleHowItWorksToggle}>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between text-lg font-semibold py-4 mb-4"
+              >
+                ¿Cómo Funciona?
+                <ChevronDown className={`h-5 w-5 transition-transform duration-200 ${isHowItWorksOpen ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent ref={howItWorksRef}>
+              <div className="space-y-3">
+                <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Search className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Publicá el producto que buscás</h3>
+                      <p className="text-sm text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Publicá el producto que buscás</h3>
-                  <p className="text-sm text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
+                
+                <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Package className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Recibí ofertas</h3>
+                      <p className="text-sm text-muted-foreground">La gente que tenga lo que buscás te lo va a ofrecer.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Handshake className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Elegí la mejor</h3>
+                      <p className="text-sm text-muted-foreground">Compará las ofertas y quedate con la que más te sirva.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-sm border border-border p-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Package className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Recibí ofertas</h3>
-                  <p className="text-sm text-muted-foreground">La gente que tenga lo que buscás te lo va a ofrecer.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-sm border border-border p-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Handshake className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Elegí la mejor</h3>
-                  <p className="text-sm text-muted-foreground">Compará las ofertas y quedate con la que más te sirva.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
         {/* Desktop section - unchanged */}
