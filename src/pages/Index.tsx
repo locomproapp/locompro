@@ -1,5 +1,6 @@
 
 
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -30,25 +31,48 @@ const Index = () => {
           }}>
             LoCompro
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto">
+          {/* Desktop subheader */}
+          <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto hidden sm:block">
             La plataforma donde los compradores publican qué buscan y los vendedores envían ofertas.
           </p>
+          {/* Mobile subheader */}
+          <p className="text-xl text-muted-foreground mb-8 mt-7 max-w-3xl mx-auto block sm:hidden">
+            Donde los compradores dicen qué buscan y los vendedores ofrecen.
+          </p>
           <div className="mb-10 flex justify-center">
-            <SearchBar placeholder="Producto que quieras vender" onSearch={handleSearch} />
+            <div className="w-full max-w-2xl mx-auto">
+              <form className="relative">
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Producto que quieras vender"
+                    className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full sm:rounded-full rounded-lg shadow-lg placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    onChange={(e) => handleSearch(e.target.value)}
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    className="absolute right-2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                  >
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
-          <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-12 px-2">
-            <Button asChild size="sm" className="text-sm sm:text-lg px-3 py-4 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[170px] sm:max-w-none">
+          <div className="flex flex-row gap-1 sm:gap-4 justify-center mb-12 px-1">
+            <Button asChild size="sm" className="text-base sm:text-lg px-4 py-5 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[190px] sm:max-w-none">
               <Link to="/marketplace">
-                <ShoppingBag className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-lg">Explorar Mercado</span>
+                <ShoppingBag className="mr-2 sm:mr-2 h-5 w-5 sm:h-5 sm:w-5" />
+                <span className="text-sm sm:text-lg">Explorar Mercado</span>
               </Link>
             </Button>
-            <Button asChild size="sm" className="text-sm sm:text-lg px-3 py-4 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[170px] sm:max-w-none">
+            <Button asChild size="sm" className="text-base sm:text-lg px-4 py-5 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[190px] sm:max-w-none">
               <Link to="/create-buy-request" state={{
                 from: "/"
               }}>
-                <Plus className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-lg">Crear Búsqueda</span>
+                <Plus className="mr-2 sm:mr-2 h-5 w-5 sm:h-5 sm:w-5" />
+                <span className="text-sm sm:text-lg">Crear Búsqueda</span>
               </Link>
             </Button>
           </div>
@@ -88,4 +112,5 @@ const Index = () => {
 };
 
 export default Index;
+
 
