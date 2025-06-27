@@ -72,8 +72,8 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3 sm:min-h-[180px] sm:justify-between">
-        <div className="space-y-3">
+      <CardContent className="flex flex-col gap-3 sm:justify-between">
+        <div className="space-y-3 flex-1">
           {request.reference_image && (
             <img
               src={request.reference_image}

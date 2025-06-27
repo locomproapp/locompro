@@ -28,7 +28,7 @@ const Marketplace = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Mercado
           </h1>
-          <p className="text-lg text-muted-foreground mb-6">
+          <p className="text-lg text-muted-foreground mb-6 hidden sm:block">
             Acá se encuentran las publicaciones de los que quieren comprar un producto
           </p>
           {/* Search bar + button */}

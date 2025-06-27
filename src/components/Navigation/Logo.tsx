@@ -15,22 +15,6 @@ export function Logo() {
             e.currentTarget.nextElementSibling?.classList.remove('hidden');
           }}
         />
-        <span
-          className="font-medium text-xl tracking-tight"
-          style={{
-            fontFamily: 'inherit',
-            color: 'inherit',
-            letterSpacing: 0,
-            fontWeight: 500,
-            lineHeight: '2.5rem',
-            display: 'inline-block',
-            marginLeft: '0.5rem',
-            verticalAlign: 'baseline',
-            paddingTop: 0,
-          }}
-        >
-          LoCompro
-        </span>
       </Link>
       {/* New: Inicio link */}
       <Button
