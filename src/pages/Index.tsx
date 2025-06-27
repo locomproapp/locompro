@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -11,7 +10,7 @@ import DesktopFeatures from '@/components/Home/DesktopFeatures';
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(true);
 
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
