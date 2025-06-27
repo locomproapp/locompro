@@ -4,7 +4,7 @@ import { Search, Package, Handshake } from 'lucide-react';
 
 const DesktopFeatures = () => {
   return (
-    <div className="hidden md:grid md:grid-cols-3 gap-8 mt-16">
+    <div className="hidden md:grid md:grid-cols-3 gap-8 mt-48">
       <div className="text-center">
         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <Search className="h-8 w-8 text-primary" />
