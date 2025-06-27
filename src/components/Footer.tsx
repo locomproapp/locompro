@@ -13,7 +13,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Mobile Layout */}
         <div className="block md:hidden">
-          {/* Logo and Social Icons - Mobile */}
+          {/* Logo - Mobile (sin redes sociales) */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-3">
               <img 
@@ -22,34 +22,6 @@ const Footer = () => {
                 className="h-5 w-5"
               />
               <h3 className="text-lg font-semibold text-foreground">LoCompro</h3>
-            </div>
-            <div className="flex justify-center space-x-4">
-              <a 
-                href="https://www.instagram.com/locompro.arg/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a 
-                href="https://www.tiktok.com/@locompro.arg" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5.16 20.5a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.5z"/>
-                </svg>
-              </a>
-              <a 
-                href="https://www.youtube.com/@locomproarg" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Youtube className="h-4 w-4" />
-              </a>
             </div>
           </div>
 
@@ -96,6 +68,16 @@ const Footer = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+
+          {/* Footer Bottom Mobile - solo copyright, sin línea divisoria */}
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-2">
+              © 2025 LoCompro. Todos los derechos reservados.
+            </p>
+            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+              Hecho con <Heart className="h-4 w-4 text-red-500" /> en Argentina
+            </div>
+          </div>
         </div>
 
         {/* Desktop Layout - Keep existing */}
@@ -173,8 +155,8 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Footer Bottom - Shared */}
-        <div className="border-t border-border pt-6 mt-6">
+        {/* Footer Bottom - Desktop only */}
+        <div className="hidden md:block border-t border-border pt-6 mt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">
               © 2025 LoCompro. Todos los derechos reservados.
