@@ -1,9 +1,8 @@
-
 import React from 'react';
 
 const HeroSection = () => {
   return (
-    <div className="text-center mb-8 sm:mb-16 mt-24">
+    <div className="text-center mb-8 sm:mb-16 mt-8">
       <h1 className="text-4xl md:text-6xl font-medium tracking-tight text-foreground" style={{
         fontFamily: 'inherit',
         letterSpacing: '0em',
