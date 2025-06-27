@@ -36,14 +36,14 @@ const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionPr
         </div>
       </div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-8 sm:mb-12 px-0 sm:px-2">
-        <Button asChild size="sm" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[180px] sm:max-w-none">
+        <Button asChild size="sm" className="text-base sm:text-lg px-4 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none">
           <Link to="/marketplace">
             <ShoppingBag className="mr-2 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
             <span className="text-base sm:text-lg block sm:hidden">Mercado</span>
             <span className="text-base sm:text-lg hidden sm:block">Explorar Mercado</span>
           </Link>
         </Button>
-        <Button asChild size="sm" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[180px] sm:max-w-none">
+        <Button asChild size="sm" className="text-base sm:text-lg px-4 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none">
           <Link to="/create-buy-request" state={{
             from: "/"
           }}>
