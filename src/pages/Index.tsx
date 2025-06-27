@@ -1,7 +1,4 @@
-
-
-
-import React from 'react';
+import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -11,10 +8,21 @@ import SearchBar from '@/components/SearchBar';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
       navigate(`/marketplace?search=${encodeURIComponent(query.trim())}`);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch(searchQuery);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -41,13 +49,14 @@ const Index = () => {
           </p>
           <div className="mb-10 flex justify-center">
             <div className="w-full max-w-2xl mx-auto">
-              <form className="relative">
+              <form onSubmit={handleSubmit} className="relative">
                 <div className="relative flex items-center">
                   <input
                     type="text"
                     placeholder="Producto que quieras vender"
+                    value={searchQuery}
+                    onChange={handleInputChange}
                     className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full sm:rounded-full rounded-lg shadow-lg placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                    onChange={(e) => handleSearch(e.target.value)}
                   />
                   <Button
                     type="submit"
@@ -112,5 +121,3 @@ const Index = () => {
 };
 
 export default Index;
-
-
