@@ -39,10 +39,10 @@ const MyOffers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full">
         {/* Header - Desktop */}
         <div className="mb-8 hidden sm:block">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -70,16 +70,16 @@ const MyOffers = () => {
           <div className="text-center py-12">
             {/* Mobile Layout */}
             <div className="block sm:hidden">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Package className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                No has enviado ofertas
-              </h3>
-              <p className="text-muted-foreground mb-6">Cuando envíes ofertas van a aparecer acá</p>
-              
-              <div className="bg-card rounded-lg border border-border shadow-sm p-6 text-center mt-8">
+              <div className="bg-card rounded-lg border border-border shadow-sm p-6 text-center">
                 <div className="max-w-md mx-auto">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Package className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    No has enviado ofertas
+                  </h3>
+                  <p className="text-muted-foreground mb-6">Cuando envíes ofertas van a aparecer acá</p>
+                  
                   <p className="text-muted-foreground mb-6">
                     Explora el mercado y envía ofertas a los compradores.
                   </p>
@@ -157,3 +157,4 @@ const MyOffers = () => {
 };
 
 export default MyOffers;
+
