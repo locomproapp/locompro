@@ -54,7 +54,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
   );
 
   return (
-    <Card key={request.id} className="hover:shadow-md transition-shadow h-auto sm:min-h-[320px]">
+    <Card key={request.id} className="hover:shadow-md transition-shadow h-auto sm:min-h-[400px]">
       <CardHeader className="space-y-2">
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg line-clamp-2">
@@ -72,7 +72,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3 sm:min-h-[180px] sm:justify-between">
+      <CardContent className="flex flex-col gap-3 sm:min-h-[240px] sm:justify-between">
         <div className="space-y-3">
           {request.reference_image && (
             <img
