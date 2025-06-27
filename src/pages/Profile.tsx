@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
@@ -9,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
+
 const Profile = () => {
   const {
     user,
@@ -17,6 +19,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
@@ -25,6 +28,7 @@ const Profile = () => {
       setFullName(user.user_metadata.full_name);
     }
   }, [user, authLoading, navigate]);
+
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -43,6 +47,7 @@ const Profile = () => {
       toast.success('Perfil actualizado con éxito');
     }
   };
+
   if (authLoading || !user) {
     return <div className="flex flex-col min-h-screen">
         <Navigation />
@@ -52,9 +57,10 @@ const Profile = () => {
         <Footer />
       </div>;
   }
+
   return <div className="flex flex-col min-h-screen bg-muted/40">
       <Navigation />
-      <main className="flex-1 w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8" style={{ minHeight: 'calc(100vh - 4rem)' }}>
         <Card>
           <CardHeader>
             <CardTitle>Mi Perfil</CardTitle>
@@ -80,4 +86,5 @@ const Profile = () => {
       <Footer />
     </div>;
 };
+
 export default Profile;
