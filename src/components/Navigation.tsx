@@ -71,6 +71,16 @@ export default function Navigation() {
     setOpen(false);
   };
 
+  const handleProfileClick = () => {
+    if (user) {
+      // User is logged in, go to profile
+      return "/profile";
+    } else {
+      // User is not logged in, go to login page
+      return "/auth";
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-14 items-center">
@@ -151,26 +161,6 @@ export default function Navigation() {
                 </div>
               </div>
               
-              {/* User info header */}
-              {user && (
-                <div className="flex items-center gap-3 p-4 border-b border-sidebar-border bg-sidebar-accent/30">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.user_metadata?.avatar_url} />
-                    <AvatarFallback>
-                      {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate text-sidebar-foreground">
-                      {user.user_metadata?.full_name || 'Usuario'}
-                    </p>
-                    <p className="text-xs text-sidebar-foreground/70 truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                </div>
-              )}
-              
               <ScrollArea className="flex-1 p-4">
                 <div className="flex flex-col space-y-1">
                   {/* Main navigation items */}
@@ -190,7 +180,7 @@ export default function Navigation() {
                     Mercado
                   </MobileLink>
                   
-                  {/* Historial collapsible section */}
+                  {/* Historial collapsible section - only show if user is logged in */}
                   {user && (
                     <Collapsible open={historialOpen} onOpenChange={setHistorialOpen}>
                       <CollapsibleTrigger className="flex items-center justify-between w-full gap-3 text-base font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md p-3 transition-colors">
@@ -204,166 +194,151 @@ export default function Navigation() {
                           <ChevronRight className="h-4 w-4" />
                         )}
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="ml-8 space-y-1">
-                        <MobileLink 
-                          to="/my-requests" 
-                          onOpenChange={setOpen}
-                          icon={<ShoppingCart className="h-4 w-4" />}
-                        >
-                          Mis publicaciones
-                        </MobileLink>
-                        
-                        <div className="flex items-center justify-between w-full">
+                      <CollapsibleContent className="space-y-1">
+                        <div className="ml-8 space-y-1 border-l border-sidebar-border pl-4">
                           <MobileLink 
-                            to="/my-offers" 
+                            to="/my-requests" 
                             onOpenChange={setOpen}
-                            icon={<Tag className="h-4 w-4" />}
-                            className="flex-1"
+                            icon={<ShoppingCart className="h-4 w-4" />}
                           >
-                            <span className="flex items-center justify-between w-full">
-                              <span>Mis Ofertas</span>
-                              {notificationCount > 0 && (
-                                <Badge variant="destructive" className="text-xs ml-2">
-                                  {notificationCount}
-                                </Badge>
-                              )}
-                            </span>
+                            Mis publicaciones
                           </MobileLink>
+                          
+                          <div className="flex items-center justify-between w-full">
+                            <MobileLink 
+                              to="/my-offers" 
+                              onOpenChange={setOpen}
+                              icon={<Tag className="h-4 w-4" />}
+                              className="flex-1"
+                            >
+                              <span className="flex items-center justify-between w-full">
+                                <span>Mis Ofertas</span>
+                                {notificationCount > 0 && (
+                                  <Badge variant="destructive" className="text-xs ml-2">
+                                    {notificationCount}
+                                  </Badge>
+                                )}
+                              </span>
+                            </MobileLink>
+                          </div>
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
                   )}
                   
-                  {/* Mi Perfil */}
-                  {user && (
-                    <MobileLink 
-                      to="/profile" 
-                      onOpenChange={setOpen}
-                      icon={<User className="h-5 w-5" />}
-                    >
-                      Mi perfil
-                    </MobileLink>
-                  )}
+                  {/* Mi Perfil - always visible */}
+                  <MobileLink 
+                    to={handleProfileClick()} 
+                    onOpenChange={setOpen}
+                    icon={<User className="h-5 w-5" />}
+                  >
+                    Mi perfil
+                  </MobileLink>
                   
-                  {/* Show market link for non-authenticated users */}
-                  {!user && (
-                    <MobileLink 
-                      to="/market" 
-                      onOpenChange={setOpen}
-                      icon={<ShoppingCart className="h-5 w-5" />}
+                  {/* Cerrar sesión - only show if user is logged in */}
+                  {user && (
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 p-3"
+                      onClick={handleSignOut}
                     >
-                      Solicitudes de Compra
-                    </MobileLink>
+                      <LogOut className="mr-3 h-5 w-5" />
+                      Cerrar sesión
+                    </Button>
                   )}
                 </div>
               </ScrollArea>
-              
-              {/* Footer section with sign out or auth buttons */}
-              <div className="p-4 border-t border-sidebar-border">
-                {user ? (
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="mr-3 h-5 w-5" />
-                    Cerrar sesión
-                  </Button>
-                ) : (
-                  <div className="space-y-2">
-                    <Button variant="outline" asChild className="w-full">
-                      <Link to="/auth" onClick={() => setOpen(false)}>
-                        Iniciar Sesión
-                      </Link>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <Link to="/auth?signup=true" onClick={() => setOpen(false)}>
-                        Registrarse
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </div>
             </div>
           </SheetContent>
         </Sheet>
 
         {/* Espaciador */}
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {/* Ya NO hay search bar aquí, solo login/user */}
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
-                    <AvatarFallback>
-                      {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  {notificationCount > 0 && (
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs p-0"
-                    >
-                      {notificationCount > 9 ? '9+' : notificationCount}
-                    </Badge>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user.user_metadata?.full_name || 'Usuario'}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/profile" className="w-full">
-                    <User className="mr-2 h-4 w-4" />
-                    Mi perfil
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/my-requests" className="w-full">
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Mis publicaciones
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/my-offers" className="w-full flex items-center">
-                    <Tag className="mr-2 h-4 w-4" />
-                    Mis Ofertas
+          {/* Mobile profile icon */}
+          <div className="flex items-center space-x-2 md:hidden">
+            <Button variant="ghost" size="icon" asChild>
+              <Link to={handleProfileClick()}>
+                <User className="h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
+
+          {/* Desktop user menu */}
+          <div className="hidden md:flex items-center space-x-2">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
+                      <AvatarFallback>
+                        {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
                     {notificationCount > 0 && (
-                      <Badge variant="destructive" className="ml-2 text-xs">
-                        {notificationCount}
+                      <Badge 
+                        variant="destructive" 
+                        className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs p-0"
+                      >
+                        {notificationCount > 9 ? '9+' : notificationCount}
                       </Badge>
                     )}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar sesión</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" asChild className="capitalize">
-                <Link to="/auth">Iniciar Sesión</Link>
-              </Button>
-              <Button asChild>
-                <Link to="/auth?signup=true">Registrarse</Link>
-              </Button>
-            </div>
-          )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user.user_metadata?.full_name || 'Usuario'}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="w-full">
+                      <User className="mr-2 h-4 w-4" />
+                      Mi perfil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-requests" className="w-full">
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Mis publicaciones
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-offers" className="w-full flex items-center">
+                      <Tag className="mr-2 h-4 w-4" />
+                      Mis Ofertas
+                      {notificationCount > 0 && (
+                        <Badge variant="destructive" className="ml-2 text-xs">
+                          {notificationCount}
+                        </Badge>
+                      )}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Cerrar sesión</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" asChild className="capitalize">
+                  <Link to="/auth">Iniciar Sesión</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/auth?signup=true">Registrarse</Link>
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
