@@ -10,7 +10,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
-import { Package, Menu, ShoppingCart, Tag, LogOut, Home, Bell, User, History, ChevronDown, ChevronRight } from "lucide-react";
+import { ShoppingBag, Menu, ShoppingCart, Tag, LogOut, Home, Bell, User, History, ChevronDown, ChevronRight } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -142,113 +142,110 @@ export default function Navigation() {
               <span className="sr-only">Alternar menú</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80 bg-sidebar border-sidebar-border p-0">
-            <div className="flex flex-col h-full">
-              {/* Header with logo and close button */}
-              <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-                <div className="flex items-center">
-                  <img 
-                    src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
-                    alt="LoCompro" 
-                    className="h-6 w-6 object-contain mr-2"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                    }}
-                  />
-                  <Package className="mr-2 h-5 w-5 text-sidebar-primary hidden" />
-                  <span className="text-lg font-bold text-sidebar-foreground">LoCompro</span>
-                </div>
+          <SheetContent side="left" className="w-80 bg-sidebar border-sidebar-border p-0 flex flex-col">
+            {/* Header with logo and close button */}
+            <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+              <div className="flex items-center">
+                <img 
+                  src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+                  alt="LoCompro" 
+                  className="h-6 w-6 object-contain mr-2"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <ShoppingBag className="mr-2 h-5 w-5 text-sidebar-primary hidden" />
+                <span className="text-lg font-bold text-sidebar-foreground">LoCompro</span>
               </div>
-              
-              <ScrollArea className="flex-1 p-4">
-                <div className="flex flex-col space-y-1">
-                  {/* Main navigation items */}
-                  <MobileLink 
-                    to="/" 
-                    onOpenChange={setOpen}
-                    icon={<Home className="h-5 w-5" />}
-                  >
-                    Inicio
-                  </MobileLink>
-                  
-                  <MobileLink 
-                    to="/marketplace" 
-                    onOpenChange={setOpen}
-                    icon={<Package className="h-5 w-5" />}
-                  >
-                    Mercado
-                  </MobileLink>
-                  
-                  {/* Historial collapsible section - only show if user is logged in */}
-                  {user && (
-                    <Collapsible open={historialOpen} onOpenChange={setHistorialOpen}>
-                      <CollapsibleTrigger className="flex items-center justify-between w-full gap-3 text-base font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md p-3 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <History className="h-5 w-5" />
-                          <span>Historial</span>
-                        </div>
-                        {historialOpen ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        )}
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="space-y-1">
-                        <div className="ml-8 space-y-1 border-l border-sidebar-border pl-4">
-                          <MobileLink 
-                            to="/my-requests" 
-                            onOpenChange={setOpen}
-                            icon={<ShoppingCart className="h-4 w-4" />}
-                          >
-                            Mis publicaciones
-                          </MobileLink>
-                          
-                          <div className="flex items-center justify-between w-full">
-                            <MobileLink 
-                              to="/my-offers" 
-                              onOpenChange={setOpen}
-                              icon={<Tag className="h-4 w-4" />}
-                              className="flex-1"
-                            >
-                              <span className="flex items-center justify-between w-full">
-                                <span>Mis Ofertas</span>
-                                {notificationCount > 0 && (
-                                  <Badge variant="destructive" className="text-xs ml-2">
-                                    {notificationCount}
-                                  </Badge>
-                                )}
-                              </span>
-                            </MobileLink>
-                          </div>
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  )}
-                  
-                  {/* Mi Perfil - always visible */}
-                  <MobileLink 
-                    to={handleProfileClick()} 
-                    onOpenChange={setOpen}
-                    icon={<User className="h-5 w-5" />}
-                  >
-                    Mi perfil
-                  </MobileLink>
-                  
-                  {/* Cerrar sesión - only show if user is logged in */}
-                  {user && (
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 p-3"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="mr-3 h-5 w-5" />
-                      Cerrar sesión
-                    </Button>
-                  )}
-                </div>
-              </ScrollArea>
             </div>
+            
+            {/* Scrollable content area */}
+            <ScrollArea className="flex-1 p-4">
+              <div className="flex flex-col space-y-1">
+                {/* Main navigation items */}
+                <MobileLink 
+                  to="/" 
+                  onOpenChange={setOpen}
+                  icon={<Home className="h-5 w-5" />}
+                >
+                  Inicio
+                </MobileLink>
+                
+                <MobileLink 
+                  to="/marketplace" 
+                  onOpenChange={setOpen}
+                  icon={<ShoppingBag className="h-5 w-5" />}
+                >
+                  Mercado
+                </MobileLink>
+                
+                {/* Historial collapsible section - only show if user is logged in */}
+                {user && (
+                  <Collapsible open={historialOpen} onOpenChange={setHistorialOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full gap-3 text-base font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md p-3 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <History className="h-5 w-5" />
+                        <span>Historial</span>
+                      </div>
+                      {historialOpen ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-1">
+                      <div className="ml-8 space-y-1 border-l border-sidebar-border pl-4">
+                        <MobileLink 
+                          to="/my-requests" 
+                          onOpenChange={setOpen}
+                          icon={<ShoppingCart className="h-4 w-4" />}
+                        >
+                          Mis publicaciones
+                        </MobileLink>
+                        
+                        <Link
+                          to="/my-offers"
+                          className="flex items-center gap-3 text-base font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md p-3 transition-colors"
+                          onClick={() => setOpen(false)}
+                        >
+                          <Tag className="h-4 w-4" />
+                          <span className="flex-1">Mis Ofertas</span>
+                          {notificationCount > 0 && (
+                            <Badge variant="destructive" className="text-xs">
+                              {notificationCount}
+                            </Badge>
+                          )}
+                        </Link>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+                
+                {/* Mi Perfil - always visible */}
+                <MobileLink 
+                  to={handleProfileClick()} 
+                  onOpenChange={setOpen}
+                  icon={<User className="h-5 w-5" />}
+                >
+                  Mi perfil
+                </MobileLink>
+              </div>
+            </ScrollArea>
+            
+            {/* Fixed bottom section for logout */}
+            {user && (
+              <div className="border-t border-sidebar-border p-4">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 p-3"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="mr-3 h-5 w-5" />
+                  Cerrar sesión
+                </Button>
+              </div>
+            )}
           </SheetContent>
         </Sheet>
 
