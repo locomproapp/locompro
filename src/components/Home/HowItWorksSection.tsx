@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { Search, Package, Handshake, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -53,11 +54,11 @@ const HowItWorksSection = ({ isOpen, onToggle }: HowItWorksSectionProps) => {
             <div className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Search className="h-5 w-5 text-primary" />
+                  <Package className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Publicá el producto que buscás</h3>
-                  <p className="text-sm text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
+                  <h3 className="font-semibold mb-2">Recibí ofertas</h3>
+                  <p className="text-sm text-muted-foreground">La gente que tenga lo que buscás te lo va a ofrecer.</p>
                 </div>
               </div>
             </div>
@@ -65,11 +66,11 @@ const HowItWorksSection = ({ isOpen, onToggle }: HowItWorksSectionProps) => {
             <div className="border-t border-border p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Package className="h-5 w-5 text-primary" />
+                  <Search className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Recibí ofertas</h3>
-                  <p className="text-sm text-muted-foreground">La gente que tenga lo que buscás te lo va a ofrecer.</p>
+                  <h3 className="font-semibold mb-2">Publicá el producto que buscás</h3>
+                  <p className="text-sm text-muted-foreground">Describí que buscás, con características, tu presupuesto y de dónde sos.</p>
                 </div>
               </div>
             </div>
