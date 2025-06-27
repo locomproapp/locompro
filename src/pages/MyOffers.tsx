@@ -101,6 +101,14 @@ const MyOffers = () => {
               <Button asChild>
                 <Link to="/marketplace">Explorar publicaciones</Link>
               </Button>
+              
+              <div className="bg-card rounded-lg border border-border shadow-sm p-6 text-center mt-8">
+                <div className="max-w-md mx-auto">
+                  <p className="text-muted-foreground">
+                    Explora el mercado y envía ofertas a los compradores.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         ) : (
