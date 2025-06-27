@@ -10,7 +10,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-card border-t border-border mt-8">
+    <footer className="bg-card border-t border-border mt-4 sm:mt-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Mobile Layout */}
         <div className="block md:hidden">

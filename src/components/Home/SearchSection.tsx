@@ -13,7 +13,7 @@ interface SearchSectionProps {
 const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionProps) => {
   return (
     <>
-      <div className="mb-6 sm:mb-10 mt-8 sm:mt-12 flex justify-center">
+      <div className="mb-6 sm:mb-10 mt-6 sm:mt-12 flex justify-center">
         <div className="w-full max-w-2xl mx-auto">
           <form onSubmit={onSubmit} className="relative">
             <div className="relative flex items-center">
@@ -35,7 +35,7 @@ const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionPr
           </form>
         </div>
       </div>
-      <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-4 mt-8 sm:mt-12 px-0 sm:px-2">
+      <div className="flex flex-row gap-2 sm:gap-4 justify-center mb-4 mt-6 sm:mt-12 px-0 sm:px-2">
         <Button asChild size="sm" className="text-base sm:text-lg px-4 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none">
           <Link to="/marketplace">
             <ShoppingBag className="mr-2 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
