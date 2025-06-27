@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -45,7 +46,13 @@ const Index = () => {
             behavior: 'smooth'
           });
         }
-      }, 100);
+      }, 200);
+    } else if (!open) {
+      // Scroll to top when closing
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -116,17 +123,16 @@ const Index = () => {
         <div className="block md:hidden mb-8" style={{ minHeight: 'calc(100vh - 600px)' }}>
           <Collapsible open={isHowItWorksOpen} onOpenChange={handleHowItWorksToggle}>
             <CollapsibleTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-between text-lg font-semibold py-4 mb-4"
-              >
-                ¿Cómo Funciona?
-                <ChevronDown className={`h-5 w-5 transition-transform duration-200 ${isHowItWorksOpen ? 'rotate-180' : ''}`} />
-              </Button>
+              <div className="bg-white rounded-lg shadow-sm border border-border p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">¿Cómo Funciona?</h3>
+                  <ChevronDown className={`h-5 w-5 transition-transform duration-200 ${isHowItWorksOpen ? 'rotate-180' : ''}`} />
+                </div>
+              </div>
             </CollapsibleTrigger>
             <CollapsibleContent ref={howItWorksRef}>
-              <div className="space-y-3">
-                <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+              <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+                <div className="p-4">
                   <div className="flex items-start space-x-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                       <Search className="h-5 w-5 text-primary" />
@@ -138,7 +144,7 @@ const Index = () => {
                   </div>
                 </div>
                 
-                <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+                <div className="border-t border-border p-4">
                   <div className="flex items-start space-x-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                       <Package className="h-5 w-5 text-primary" />
@@ -150,7 +156,7 @@ const Index = () => {
                   </div>
                 </div>
                 
-                <div className="bg-white rounded-lg shadow-sm border border-border p-4">
+                <div className="border-t border-border p-4">
                   <div className="flex items-start space-x-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                       <Handshake className="h-5 w-5 text-primary" />
