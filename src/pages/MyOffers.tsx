@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -76,15 +75,15 @@ const MyOffers = () => {
                 No has enviado ofertas
               </h3>
               <p className="text-muted-foreground mb-6">Cuando envíes ofertas van a aparecer acá</p>
-              <Button asChild>
-                <Link to="/marketplace">Explorar publicaciones</Link>
-              </Button>
               
               <div className="bg-card rounded-lg border border-border shadow-sm p-6 text-center mt-8">
                 <div className="max-w-md mx-auto">
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground mb-6">
                     Explora el mercado y envía ofertas a los compradores.
                   </p>
+                  <Button asChild>
+                    <Link to="/marketplace">Explorar publicaciones</Link>
+                  </Button>
                 </div>
               </div>
             </div>
