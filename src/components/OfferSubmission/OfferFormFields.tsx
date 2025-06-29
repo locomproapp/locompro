@@ -25,7 +25,7 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
             <FormLabel>Título</FormLabel>
             <FormControl>
               <Input 
-                placeholder="Ej: iPhone 12 Pro usado en excelente estado" 
+                placeholder="Ej: Licuadora Marca..." 
                 {...field} 
               />
             </FormControl>
@@ -42,7 +42,7 @@ export const OfferFormFields = ({ control }: OfferFormFieldsProps) => {
             <FormLabel>Descripción</FormLabel>
             <FormControl>
               <Textarea 
-                placeholder="Describe tu producto, condición, características especiales..." 
+                placeholder="Describí tu producto, sus especificaciones, aclaraciones al comprador..." 
                 className="resize-none" 
                 rows={4} 
                 {...field} 
