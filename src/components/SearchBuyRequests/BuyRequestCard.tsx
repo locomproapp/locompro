@@ -82,20 +82,22 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
           {/* Content section */}
           <div className="flex-1 pl-4 flex flex-col min-w-0">
             <div className="flex items-start justify-between gap-4 h-full">
-              <div className="flex-1 min-w-0 flex flex-col">
-                <CardTitle className="text-lg line-clamp-2 font-bold mb-1">
-                  {request.title}
-                </CardTitle>
-                
-                <div className="space-y-1 text-sm text-muted-foreground mb-3">
-                  <p>Nuevo</p>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate">{request.zone}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(request.created_at)}
+              <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
+                <div>
+                  <CardTitle className="text-lg line-clamp-2 font-bold mb-1">
+                    {request.title}
+                  </CardTitle>
+                  
+                  <div className="space-y-1 text-sm text-muted-foreground mb-3">
+                    <p>Nuevo</p>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{request.zone}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate(request.created_at)}
+                    </div>
                   </div>
                 </div>
                 
@@ -104,13 +106,13 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
                 </div>
               </div>
               
-              {/* Right side with price badge and button aligned to top */}
-              <div className="flex flex-col items-end gap-3 flex-shrink-0">
+              {/* Right side with price badge at top and button at bottom */}
+              <div className="flex flex-col justify-between items-end h-full flex-shrink-0">
                 <Badge variant="outline" className="font-bold whitespace-nowrap text-base px-4 py-2">
                   {formatPrice(request.min_price, request.max_price)}
                 </Badge>
                 
-                <Button asChild size="sm" className="whitespace-nowrap">
+                <Button asChild size="sm" className="whitespace-nowrap text-base">
                   <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
                     <Eye className="h-3 w-3" />
                     Ver detalles
