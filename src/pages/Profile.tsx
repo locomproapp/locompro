@@ -10,11 +10,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 
 const Profile = () => {
   const {
     user,
-    loading: authLoading
+    loading: authLoading,
+    signOut
   } = useAuth();
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
@@ -48,6 +50,11 @@ const Profile = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   if (authLoading || !user) {
     return <div className="flex flex-col min-h-screen">
         <Navigation />
@@ -65,6 +72,18 @@ const Profile = () => {
           <CardHeader>
             <CardTitle>Mi Perfil</CardTitle>
             <CardDescription>Actualizá tu información personal.</CardDescription>
+            
+            {/* Mobile-only logout button */}
+            <div className="md:hidden pt-4">
+              <Button 
+                variant="destructive" 
+                onClick={handleSignOut}
+                className="w-full bg-red-500 hover:bg-red-600 text-white"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Salir
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleUpdateProfile} className="space-y-4">
