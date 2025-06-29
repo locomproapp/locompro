@@ -54,8 +54,8 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
   );
 
   return (
-    <Card key={request.id} className="hover:shadow-md transition-shadow h-auto sm:min-h-[320px] px-4 sm:px-3 lg:px-4">
-      <CardHeader className="space-y-2 px-0 sm:px-3 lg:px-2">
+    <Card key={request.id} className="hover:shadow-md transition-shadow h-auto sm:min-h-[320px] px-4 sm:px-6 rounded-none border">
+      <CardHeader className="space-y-2 px-0 sm:px-0">
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg line-clamp-2">
             {request.title}
@@ -72,13 +72,13 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3 sm:justify-between px-0 sm:px-3 lg:px-2">
+      <CardContent className="flex flex-col gap-3 sm:justify-between px-0 sm:px-0">
         <div className="space-y-3 flex-1">
           {request.reference_image && (
             <img
               src={request.reference_image}
               alt="Referencia"
-              className="w-full h-32 object-cover rounded"
+              className="w-full h-32 object-cover"
             />
           )}
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
