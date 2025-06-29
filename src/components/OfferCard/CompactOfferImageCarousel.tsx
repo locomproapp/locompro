@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import ImageLightbox from '@/components/ImageLightbox';
 
 interface CompactOfferImageCarouselProps {
@@ -12,22 +11,6 @@ interface CompactOfferImageCarouselProps {
 const CompactOfferImageCarousel = ({ images, title }: CompactOfferImageCarouselProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-
-  const goToPrevious = () => {
-    if (images && images.length > 0) {
-      setSelectedImageIndex((prevIndex) => 
-        prevIndex === 0 ? images.length - 1 : prevIndex - 1
-      );
-    }
-  };
-
-  const goToNext = () => {
-    if (images && images.length > 0) {
-      setSelectedImageIndex((prevIndex) => 
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
-      );
-    }
-  };
 
   return (
     <>
@@ -47,30 +30,9 @@ const CompactOfferImageCarousel = ({ images, title }: CompactOfferImageCarouselP
             </button>
 
             {images.length > 1 && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={goToPrevious}
-                  className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-6 w-6"
-                  aria-label="Imagen anterior"
-                >
-                  <ChevronLeft className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={goToNext}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full h-6 w-6"
-                  aria-label="Imagen siguiente"
-                >
-                  <ChevronRight className="h-3 w-3" />
-                </Button>
-
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-black/40 text-white text-xs px-1.5 py-0.5 rounded-full">
-                  {selectedImageIndex + 1}/{images.length}
-                </div>
-              </>
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-black/40 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {selectedImageIndex + 1}/{images.length}
+              </div>
             )}
           </>
         ) : (
