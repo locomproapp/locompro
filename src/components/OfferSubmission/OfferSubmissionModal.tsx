@@ -47,7 +47,7 @@ export const OfferSubmissionModal = ({
           Enviar Oferta
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto mx-4 sm:mx-auto">
         <DialogHeader>
           <DialogTitle>Enviar Oferta</DialogTitle>
           <p className="text-sm text-muted-foreground">
