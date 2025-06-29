@@ -68,7 +68,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
       case 'accepted':
         return 'ring-1 ring-green-200 bg-green-50';
       case 'rejected':
-        return 'border-red-200 bg-white';
+        return 'border-red-200 bg-red-50';
       case 'finalized':
         return 'ring-1 ring-gray-200 bg-gray-50';
       default:
@@ -76,9 +76,12 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     }
   };
 
+  // Determine if we need extra height for pending offers with buttons
+  const needsExtraHeight = canAcceptOrReject || isOfferOwner;
+
   return (
     <div className="space-y-4 w-full min-w-[260px] max-w-[260px] md:min-w-[320px] md:max-w-[320px]">
-      <Card className={`w-full flex-shrink-0 flex flex-col border-2 ${getCardClassName()}`}>
+      <Card className={`w-full flex-shrink-0 flex flex-col border-2 ${getCardClassName()} ${needsExtraHeight ? 'min-h-[400px]' : ''}`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <CompactOfferHeader
             displayName={displayName}
@@ -88,7 +91,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           />
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col p-4 pt-0 min-h-0">
+        <CardContent className="flex-1 flex flex-col p-4 pt-0 min-h-0 justify-between">
           <CompactOfferDetails
             images={offer.images}
             title={offer.title}
@@ -100,16 +103,18 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             description={offer.description}
           />
           
-          {/* Action buttons moved here - below the description */}
+          {/* Action buttons pushed to bottom with consistent spacing */}
           {(canAcceptOrReject || isOfferOwner) && (
-            <CompactOfferActionSection
-              canAcceptOrReject={canAcceptOrReject}
-              isOfferOwner={isOfferOwner}
-              offerId={offer.id}
-              buyRequestId={offer.buy_request_id}
-              status={offer.status}
-              onStatusUpdate={onStatusUpdate}
-            />
+            <div className="mt-6 pt-4 border-t border-border/20">
+              <CompactOfferActionSection
+                canAcceptOrReject={canAcceptOrReject}
+                isOfferOwner={isOfferOwner}
+                offerId={offer.id}
+                buyRequestId={offer.buy_request_id}
+                status={offer.status}
+                onStatusUpdate={onStatusUpdate}
+              />
+            </div>
           )}
         </CardContent>
       </Card>
