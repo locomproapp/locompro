@@ -36,6 +36,7 @@ const Marketplace = () => {
             <div className="flex-1 w-full">
               <SearchBar
                 placeholder="¿Qué estás buscando?"
+                mobilePlaceholder="Qué quiero vender..."
                 onSearch={setSearchQuery}
                 value={searchQuery}
               />

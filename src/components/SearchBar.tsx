@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -6,14 +7,30 @@ import { Button } from '@/components/ui/button';
 interface SearchBarProps {
   onSearch?: (query: string) => void;
   placeholder?: string;
+  mobilePlaceholder?: string;
   value?: string;
 }
 
-const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?", value }: SearchBarProps) => {
+const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?", mobilePlaceholder, value }: SearchBarProps) => {
   // Si se pasa value, controlado desde afuera; si no, local state interno
   const [localSearch, setLocalSearch] = useState('');
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholder);
   const isControlled = typeof value === 'string';
   const searchQuery = isControlled ? value! : localSearch;
+
+  useEffect(() => {
+    const updatePlaceholder = () => {
+      if (mobilePlaceholder && window.innerWidth < 768) {
+        setCurrentPlaceholder(mobilePlaceholder);
+      } else {
+        setCurrentPlaceholder(placeholder);
+      }
+    };
+
+    updatePlaceholder();
+    window.addEventListener('resize', updatePlaceholder);
+    return () => window.removeEventListener('resize', updatePlaceholder);
+  }, [placeholder, mobilePlaceholder]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +54,7 @@ const SearchBar = ({ onSearch, placeholder = "¿Qué estás buscando?", value }:
         <div className="relative flex items-center">
           <Input
             type="text"
-            placeholder={placeholder}
+            placeholder={currentPlaceholder}
             value={searchQuery}
             onChange={handleInputChange}
             className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full shadow-lg placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground"
