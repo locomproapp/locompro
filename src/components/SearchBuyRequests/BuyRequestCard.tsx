@@ -57,7 +57,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
   if (isDesktopHorizontal) {
     // Desktop horizontal layout
     return (
-      <Card className="hover:shadow-md transition-shadow rounded-none border">
+      <Card className="hover:shadow-md transition-shadow rounded-none border-b border-l-0 border-r-0 border-t-0">
         <div className="flex">
           {/* Image section */}
           <div className="w-48 h-32 flex-shrink-0">
@@ -75,13 +75,13 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
           </div>
 
           {/* Content section */}
-          <div className="flex-1 p-4 flex flex-col justify-between">
+          <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
             <div className="space-y-2">
-              <div className="flex items-start justify-between">
-                <CardTitle className="text-lg line-clamp-2 flex-1 mr-4">
+              <div className="flex items-start justify-between gap-4">
+                <CardTitle className="text-lg line-clamp-2 flex-1 min-w-0">
                   {request.title}
                 </CardTitle>
-                <Badge variant="outline" className="font-bold flex-shrink-0">
+                <Badge variant="outline" className="font-bold flex-shrink-0 whitespace-nowrap">
                   {formatPrice(request.min_price, request.max_price)}
                 </Badge>
               </div>
@@ -94,10 +94,10 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
               
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  {request.zone}
+                  <MapPin className="h-3 w-3 flex-shrink-0" />
+                  <span className="truncate">{request.zone}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-shrink-0">
                   <Calendar className="h-3 w-3" />
                   {formatDate(request.created_at)}
                 </div>
@@ -108,7 +108,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
               <p className="text-xs text-muted-foreground flex-shrink-0 min-w-0 truncate">
                 Por: {displayName}
               </p>
-              <Button asChild size="sm" className="flex-shrink-0">
+              <Button asChild size="sm" className="flex-shrink-0 whitespace-nowrap">
                 <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
                   <Eye className="h-3 w-3" />
                   Ver detalles
@@ -121,48 +121,51 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     );
   }
 
-  // Mobile vertical layout
+  // Mobile vertical layout - optimized for two-column grid
   return (
-    <Card className="hover:shadow-md transition-shadow h-auto rounded-none border">
-      <CardHeader className="space-y-2 p-3">
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-sm line-clamp-2 leading-tight">
+    <Card className="hover:shadow-md transition-shadow rounded-none border flex flex-col h-full">
+      <CardHeader className="p-2 pb-1 flex-shrink-0">
+        <div className="space-y-1.5">
+          <CardTitle className="text-xs leading-tight line-clamp-3 min-h-[2.7rem] flex items-start">
             {request.title}
           </CardTitle>
-        </div>
-        <div className="flex items-center justify-between">
-          <Badge variant="outline" className="font-bold text-xs px-1 py-0.5">
-            {formatPrice(request.min_price, request.max_price)}
-          </Badge>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            {formatDate(request.created_at)}
+          <div className="flex items-center justify-between gap-1">
+            <Badge variant="outline" className="font-bold text-[10px] px-1 py-0.5 flex-shrink-0">
+              {formatPrice(request.min_price, request.max_price)}
+            </Badge>
+            <div className="flex items-center gap-0.5 text-[10px] text-muted-foreground flex-shrink-0">
+              <Calendar className="h-2.5 w-2.5" />
+              <span>{formatDate(request.created_at)}</span>
+            </div>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-2 p-3 pt-0">
-        <div className="space-y-2 flex-1">
+      <CardContent className="p-2 pt-0 flex flex-col flex-1 min-h-0">
+        <div className="flex-1 space-y-1.5">
           {request.reference_image && (
-            <img
-              src={request.reference_image}
-              alt="Referencia"
-              className="w-full h-24 object-cover"
-            />
+            <div className="aspect-square w-full overflow-hidden bg-gray-100">
+              <img
+                src={request.reference_image}
+                alt="Referencia"
+                className="w-full h-full object-cover"
+              />
+            </div>
           )}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <MapPin className="h-3 w-3" />
-            {request.zone}
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+            <MapPin className="h-2.5 w-2.5 flex-shrink-0" />
+            <span className="truncate">{request.zone}</span>
           </div>
         </div>
-        <div className="flex items-center justify-between gap-2 pt-2 mt-auto">
-          <p className="text-xs text-muted-foreground flex-shrink-0 min-w-0 truncate">
+        
+        <div className="flex items-center justify-between gap-1 pt-1.5 mt-auto border-t border-gray-100">
+          <p className="text-[10px] text-muted-foreground flex-shrink-0 min-w-0 truncate max-w-[60%]">
             Por: {displayName}
           </p>
-          <Button asChild size="sm" className="flex-shrink-0 text-xs px-2 py-1 h-6">
-            <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
-              <Eye className="h-3 w-3" />
-              Ver
+          <Button asChild size="sm" className="flex-shrink-0 text-[10px] px-1.5 py-0.5 h-5 min-w-0">
+            <Link to={`/buy-request/${request.id}`} className="flex items-center gap-0.5">
+              <Eye className="h-2.5 w-2.5" />
+              <span>Ver</span>
             </Link>
           </Button>
         </div>

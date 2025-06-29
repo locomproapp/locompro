@@ -22,7 +22,7 @@ const Marketplace = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
 
-      <main className="w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
+      <main className="w-full px-2 sm:px-6 lg:px-8 py-8 flex-1">
         {/* Marketplace Heading & Main search bar */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -54,7 +54,7 @@ const Marketplace = () => {
         </div>
 
         {/* Resultados de búsqueda */}
-        <div className="mt-6 mb-8 sm:mb-16 w-full">
+        <div className="mt-6 mb-8 sm:mb-16 w-full max-w-none">
           <SearchBuyRequests searchQuery={searchQuery} />
         </div>
       </main>
