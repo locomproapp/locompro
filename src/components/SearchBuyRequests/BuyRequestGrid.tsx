@@ -1,6 +1,7 @@
 
 import React from 'react';
 import BuyRequestCard from './BuyRequestCard';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BuyRequest {
   id: string;
@@ -25,10 +26,19 @@ interface BuyRequestGridProps {
 }
 
 const BuyRequestGrid: React.FC<BuyRequestGridProps> = ({ buyRequests }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+    <div className={isMobile 
+      ? "grid grid-cols-2 gap-2 w-full" 
+      : "flex flex-col gap-4 w-full"
+    }>
       {buyRequests.map((request) => (
-        <BuyRequestCard key={request.id} request={request} />
+        <BuyRequestCard 
+          key={request.id} 
+          request={request} 
+          isDesktopHorizontal={!isMobile}
+        />
       ))}
     </div>
   );
