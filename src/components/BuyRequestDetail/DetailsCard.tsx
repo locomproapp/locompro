@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { Tag, ArrowLeft } from 'lucide-react';
+import { Tag, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ImageLightbox from '@/components/ImageLightbox';
+
 const formatPrice = (min: number | null, max: number | null) => {
   const format = (p: number) => '$' + p.toLocaleString('es-AR');
   if (!min && !max) return 'Presupuesto abierto';
@@ -12,6 +14,7 @@ const formatPrice = (min: number | null, max: number | null) => {
   if (max) return `Hasta ${format(max)}`;
   return 'Presupuesto abierto';
 };
+
 const formatCondition = (condition: string | null) => {
   if (!condition || condition === null || condition === 'null') {
     return 'No especificado';
@@ -25,6 +28,7 @@ const formatCondition = (condition: string | null) => {
   };
   return map[condition] || condition.charAt(0).toUpperCase() + condition.slice(1);
 };
+
 const DetailsCard = ({
   buyRequest,
   buyRequestData
@@ -51,11 +55,12 @@ const DetailsCard = ({
     coverImage = buyRequestData.reference_image;
     totalImages = 1;
   }
+
   return <>
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-8">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-6">
                 {/* Mobile back button - only show on mobile */}
                 <div className="md:hidden">
-                    <Button variant="ghost" asChild className="mb-4 self-start">
+                    <Button variant="ghost" asChild className="mb-2 self-start">
                         <Link to="/marketplace" className="flex items-center gap-2">
                             <ArrowLeft className="h-4 w-4" />
                             Volver al mercado
@@ -114,6 +119,21 @@ const DetailsCard = ({
                                         1/{totalImages}
                                     </div>
                                 </div>
+                                
+                                {/* Reference link below image - only on mobile */}
+                                {buyRequest.reference_url && buyRequest.reference_url !== null && buyRequest.reference_url !== 'null' && buyRequest.reference_url.trim() !== '' && (
+                                    <div className="mt-3">
+                                        <a 
+                                            href={buyRequest.reference_url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium"
+                                        >
+                                            <ExternalLink className="h-4 w-4" />
+                                            Ver referencia
+                                        </a>
+                                    </div>
+                                )}
                             </div>}
 
                         <div>
@@ -126,11 +146,6 @@ const DetailsCard = ({
               })}
                             </p>
                         </div>
-
-                        {buyRequest.profiles?.full_name && <div>
-                                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
-                                <p className="text-base text-foreground">{buyRequest.profiles.full_name}</p>
-                            </div>}
                     </div>
                 </div>
             </div>
@@ -139,4 +154,5 @@ const DetailsCard = ({
             {allImages.length > 0 && <ImageLightbox images={allImages} open={lightboxOpen} onOpenChange={setLightboxOpen} startIndex={0} />}
         </>;
 };
+
 export default DetailsCard;
