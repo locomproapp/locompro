@@ -126,11 +126,14 @@ const BuyRequestDetail = () => {
             </div>
           </div>
           
-          <ImageAndActionsCard
-            buyRequest={buyRequestData}
-            user={user}
-            onUpdate={() => refetch()}
-          />
+          {/* Desktop image gallery - hidden on mobile */}
+          <div className="hidden md:block">
+            <ImageAndActionsCard
+              buyRequest={buyRequestData}
+              user={user}
+              onUpdate={() => refetch()}
+            />
+          </div>
         </div>
 
         {!isOwner && isActive && (

@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Tag, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ImageLightbox from '@/components/ImageLightbox';
 
 const formatPrice = (min: number | null, max: number | null) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
@@ -29,116 +30,138 @@ const formatCondition = (condition: string | null) => {
 };
 
 const DetailsCard = ({ buyRequest, buyRequestData }: { buyRequest: any; buyRequestData: any }) => {
+    const [lightboxOpen, setLightboxOpen] = useState(false);
     const isActive = buyRequest.status === 'active';
     
-    // Get cover image
+    // Get all images for lightbox
+    let allImages: string[] = [];
     let coverImage: string | null = null;
     let totalImages = 0;
     
     if (buyRequestData?.images && Array.isArray(buyRequestData.images) && buyRequestData.images.length > 0) {
         const validImages = buyRequestData.images.filter((img: any) => img && typeof img === 'string');
         if (validImages.length > 0) {
+            allImages = validImages;
             coverImage = validImages[0];
             totalImages = validImages.length;
         }
     } else if (buyRequestData?.reference_image && typeof buyRequestData.reference_image === 'string') {
+        allImages = [buyRequestData.reference_image];
         coverImage = buyRequestData.reference_image;
         totalImages = 1;
     }
     
     return (
-        <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-8">
-            {/* Mobile back button - only show on mobile */}
-            <div className="md:hidden">
-                <Button variant="ghost" asChild className="mb-4 self-start">
-                    <Link to="/marketplace" className="flex items-center gap-2">
-                        <ArrowLeft className="h-4 w-4" />
-                        Volver al mercado
-                    </Link>
-                </Button>
-            </div>
-
-            <div className="flex flex-col gap-6">
-                <div className="flex items-center gap-2 flex-wrap">
-                    {/* Hide status badge on mobile, show on desktop */}
-                    <Badge variant={isActive ? "default" : "secondary"} className="hidden md:flex">
-                        {isActive ? 'ACTIVA' : 'CERRADA'}
-                    </Badge>
-                    {buyRequest.categories && (
-                        <Badge variant="outline" className="flex items-center gap-1">
-                            <Tag className="h-3 w-3" />
-                            {buyRequest.categories.name}
-                        </Badge>
-                    )}
+        <>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-8">
+                {/* Mobile back button - only show on mobile */}
+                <div className="md:hidden">
+                    <Button variant="ghost" asChild className="mb-4 self-start">
+                        <Link to="/marketplace" className="flex items-center gap-2">
+                            <ArrowLeft className="h-4 w-4" />
+                            Volver al mercado
+                        </Link>
+                    </Button>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                    {buyRequest.title}
-                </h1>
-
-                <div className="space-y-6">
-                    <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
-                        <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
+                <div className="flex flex-col gap-6">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {/* Hide status badge on mobile, show on desktop */}
+                        <Badge variant={isActive ? "default" : "secondary"} className="hidden md:flex">
+                            {isActive ? 'ACTIVA' : 'CERRADA'}
+                        </Badge>
+                        {buyRequest.categories && (
+                            <Badge variant="outline" className="flex items-center gap-1">
+                                <Tag className="h-3 w-3" />
+                                {buyRequest.categories.name}
+                            </Badge>
+                        )}
                     </div>
 
-                    <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground mb-1">Condición del producto</h3>
-                        <p className="text-base text-foreground">{formatCondition(buyRequest.condition)}</p>
-                    </div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                        {buyRequest.title}
+                    </h1>
 
-                    <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
-                        <p className="text-base text-foreground">{buyRequest.zone}</p>
-                    </div>
-
-                    {buyRequest.description && buyRequest.description !== null && buyRequest.description !== 'null' && buyRequest.description.trim() !== '' && (
+                    <div className="space-y-6">
                         <div>
-                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
-                            <p className="text-base text-foreground whitespace-pre-wrap">
-                                {buyRequest.description}
-                            </p>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Precio</h3>
+                            <p className="text-lg text-primary font-bold">{formatPrice(buyRequest.min_price, buyRequest.max_price)}</p>
                         </div>
-                    )}
 
-                    {/* Cover image section - only on mobile */}
-                    {coverImage && (
-                        <div className="md:hidden">
-                            <h3 className="text-sm font-semibold text-muted-foreground mb-3">Imagen</h3>
-                            <div className="relative">
-                                <img
-                                    src={coverImage}
-                                    alt="Imagen del producto"
-                                    className="w-full h-64 object-cover rounded-lg border border-border"
-                                />
-                                {/* Image position indicator */}
-                                <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                                    1/{totalImages}
+                        <div>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Condición del producto</h3>
+                            <p className="text-base text-foreground">{formatCondition(buyRequest.condition)}</p>
+                        </div>
+
+                        <div>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
+                            <p className="text-base text-foreground">{buyRequest.zone}</p>
+                        </div>
+
+                        {buyRequest.description && buyRequest.description !== null && buyRequest.description !== 'null' && buyRequest.description.trim() !== '' && (
+                            <div>
+                                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
+                                <p className="text-base text-foreground whitespace-pre-wrap">
+                                    {buyRequest.description}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Cover image section - only on mobile */}
+                        {coverImage && (
+                            <div className="md:hidden">
+                                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Imagen</h3>
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setLightboxOpen(true)}
+                                        className="w-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+                                        aria-label="Ver imagen en tamaño completo"
+                                    >
+                                        <img
+                                            src={coverImage}
+                                            alt="Imagen del producto"
+                                            className="w-full h-64 object-cover rounded-lg border border-border"
+                                        />
+                                    </button>
+                                    {/* Image position indicator */}
+                                    <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                        1/{totalImages}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha</h3>
-                        <p className="text-base text-foreground">
-                            {new Date(buyRequest.created_at).toLocaleDateString('es-AR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                            })}
-                        </p>
-                    </div>
-
-                    {buyRequest.profiles?.full_name && (
                         <div>
-                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
-                            <p className="text-base text-foreground">{buyRequest.profiles.full_name}</p>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Fecha</h3>
+                            <p className="text-base text-foreground">
+                                {new Date(buyRequest.created_at).toLocaleDateString('es-AR', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                })}
+                            </p>
                         </div>
-                    )}
+
+                        {buyRequest.profiles?.full_name && (
+                            <div>
+                                <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
+                                <p className="text-base text-foreground">{buyRequest.profiles.full_name}</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {/* Lightbox for full-screen image viewing */}
+            {allImages.length > 0 && (
+                <ImageLightbox
+                    images={allImages}
+                    open={lightboxOpen}
+                    onOpenChange={setLightboxOpen}
+                    startIndex={0}
+                />
+            )}
+        </>
     );
 };
 
