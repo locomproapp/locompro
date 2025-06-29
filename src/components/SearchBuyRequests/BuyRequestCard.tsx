@@ -63,24 +63,24 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     // Desktop horizontal layout
     return (
       <Card className="hover:shadow-md transition-shadow rounded-none border-b border-l-0 border-r-0 border-t-0">
-        <div className="flex">
-          {/* Image section */}
-          <div className="w-48 h-32 flex-shrink-0">
+        <div className="flex p-4">
+          {/* Image section with white margin */}
+          <div className="w-44 h-32 flex-shrink-0">
             {request.reference_image ? (
               <img
                 src={request.reference_image}
                 alt="Referencia"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded"
               />
             ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 rounded">
                 Sin imagen
               </div>
             )}
           </div>
 
           {/* Content section */}
-          <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+          <div className="flex-1 pl-4 flex flex-col justify-between min-w-0">
             <div className="space-y-2">
               <div className="flex items-start justify-between gap-4">
                 <CardTitle className="text-lg line-clamp-2 flex-1 min-w-0">
@@ -90,12 +90,6 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
                   {formatPrice(request.min_price, request.max_price)}
                 </Badge>
               </div>
-              
-              {request.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {request.description}
-                </p>
-              )}
               
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
