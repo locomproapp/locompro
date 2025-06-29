@@ -55,6 +55,14 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     user?.id
   );
 
+  // Function to estimate if title will wrap to multiple lines
+  // This is a rough estimation based on character count
+  const getTitleMarginClass = (title: string) => {
+    // Approximate: if title is longer than ~35-40 characters, it will likely wrap
+    // This accounts for the text-sm size and typical card width
+    return title.length > 35 ? 'mb-0' : 'mb-1';
+  };
+
   if (isDesktopHorizontal) {
     // Desktop horizontal layout
     return (
@@ -122,13 +130,13 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     );
   }
 
-  // Mobile vertical layout - refined design
+  // Mobile vertical layout with dynamic spacing
   return (
     <Link to={`/buy-request/${request.id}`} className="block h-full">
       <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
         <CardContent className="p-3 flex flex-col h-full">
-          {/* Large title at the top */}
-          <h3 className="text-sm font-semibold leading-tight line-clamp-3 mb-0.5 min-h-[3.6rem] flex items-start">
+          {/* Large title at the top with dynamic margin */}
+          <h3 className={`text-sm font-semibold leading-tight line-clamp-3 min-h-[3.6rem] flex items-start ${getTitleMarginClass(request.title)}`}>
             {request.title}
           </h3>
           
