@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -56,12 +54,9 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
   );
 
   // Function to determine spacing based on title length
-  // More precise estimation for when title will wrap to multiple lines
+  // 8px spacing (mb-2) for all cases now
   const getTitleSpacingClass = (title: string) => {
-    // Approximate: if title is longer than ~25 characters, it will likely wrap
-    // This accounts for the text-sm size and typical mobile card width
-    // For wrapped titles: no margin (mb-0), for single line: 1.5 units margin (mb-1.5) to match photo spacing
-    return title.length > 25 ? 'mb-0' : 'mb-1.5';
+    return 'mb-2'; // Always 8px spacing
   };
 
   if (isDesktopHorizontal) {
@@ -131,18 +126,18 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     );
   }
 
-  // Mobile vertical layout with consistent 6px (1.5 units) spacing
+  // Mobile vertical layout with consistent 8px (2 units) spacing
   return (
     <Link to={`/buy-request/${request.id}`} className="block h-full">
       <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
         <CardContent className="p-3 flex flex-col h-full">
-          {/* Title with dynamic spacing and flexible height */}
+          {/* Title with 8px spacing below */}
           <h3 className={`text-sm font-semibold leading-tight line-clamp-3 flex items-start ${getTitleSpacingClass(request.title)}`}>
             {request.title}
           </h3>
           
-          {/* Price label with consistent spacing below */}
-          <div className="mb-1.5 flex justify-center">
+          {/* Price label with 8px spacing below */}
+          <div className="mb-2 flex justify-center">
             <div className="w-full bg-primary/10 border border-primary/20 rounded-lg py-1 px-3 text-center">
               <span className="font-bold text-xs text-primary whitespace-nowrap">
                 {formatPrice(request.min_price, request.max_price)}
@@ -150,8 +145,8 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
             </div>
           </div>
           
-          {/* Photo in the middle with consistent spacing */}
-          <div className="mb-1.5 flex-shrink-0">
+          {/* Photo in the middle with 8px spacing below */}
+          <div className="mb-2 flex-shrink-0">
             {request.reference_image ? (
               <div className="aspect-square w-full overflow-hidden bg-gray-50 border border-gray-100">
                 <img
@@ -167,8 +162,8 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
             )}
           </div>
           
-          {/* Date and zone at the bottom with consistent spacing */}
-          <div className="mt-auto pt-1.5 border-t border-gray-100">
+          {/* Date and zone at the bottom with 8px spacing above (pt-2) */}
+          <div className="mt-auto pt-2 border-t border-gray-100">
             <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3 flex-shrink-0" />
@@ -187,4 +182,3 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
 };
 
 export default BuyRequestCard;
-
