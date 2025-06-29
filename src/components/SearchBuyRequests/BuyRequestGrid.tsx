@@ -30,7 +30,7 @@ const BuyRequestGrid: React.FC<BuyRequestGridProps> = ({ buyRequests }) => {
   
   return (
     <div className={isMobile 
-      ? "grid grid-cols-2 gap-3 w-full px-2" 
+      ? "grid grid-cols-2 gap-3 w-full px-0" 
       : "flex flex-col gap-0 w-full"
     }>
       {buyRequests.map((request) => (
