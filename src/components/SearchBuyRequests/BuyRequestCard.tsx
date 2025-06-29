@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -55,12 +53,12 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     user?.id
   );
 
-  // Function to estimate if title will wrap to multiple lines
-  // This is a rough estimation based on character count
-  const getTitleMarginClass = (title: string) => {
-    // Approximate: if title is longer than ~35-40 characters, it will likely wrap
-    // This accounts for the text-sm size and typical card width
-    return title.length > 35 ? 'mb-0' : 'mb-1';
+  // Function to determine spacing based on title length
+  // More precise estimation for when title will wrap to multiple lines
+  const getTitleSpacingClass = (title: string) => {
+    // Approximate: if title is longer than ~30 characters, it will likely wrap
+    // This accounts for the text-sm size and typical mobile card width
+    return title.length > 30 ? 'mb-0' : 'mb-2';
   };
 
   if (isDesktopHorizontal) {
@@ -130,18 +128,18 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     );
   }
 
-  // Mobile vertical layout with dynamic spacing
+  // Mobile vertical layout with refined spacing
   return (
     <Link to={`/buy-request/${request.id}`} className="block h-full">
       <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
         <CardContent className="p-3 flex flex-col h-full">
-          {/* Large title at the top with dynamic margin */}
-          <h3 className={`text-sm font-semibold leading-tight line-clamp-3 min-h-[3.6rem] flex items-start ${getTitleMarginClass(request.title)}`}>
+          {/* Title with dynamic spacing based on length */}
+          <h3 className={`text-sm font-semibold leading-tight line-clamp-3 min-h-[3.6rem] flex items-start ${getTitleSpacingClass(request.title)}`}>
             {request.title}
           </h3>
           
-          {/* Price label matching photo width with consistent padding - more rounded */}
-          <div className="mb-1.5 flex justify-center">
+          {/* Price label matching photo width with consistent padding */}
+          <div className="flex justify-center">
             <div className="w-full bg-primary/10 border border-primary/20 rounded-lg py-1 px-3 text-center">
               <span className="font-bold text-xs text-primary whitespace-nowrap">
                 {formatPrice(request.min_price, request.max_price)}
@@ -150,7 +148,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
           </div>
           
           {/* Photo in the middle with minimal frame */}
-          <div className="mb-3 flex-shrink-0">
+          <div className="mb-3 mt-1.5 flex-shrink-0">
             {request.reference_image ? (
               <div className="aspect-square w-full overflow-hidden bg-gray-50 border border-gray-100">
                 <img
@@ -186,4 +184,3 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
 };
 
 export default BuyRequestCard;
-
