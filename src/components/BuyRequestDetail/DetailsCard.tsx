@@ -1,10 +1,13 @@
 
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Tag, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ImageLightbox from '@/components/ImageLightbox';
+import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
+import { useAuth } from '@/hooks/useAuth';
 
 const formatPrice = (min: number | null, max: number | null) => {
   const format = (p: number) => '$' + p.toLocaleString('es-AR');
@@ -37,6 +40,7 @@ const DetailsCard = ({
   buyRequestData: any;
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const { user } = useAuth();
   const isActive = buyRequest.status === 'active';
 
   // Get all images for lightbox
@@ -56,11 +60,18 @@ const DetailsCard = ({
     totalImages = 1;
   }
 
+  // Get display name for publisher
+  const displayName = getDisplayNameWithCurrentUser(
+    buyRequest.profiles,
+    buyRequest.user_id,
+    user?.id
+  );
+
   return <>
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-6">
                 {/* Mobile back button - only show on mobile */}
-                <div className="md:hidden">
-                    <Button variant="ghost" asChild className="mb-2 self-start">
+                <div className="md:hidden -mb-4">
+                    <Button variant="ghost" asChild className="self-start">
                         <Link to="/marketplace" className="flex items-center gap-2">
                             <ArrowLeft className="h-4 w-4" />
                             Volver al mercado
@@ -114,9 +125,11 @@ const DetailsCard = ({
                                     <button onClick={() => setLightboxOpen(true)} className="w-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg" aria-label="Ver imagen en tamaño completo">
                                         <img src={coverImage} alt="Imagen del producto" className="w-full h-64 object-cover rounded-lg border border-border" />
                                     </button>
-                                    {/* Image position indicator */}
-                                    <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                                        1/{totalImages}
+                                    {/* Image position indicator - styled like other badges */}
+                                    <div className="absolute top-2 left-2">
+                                        <Badge variant="secondary" className="text-xs px-2 py-1">
+                                            {1}/{totalImages}
+                                        </Badge>
                                     </div>
                                 </div>
                                 
@@ -130,7 +143,7 @@ const DetailsCard = ({
                                             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium"
                                         >
                                             <ExternalLink className="h-4 w-4" />
-                                            Ver referencia
+                                            Ver enlace de referencia
                                         </a>
                                     </div>
                                 )}
@@ -146,6 +159,11 @@ const DetailsCard = ({
               })}
                             </p>
                         </div>
+
+                        <div>
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
+                            <p className="text-base text-foreground">{displayName}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,3 +174,4 @@ const DetailsCard = ({
 };
 
 export default DetailsCard;
+

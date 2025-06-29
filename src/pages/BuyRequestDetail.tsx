@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -121,7 +120,8 @@ const BuyRequestDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col gap-6">
             <BuyRequestInformation buyRequest={buyRequest} buyRequestData={buyRequestData} />
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            {/* Remove the PublisherCard on mobile, keep on desktop */}
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm hidden md:block">
               <PublisherCard buyRequest={buyRequest} />
             </div>
           </div>
