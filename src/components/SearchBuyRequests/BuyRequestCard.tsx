@@ -6,6 +6,7 @@ import { MapPin, Calendar, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import { useAuth } from '@/hooks/useAuth';
+import { capitalizeFirstLetter } from '@/utils/textFormatting';
 
 interface BuyRequest {
   id: string;
@@ -85,14 +86,14 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
               <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
                 <div>
                   <CardTitle className="text-lg line-clamp-2 font-bold mb-1">
-                    {request.title}
+                    {capitalizeFirstLetter(request.title)}
                   </CardTitle>
                   
                   <div className="space-y-1 text-sm text-muted-foreground mb-3">
                     <p>Nuevo</p>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3 flex-shrink-0" />
-                      <span className="truncate">{request.zone}</span>
+                      <span className="truncate">{capitalizeFirstLetter(request.zone)}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
@@ -133,7 +134,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
         <CardContent className="p-3 flex flex-col h-full">
           {/* Title with fixed height for 2 lines and 8px spacing below */}
           <h3 className={`text-sm font-semibold leading-tight line-clamp-3 flex items-start h-[2.4rem] ${getTitleSpacingClass(request.title)}`}>
-            {request.title}
+            {capitalizeFirstLetter(request.title)}
           </h3>
           
           {/* Price label with 8px spacing below */}
@@ -171,7 +172,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <MapPin className="h-3 w-3 flex-shrink-0" />
-                <span className="truncate">{request.zone}</span>
+                <span className="truncate">{capitalizeFirstLetter(request.zone)}</span>
               </div>
             </div>
           </div>
