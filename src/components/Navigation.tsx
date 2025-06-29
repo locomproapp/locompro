@@ -33,8 +33,8 @@ export default function Navigation() {
 
         {/* Espaciador */}
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {/* Mobile auth section - positioned very close to right edge */}
-          <div className="flex items-center space-x-2 md:hidden ml-auto mr-1">
+          {/* Mobile auth section - positioned at the very right edge */}
+          <div className="flex items-center space-x-2 md:hidden ml-auto">
             {user ? (
               <UserAvatar user={user} />
             ) : (
