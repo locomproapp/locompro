@@ -21,7 +21,7 @@ const CompactOfferActionSection = ({
   onStatusUpdate
 }: CompactOfferActionSectionProps) => {
   return (
-    <div className="h-12 flex-shrink-0">
+    <div>
       {canAcceptOrReject && (
         <CompactOfferActions
           offerId={offerId}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import ImageLightbox from '@/components/ImageLightbox';
 import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import { useAuth } from '@/hooks/useAuth';
+import BuyRequestActions from '@/components/BuyRequestActions';
+
 const formatPrice = (min: number | null, max: number | null) => {
   const format = (p: number) => '$' + p.toLocaleString('es-AR');
   if (!min && !max) return 'Presupuesto abierto';
@@ -14,6 +17,7 @@ const formatPrice = (min: number | null, max: number | null) => {
   if (max) return `Hasta ${format(max)}`;
   return 'Presupuesto abierto';
 };
+
 const formatCondition = (condition: string | null) => {
   if (!condition || condition === null || condition === 'null') {
     return 'No especificado';
@@ -27,6 +31,7 @@ const formatCondition = (condition: string | null) => {
   };
   return map[condition] || condition.charAt(0).toUpperCase() + condition.slice(1);
 };
+
 const DetailsCard = ({
   buyRequest,
   buyRequestData
@@ -35,9 +40,7 @@ const DetailsCard = ({
   buyRequestData: any;
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const isActive = buyRequest.status === 'active';
 
   // Get all images for lightbox
@@ -59,6 +62,18 @@ const DetailsCard = ({
 
   // Get display name for publisher
   const displayName = getDisplayNameWithCurrentUser(buyRequest.profiles, buyRequest.user_id, user?.id);
+
+  // Mock delete function for BuyRequestActions
+  const handleDelete = async (id: string) => {
+    // This would need to be implemented based on your actual delete logic
+    return { success: false, error: 'Delete functionality not implemented' };
+  };
+
+  const handleUpdate = () => {
+    // This would need to be implemented based on your actual update logic
+    console.log('Update requested');
+  };
+
   return <>
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-6">
                 {/* Mobile back button - only show on mobile */}
@@ -146,8 +161,20 @@ const DetailsCard = ({
                         </div>
 
                         <div>
-                            <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
-                            <p className="text-base text-foreground">{displayName}</p>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
+                                    <p className="text-base text-foreground">{displayName}</p>
+                                </div>
+                                {/* Restored Edit/Delete actions */}
+                                <BuyRequestActions
+                                    buyRequestId={buyRequest.id}
+                                    buyRequestTitle={buyRequest.title}
+                                    buyRequestUserId={buyRequest.user_id}
+                                    onDelete={handleDelete}
+                                    onUpdate={handleUpdate}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,4 +184,5 @@ const DetailsCard = ({
             {allImages.length > 0 && <ImageLightbox images={allImages} open={lightboxOpen} onOpenChange={setLightboxOpen} startIndex={0} />}
         </>;
 };
+
 export default DetailsCard;

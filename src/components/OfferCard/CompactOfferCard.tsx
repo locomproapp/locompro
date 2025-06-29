@@ -78,7 +78,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full min-w-[260px] max-w-[260px] md:min-w-[320px] md:max-w-[320px]">
-      <Card className={`w-full flex-shrink-0 h-[410px] flex flex-col border-2 ${getCardClassName()}`}>
+      <Card className={`w-full flex-shrink-0 flex flex-col border-2 ${getCardClassName()}`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <CompactOfferHeader
             displayName={displayName}
@@ -88,7 +88,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           />
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col justify-between p-4 pt-0 min-h-0">
+        <CardContent className="flex-1 flex flex-col p-4 pt-0 min-h-0">
           <CompactOfferDetails
             images={offer.images}
             title={offer.title}
@@ -99,16 +99,21 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             deliveryTime={offer.delivery_time}
             description={offer.description}
           />
+          
+          {/* Action buttons moved here - below the description */}
+          {(canAcceptOrReject || isOfferOwner) && (
+            <div className="mt-4 pt-3 border-t border-border">
+              <CompactOfferActionSection
+                canAcceptOrReject={canAcceptOrReject}
+                isOfferOwner={isOfferOwner}
+                offerId={offer.id}
+                buyRequestId={offer.buy_request_id}
+                status={offer.status}
+                onStatusUpdate={onStatusUpdate}
+              />
+            </div>
+          )}
         </CardContent>
-
-        <CompactOfferActionSection
-          canAcceptOrReject={canAcceptOrReject}
-          isOfferOwner={isOfferOwner}
-          offerId={offer.id}
-          buyRequestId={offer.buy_request_id}
-          status={offer.status}
-          onStatusUpdate={onStatusUpdate}
-        />
       </Card>
 
       {/* Rejection reason - separate box below the main card */}
