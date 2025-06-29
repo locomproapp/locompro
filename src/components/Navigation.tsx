@@ -34,7 +34,7 @@ export default function Navigation() {
         {/* Flex container that takes remaining space */}
         <div className="flex-1 flex items-center justify-end">
           {/* Mobile auth section - positioned to align with page content */}
-          <div className="md:hidden pr-4">
+          <div className="md:hidden">
             {user ? (
               <UserAvatar user={user} />
             ) : (
