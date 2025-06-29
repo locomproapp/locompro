@@ -86,11 +86,11 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request }) => {
             {request.zone}
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pt-4 mt-auto">
-          <p className="text-xs text-muted-foreground flex-shrink-0">
+        <div className="flex items-center justify-between gap-4 pt-4 mt-auto">
+          <p className="text-xs text-muted-foreground flex-shrink-0 min-w-0">
             Por: {displayName}
           </p>
-          <Button asChild size="sm" className="self-start sm:self-auto">
+          <Button asChild size="sm" className="flex-shrink-0">
             <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
               <Eye className="h-3 w-3" />
               Ver detalles
