@@ -131,8 +131,8 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     <Link to={`/buy-request/${request.id}`} className="block h-full">
       <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
         <CardContent className="p-3 flex flex-col h-full">
-          {/* Title with 8px spacing below */}
-          <h3 className={`text-sm font-semibold leading-tight line-clamp-3 flex items-start ${getTitleSpacingClass(request.title)}`}>
+          {/* Title with fixed height for 2 lines and 8px spacing below */}
+          <h3 className={`text-sm font-semibold leading-tight line-clamp-3 flex items-start h-[2.4rem] ${getTitleSpacingClass(request.title)}`}>
             {request.title}
           </h3>
           
