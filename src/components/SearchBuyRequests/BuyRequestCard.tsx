@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -121,27 +120,27 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     );
   }
 
-  // Mobile vertical layout - completely redesigned
+  // Mobile vertical layout - refined design
   return (
     <Link to={`/buy-request/${request.id}`} className="block h-full">
       <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
         <CardContent className="p-3 flex flex-col h-full">
           {/* Large title at the top */}
-          <h3 className="text-sm font-semibold leading-tight line-clamp-3 mb-2 min-h-[3.6rem] flex items-start">
+          <h3 className="text-sm font-semibold leading-tight line-clamp-3 mb-1.5 min-h-[3.6rem] flex items-start">
             {request.title}
           </h3>
           
-          {/* Bigger price immediately below */}
-          <div className="mb-3">
-            <Badge variant="outline" className="font-bold text-sm px-2 py-1 bg-primary/10 text-primary border-primary/20">
+          {/* Bigger price immediately below - reduced spacing and size for one line */}
+          <div className="mb-1.5">
+            <Badge variant="outline" className="font-bold text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
               {formatPrice(request.min_price, request.max_price)}
             </Badge>
           </div>
           
-          {/* Photo in the middle */}
+          {/* Photo in the middle with minimal frame */}
           <div className="mb-3 flex-shrink-0">
             {request.reference_image ? (
-              <div className="aspect-square w-full overflow-hidden bg-gray-100">
+              <div className="aspect-square w-full overflow-hidden bg-gray-50 border border-gray-100">
                 <img
                   src={request.reference_image}
                   alt="Referencia"
@@ -149,29 +148,24 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
                 />
               </div>
             ) : (
-              <div className="aspect-square w-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
+              <div className="aspect-square w-full bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-400 text-xs">
                 Sin imagen
               </div>
             )}
           </div>
           
-          {/* Zone and condition under the photo */}
-          <div className="mb-3 space-y-1">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3 flex-shrink-0" />
-              <span className="truncate">{request.zone}</span>
+          {/* Date and zone at the bottom */}
+          <div className="mt-auto pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3 flex-shrink-0" />
+                <span>{formatDate(request.created_at)}</span>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <MapPin className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate">{request.zone}</span>
+              </div>
             </div>
-          </div>
-          
-          {/* Date and seller's name at the bottom */}
-          <div className="mt-auto pt-2 border-t border-gray-100 space-y-1">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Calendar className="h-3 w-3 flex-shrink-0" />
-              <span>{formatDate(request.created_at)}</span>
-            </div>
-            <p className="text-xs text-muted-foreground truncate">
-              Por: {displayName}
-            </p>
           </div>
         </CardContent>
       </Card>
