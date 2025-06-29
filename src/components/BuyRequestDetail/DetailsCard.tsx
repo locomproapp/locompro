@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import ImageLightbox from '@/components/ImageLightbox';
 import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import { useAuth } from '@/hooks/useAuth';
-
 const formatPrice = (min: number | null, max: number | null) => {
   const format = (p: number) => '$' + p.toLocaleString('es-AR');
   if (!min && !max) return 'Presupuesto abierto';
@@ -17,7 +14,6 @@ const formatPrice = (min: number | null, max: number | null) => {
   if (max) return `Hasta ${format(max)}`;
   return 'Presupuesto abierto';
 };
-
 const formatCondition = (condition: string | null) => {
   if (!condition || condition === null || condition === 'null') {
     return 'No especificado';
@@ -31,7 +27,6 @@ const formatCondition = (condition: string | null) => {
   };
   return map[condition] || condition.charAt(0).toUpperCase() + condition.slice(1);
 };
-
 const DetailsCard = ({
   buyRequest,
   buyRequestData
@@ -40,7 +35,9 @@ const DetailsCard = ({
   buyRequestData: any;
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const isActive = buyRequest.status === 'active';
 
   // Get all images for lightbox
@@ -61,12 +58,7 @@ const DetailsCard = ({
   }
 
   // Get display name for publisher
-  const displayName = getDisplayNameWithCurrentUser(
-    buyRequest.profiles,
-    buyRequest.user_id,
-    user?.id
-  );
-
+  const displayName = getDisplayNameWithCurrentUser(buyRequest.profiles, buyRequest.user_id, user?.id);
   return <>
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-6">
                 {/* Mobile back button - only show on mobile */}
@@ -120,7 +112,7 @@ const DetailsCard = ({
 
                         {/* Cover image section - only on mobile */}
                         {coverImage && <div className="md:hidden">
-                                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Fotos</h3>
+                                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Imágenes</h3>
                                 <div className="relative">
                                     <button onClick={() => setLightboxOpen(true)} className="w-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg" aria-label="Ver imagen en tamaño completo">
                                         <img src={coverImage} alt="Imagen del producto" className="w-full h-64 object-cover rounded-lg border border-border" />
@@ -134,19 +126,12 @@ const DetailsCard = ({
                                 </div>
                                 
                                 {/* Reference link below image - only on mobile */}
-                                {buyRequest.reference_url && buyRequest.reference_url !== null && buyRequest.reference_url !== 'null' && buyRequest.reference_url.trim() !== '' && (
-                                    <div className="mt-3">
-                                        <a 
-                                            href={buyRequest.reference_url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium"
-                                        >
+                                {buyRequest.reference_url && buyRequest.reference_url !== null && buyRequest.reference_url !== 'null' && buyRequest.reference_url.trim() !== '' && <div className="mt-3">
+                                        <a href={buyRequest.reference_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium">
                                             <ExternalLink className="h-4 w-4" />
                                             Ver enlace de referencia
                                         </a>
-                                    </div>
-                                )}
+                                    </div>}
                             </div>}
 
                         <div>
@@ -172,6 +157,4 @@ const DetailsCard = ({
             {allImages.length > 0 && <ImageLightbox images={allImages} open={lightboxOpen} onOpenChange={setLightboxOpen} startIndex={0} />}
         </>;
 };
-
 export default DetailsCard;
-
