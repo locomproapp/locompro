@@ -19,7 +19,7 @@ const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionPr
             <div className="relative flex items-center">
               <input
                 type="text"
-                placeholder="Producto que quieras vender"
+                placeholder="Producto que quiero vender..."
                 value={searchQuery}
                 onChange={onInputChange}
                 className="w-full h-12 pl-4 pr-12 text-lg border-2 border-border focus:border-primary rounded-full sm:rounded-full rounded-lg shadow-lg placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
