@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -126,15 +127,17 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
       <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
         <CardContent className="p-3 flex flex-col h-full">
           {/* Large title at the top */}
-          <h3 className="text-sm font-semibold leading-tight line-clamp-3 mb-1.5 min-h-[3.6rem] flex items-start">
+          <h3 className="text-sm font-semibold leading-tight line-clamp-3 mb-1 min-h-[3.6rem] flex items-start">
             {request.title}
           </h3>
           
-          {/* Bigger price immediately below - reduced spacing and size for one line */}
-          <div className="mb-1.5">
-            <Badge variant="outline" className="font-bold text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
-              {formatPrice(request.min_price, request.max_price)}
-            </Badge>
+          {/* Price label matching photo width with consistent padding */}
+          <div className="mb-1.5 flex justify-center">
+            <div className="w-full bg-primary/10 border border-primary/20 rounded-md py-1 px-3 text-center">
+              <span className="font-bold text-xs text-primary whitespace-nowrap">
+                {formatPrice(request.min_price, request.max_price)}
+              </span>
+            </div>
           </div>
           
           {/* Photo in the middle with minimal frame */}
