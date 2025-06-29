@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ExternalLink, Calendar } from 'lucide-react';
 import { getDisplayNameWithLogging } from '@/utils/displayName';
+import { capitalizeFirstLetter } from '@/utils/textFormatting';
 
 interface Post {
   id: string;
@@ -53,10 +53,10 @@ const PostCard = ({ post }: PostCardProps) => {
     <Card className="p-4 hover:shadow-md transition-shadow">
       <div className="space-y-3">
         <div>
-          <h3 className="font-semibold text-lg line-clamp-2">{post.title}</h3>
+          <h3 className="font-semibold text-lg line-clamp-2">{capitalizeFirstLetter(post.title)}</h3>
           {post.description && (
             <p className="text-muted-foreground text-sm line-clamp-3 mt-2">
-              {post.description}
+              {capitalizeFirstLetter(post.description)}
             </p>
           )}
         </div>
@@ -80,7 +80,7 @@ const PostCard = ({ post }: PostCardProps) => {
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="h-4 w-4" />
-          <span>{post.zone}</span>
+          <span>{capitalizeFirstLetter(post.zone)}</span>
         </div>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
