@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -7,7 +8,6 @@ import OfferForm from './OfferForm';
 import BuyRequestActions from './BuyRequestActions';
 import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import { useAuth } from '@/hooks/useAuth';
-import { capitalizeFirstLetter, capitalizeSentences } from '@/utils/textFormatting';
 
 interface BuyRequest {
   id: string;
@@ -97,12 +97,12 @@ const BuyRequestCard = ({
             )}
             <Link to={`/buy-request/${buyRequest.id}`}>
               <h3 className="font-semibold text-lg line-clamp-2 hover:text-primary transition-colors">
-                {capitalizeFirstLetter(buyRequest.title)}
+                {buyRequest.title}
               </h3>
             </Link>
             {buyRequest.description && (
               <p className="text-muted-foreground text-sm line-clamp-2 mt-2">
-                {capitalizeSentences(buyRequest.description)}
+                {buyRequest.description}
               </p>
             )}
           </div>
@@ -123,7 +123,7 @@ const BuyRequestCard = ({
           </Badge>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="h-4 w-4" />
-            <span>{capitalizeFirstLetter(buyRequest.zone)}</span>
+            <span>{buyRequest.zone}</span>
           </div>
         </div>
 

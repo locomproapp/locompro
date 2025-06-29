@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Search, ExternalLink } from 'lucide-react';
 import ImageGallery from './ImageGallery';
-import { capitalizeFirstLetter, capitalizeSentences } from '@/utils/textFormatting';
 
 interface Post {
   id: string;
@@ -52,14 +52,14 @@ const ProductInfo = ({ post }: ProductInfoProps) => {
         </div>
         
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-          {capitalizeFirstLetter(post.title)}
+          {post.title}
         </h1>
 
         {post.description && (
           <div className="mb-6">
             <h3 className="font-semibold text-foreground mb-2">Descripción</h3>
             <p className="text-muted-foreground whitespace-pre-wrap">
-              {capitalizeSentences(post.description)}
+              {post.description}
             </p>
           </div>
         )}

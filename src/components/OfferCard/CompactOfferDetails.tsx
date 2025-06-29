@@ -1,8 +1,8 @@
+
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import CompactOfferImageCarousel from './CompactOfferImageCarousel';
 import CompactOfferPrice from './CompactOfferPrice';
-import { capitalizeFirstLetter, capitalizeSentences } from '@/utils/textFormatting';
 
 interface CompactOfferDetailsProps {
   images: string[] | null;
@@ -59,7 +59,7 @@ const CompactOfferDetails = ({
         />
         <div className="flex items-center gap-1 text-muted-foreground">
           <MapPin className="h-3 w-3" />
-          <span className="text-xs">{capitalizeFirstLetter(contactInfo?.zone || 'No especificada')}</span>
+          <span className="text-xs">{contactInfo?.zone || 'No especificada'}</span>
         </div>
       </div>
 
@@ -81,7 +81,7 @@ const CompactOfferDetails = ({
 
       {/* Description */}
       {description && (
-        <p className="text-xs text-muted-foreground line-clamp-2">{capitalizeSentences(description)}</p>
+        <p className="text-xs text-muted-foreground line-clamp-2">{description}</p>
       )}
     </div>
   );

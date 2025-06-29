@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { MapPin, Image as ImageIcon } from 'lucide-react';
 import { formatPrice } from './utils';
-import { capitalizeFirstLetter, capitalizeSentences } from '@/utils/textFormatting';
 
 interface OfferContentProps {
   title: string;
@@ -16,9 +16,9 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="font-semibold text-lg text-foreground mb-2">{capitalizeFirstLetter(title)}</h3>
+        <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
         {description && (
-          <p className="text-muted-foreground text-sm">{capitalizeSentences(description)}</p>
+          <p className="text-muted-foreground text-sm">{description}</p>
         )}
       </div>
 
@@ -28,7 +28,7 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
         </div>
         <div className="flex items-center gap-1 text-muted-foreground">
           <MapPin className="h-4 w-4" />
-          <span className="text-sm">{capitalizeFirstLetter(zone)}</span>
+          <span className="text-sm">{zone}</span>
         </div>
       </div>
 

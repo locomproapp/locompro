@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Tag } from 'lucide-react';
-import { capitalizeFirstLetter, capitalizeSentences } from '@/utils/textFormatting';
 
 const formatPrice = (min: number | null, max: number | null) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
@@ -45,7 +45,7 @@ const DetailsCard = ({ buyRequest }: { buyRequest: any }) => {
                 </div>
 
                 <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                    {capitalizeFirstLetter(buyRequest.title)}
+                    {buyRequest.title}
                 </h1>
 
                 <div className="space-y-6">
@@ -61,14 +61,14 @@ const DetailsCard = ({ buyRequest }: { buyRequest: any }) => {
 
                     <div>
                         <h3 className="text-sm font-semibold text-muted-foreground mb-1">Zona</h3>
-                        <p className="text-base text-foreground">{capitalizeFirstLetter(buyRequest.zone)}</p>
+                        <p className="text-base text-foreground">{buyRequest.zone}</p>
                     </div>
 
                     {buyRequest.description && buyRequest.description !== null && buyRequest.description !== 'null' && buyRequest.description.trim() !== '' && (
                         <div>
                             <h3 className="text-sm font-semibold text-muted-foreground mb-1">Características</h3>
                             <p className="text-base text-foreground whitespace-pre-wrap">
-                                {capitalizeSentences(buyRequest.description)}
+                                {buyRequest.description}
                             </p>
                         </div>
                     )}

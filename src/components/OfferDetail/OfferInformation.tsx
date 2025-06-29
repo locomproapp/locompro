@@ -1,8 +1,8 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import ImageGallery from '@/components/ImageGallery';
 import RejectionReason from '@/components/OfferCard/RejectionReason';
-import { capitalizeFirstLetter, capitalizeSentences } from '@/utils/textFormatting';
 
 interface OfferInformationProps {
   offer: any;
@@ -60,7 +60,7 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
       </div>
       
       <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-        {capitalizeFirstLetter(offer.title)}
+        {offer.title}
       </h1>
 
       <div className="mb-4">
@@ -72,7 +72,7 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
           {offer.contact_info?.zone && (
             <div>
               <span className="font-medium text-foreground">Zona: </span>
-              <span className="text-muted-foreground">{capitalizeFirstLetter(offer.contact_info.zone)}</span>
+              <span className="text-muted-foreground">{offer.contact_info.zone}</span>
             </div>
           )}
 
@@ -93,7 +93,7 @@ const OfferInformation = ({ offer, isSeller, isBuyer }: OfferInformationProps) =
           {offer.description && (
             <div>
               <span className="font-medium text-foreground">Descripción: </span>
-              <span className="text-muted-foreground">{capitalizeSentences(offer.description)}</span>
+              <span className="text-muted-foreground">{offer.description}</span>
             </div>
           )}
         </div>
