@@ -12,11 +12,6 @@ interface CompactOfferHeaderProps {
 
 const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOfferHeaderProps) => {
   const getStatusBadge = (status: string) => {
-    // Don't show status badge for rejected offers
-    if (status === 'rejected') {
-      return null;
-    }
-
     switch (status) {
       case 'pending':
         return <Badge variant="secondary" className="flex items-center gap-1 text-xs">
@@ -27,6 +22,11 @@ const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOf
         return <Badge variant="default" className="bg-green-500 flex items-center gap-1 text-xs">
           <Check className="h-3 w-3" />
           Aceptada
+        </Badge>;
+      case 'rejected':
+        return <Badge variant="destructive" className="flex items-center gap-1 text-xs">
+          <X className="h-3 w-3" />
+          Rechazada
         </Badge>;
       case 'withdrawn':
         return <Badge variant="outline" className="flex items-center gap-1 text-xs">

@@ -81,7 +81,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   return (
     <div className="space-y-4 w-full min-w-[260px] max-w-[260px] md:min-w-[320px] md:max-w-[320px]">
-      <Card className={`w-full flex-shrink-0 flex flex-col border-2 ${getCardClassName()} ${needsExtraHeight ? 'min-h-[400px]' : ''}`}>
+      <Card className={`w-full flex-shrink-0 flex flex-col border ${getCardClassName()} max-h-[400px]`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <CompactOfferHeader
             displayName={displayName}
@@ -91,21 +91,23 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           />
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col p-4 pt-0 min-h-0 justify-between">
-          <CompactOfferDetails
-            images={offer.images}
-            title={offer.title}
-            price={offer.price}
-            priceHistory={offer.price_history}
-            status={offer.status}
-            contactInfo={offer.contact_info}
-            deliveryTime={offer.delivery_time}
-            description={offer.description}
-          />
+        <CardContent className="flex-1 flex flex-col p-4 pt-0 min-h-0 justify-between overflow-hidden">
+          <div className="flex-1 overflow-hidden">
+            <CompactOfferDetails
+              images={offer.images}
+              title={offer.title}
+              price={offer.price}
+              priceHistory={offer.price_history}
+              status={offer.status}
+              contactInfo={offer.contact_info}
+              deliveryTime={offer.delivery_time}
+              description={offer.description}
+            />
+          </div>
           
           {/* Action buttons pushed to bottom with consistent spacing */}
           {(canAcceptOrReject || isOfferOwner) && (
-            <div className="mt-6 pt-4 border-t border-border/20">
+            <div className="mt-6 pt-4 border-t border-border/20 flex-shrink-0">
               <CompactOfferActionSection
                 canAcceptOrReject={canAcceptOrReject}
                 isOfferOwner={isOfferOwner}
