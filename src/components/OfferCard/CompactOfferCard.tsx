@@ -67,6 +67,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     switch (offer.status) {
       case 'accepted':
         return 'ring-1 ring-green-200 bg-green-50';
+      case 'rejected':
+        return 'border-red-200 bg-white';
       case 'finalized':
         return 'ring-1 ring-gray-200 bg-gray-50';
       default:
