@@ -7,6 +7,8 @@ import { UserMenu } from './Navigation/UserMenu';
 import { UserAvatar } from './Navigation/UserAvatar';
 import { AuthButtons } from './Navigation/AuthButtons';
 import { Logo } from './Navigation/Logo';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export default function Navigation() {
   const { user, signOut } = useAuth();
@@ -31,9 +33,15 @@ export default function Navigation() {
 
         {/* Espaciador */}
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {/* Mobile profile avatar - positioned at far right */}
+          {/* Mobile auth section - positioned at far right */}
           <div className="flex items-center space-x-2 md:hidden ml-auto">
-            <UserAvatar user={user} />
+            {user ? (
+              <UserAvatar user={user} />
+            ) : (
+              <Button variant="ghost" asChild className="capitalize">
+                <Link to="/auth">Ingresar</Link>
+              </Button>
+            )}
           </div>
 
           {/* Desktop user menu */}
