@@ -72,18 +72,6 @@ const Profile = () => {
           <CardHeader>
             <CardTitle>Mi Perfil</CardTitle>
             <CardDescription>Actualizá tu información personal.</CardDescription>
-            
-            {/* Mobile-only logout button */}
-            <div className="md:hidden pt-4">
-              <Button 
-                variant="destructive" 
-                onClick={handleSignOut}
-                className="w-full bg-red-500 hover:bg-red-600 text-white"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Salir
-              </Button>
-            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -101,6 +89,18 @@ const Profile = () => {
             </form>
           </CardContent>
         </Card>
+        
+        {/* Mobile-only logout button - positioned outside the card */}
+        <div className="md:hidden mt-6">
+          <Button 
+            variant="destructive" 
+            onClick={handleSignOut}
+            className="w-full bg-red-500 hover:bg-red-600 text-white"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Salir
+          </Button>
+        </div>
       </main>
       <Footer />
     </div>;
