@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -64,66 +63,53 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     // Desktop horizontal layout
     return (
       <Card className="hover:shadow-md transition-shadow rounded-none border-b border-l-0 border-r-0 border-t-0">
-        <div className="flex p-6">
+        <div className="flex p-4">
           {/* Image section with white margin */}
           <div className="w-44 h-32 flex-shrink-0">
             {request.reference_image ? (
               <img
                 src={request.reference_image}
                 alt="Referencia"
-                className="w-full h-full object-cover rounded-sm"
+                className="w-full h-full object-cover rounded"
               />
             ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 rounded-sm">
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 rounded">
                 Sin imagen
               </div>
             )}
           </div>
 
           {/* Content section */}
-          <div className="flex-1 pl-6 flex flex-col justify-between min-w-0">
-            <div className="space-y-3">
-              {/* Title */}
-              <CardTitle className="text-lg font-bold line-clamp-2 flex-1 min-w-0">
-                {request.title}
-              </CardTitle>
-              
-              {/* Zone */}
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{request.zone}</span>
+          <div className="flex-1 pl-4 flex flex-col justify-between min-w-0">
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-4">
+                <CardTitle className="text-lg line-clamp-2 flex-1 min-w-0">
+                  {request.title}
+                </CardTitle>
+                <Badge variant="outline" className="font-bold flex-shrink-0 whitespace-nowrap">
+                  {formatPrice(request.min_price, request.max_price)}
+                </Badge>
               </div>
-
-              {/* Product Condition - we'll add this when available in the data */}
               
-              {/* Vertical space */}
-              <div className="pt-2">
-                {/* Date */}
-                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
-                  <Calendar className="h-4 w-4" />
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 flex-shrink-0" />
+                  <span className="truncate">{request.zone}</span>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Calendar className="h-3 w-3" />
                   {formatDate(request.created_at)}
                 </div>
-                
-                {/* User */}
-                <p className="text-sm text-muted-foreground">
-                  Por: {displayName}
-                </p>
               </div>
             </div>
 
-            {/* Price badge and button section */}
-            <div className="flex items-center justify-between gap-4 mt-4">
-              {/* Large price badge with fixed dimensions */}
-              <div className="w-40 h-12 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="font-bold text-sm text-primary text-center px-2 leading-tight">
-                  {formatPrice(request.min_price, request.max_price)}
-                </span>
-              </div>
-              
-              {/* Button matching badge dimensions */}
-              <Button asChild className="w-40 h-12 flex-shrink-0 whitespace-nowrap">
-                <Link to={`/buy-request/${request.id}`} className="flex items-center justify-center gap-2">
-                  <Eye className="h-4 w-4" />
+            <div className="flex items-center justify-between gap-3 mt-3">
+              <p className="text-xs text-muted-foreground flex-shrink-0 min-w-0 truncate">
+                Por: {displayName}
+              </p>
+              <Button asChild size="sm" className="flex-shrink-0 whitespace-nowrap">
+                <Link to={`/buy-request/${request.id}`} className="flex items-center gap-1">
+                  <Eye className="h-3 w-3" />
                   Ver detalles
                 </Link>
               </Button>
