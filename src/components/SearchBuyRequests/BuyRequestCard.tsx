@@ -65,16 +65,16 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     return (
       <Card className="hover:shadow-md transition-shadow rounded-none border-b border-l-0 border-r-0 border-t-0">
         <div className="flex p-4">
-          {/* Image section with white margin */}
-          <div className="w-44 h-32 flex-shrink-0 px-4">
+          {/* Image section with consistent margin */}
+          <div className="w-44 h-32 flex-shrink-0 pr-4">
             {request.reference_image ? (
               <img
                 src={request.reference_image}
                 alt="Referencia"
-                className="w-full h-full object-cover rounded-sm"
+                className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 rounded-sm">
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
                 Sin imagen
               </div>
             )}
@@ -95,13 +95,13 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
                       <MapPin className="h-3 w-3 flex-shrink-0" />
                       <span className="truncate">{request.zone}</span>
                     </div>
-                  </div>
-                  
-                  <div className="mt-3 space-y-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {formatDate(request.created_at)}
                     </div>
+                  </div>
+                  
+                  <div className="mt-3 text-xs text-muted-foreground">
                     <p>Por: {displayName}</p>
                   </div>
                 </div>
