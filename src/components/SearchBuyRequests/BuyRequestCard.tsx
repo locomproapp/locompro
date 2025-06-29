@@ -121,56 +121,61 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
     );
   }
 
-  // Mobile vertical layout - optimized for two-column grid
+  // Mobile vertical layout - completely redesigned
   return (
-    <Card className="hover:shadow-md transition-shadow rounded-none border flex flex-col h-full">
-      <CardHeader className="p-2 pb-1 flex-shrink-0">
-        <div className="space-y-1.5">
-          <CardTitle className="text-xs leading-tight line-clamp-3 min-h-[2.7rem] flex items-start">
+    <Link to={`/buy-request/${request.id}`} className="block h-full">
+      <Card className="hover:shadow-md transition-shadow rounded-none border h-full flex flex-col cursor-pointer">
+        <CardContent className="p-3 flex flex-col h-full">
+          {/* Large title at the top */}
+          <h3 className="text-sm font-semibold leading-tight line-clamp-3 mb-2 min-h-[3.6rem] flex items-start">
             {request.title}
-          </CardTitle>
-          <div className="flex items-center justify-between gap-1">
-            <Badge variant="outline" className="font-bold text-[10px] px-1 py-0.5 flex-shrink-0">
+          </h3>
+          
+          {/* Bigger price immediately below */}
+          <div className="mb-3">
+            <Badge variant="outline" className="font-bold text-sm px-2 py-1 bg-primary/10 text-primary border-primary/20">
               {formatPrice(request.min_price, request.max_price)}
             </Badge>
-            <div className="flex items-center gap-0.5 text-[10px] text-muted-foreground flex-shrink-0">
-              <Calendar className="h-2.5 w-2.5" />
+          </div>
+          
+          {/* Photo in the middle */}
+          <div className="mb-3 flex-shrink-0">
+            {request.reference_image ? (
+              <div className="aspect-square w-full overflow-hidden bg-gray-100">
+                <img
+                  src={request.reference_image}
+                  alt="Referencia"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="aspect-square w-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
+                Sin imagen
+              </div>
+            )}
+          </div>
+          
+          {/* Zone and condition under the photo */}
+          <div className="mb-3 space-y-1">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{request.zone}</span>
+            </div>
+          </div>
+          
+          {/* Date and seller's name at the bottom */}
+          <div className="mt-auto pt-2 border-t border-gray-100 space-y-1">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Calendar className="h-3 w-3 flex-shrink-0" />
               <span>{formatDate(request.created_at)}</span>
             </div>
+            <p className="text-xs text-muted-foreground truncate">
+              Por: {displayName}
+            </p>
           </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-2 pt-0 flex flex-col flex-1 min-h-0">
-        <div className="flex-1 space-y-1.5">
-          {request.reference_image && (
-            <div className="aspect-square w-full overflow-hidden bg-gray-100">
-              <img
-                src={request.reference_image}
-                alt="Referencia"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <MapPin className="h-2.5 w-2.5 flex-shrink-0" />
-            <span className="truncate">{request.zone}</span>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-between gap-1 pt-1.5 mt-auto border-t border-gray-100">
-          <p className="text-[10px] text-muted-foreground flex-shrink-0 min-w-0 truncate max-w-[60%]">
-            Por: {displayName}
-          </p>
-          <Button asChild size="sm" className="flex-shrink-0 text-[10px] px-1.5 py-0.5 h-5 min-w-0">
-            <Link to={`/buy-request/${request.id}`} className="flex items-center gap-0.5">
-              <Eye className="h-2.5 w-2.5" />
-              <span>Ver</span>
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 
