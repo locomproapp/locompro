@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { Tag } from 'lucide-react';
+import { Tag, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const formatPrice = (min: number | null, max: number | null) => {
     const format = (p: number) => '$' + p.toLocaleString('es-AR');
@@ -26,14 +28,40 @@ const formatCondition = (condition: string | null) => {
     return map[condition] || condition.charAt(0).toUpperCase() + condition.slice(1);
 };
 
-const DetailsCard = ({ buyRequest }: { buyRequest: any }) => {
+const DetailsCard = ({ buyRequest, buyRequestData }: { buyRequest: any; buyRequestData: any }) => {
     const isActive = buyRequest.status === 'active';
+    
+    // Get cover image
+    let coverImage: string | null = null;
+    let totalImages = 0;
+    
+    if (buyRequestData?.images && Array.isArray(buyRequestData.images) && buyRequestData.images.length > 0) {
+        const validImages = buyRequestData.images.filter((img: any) => img && typeof img === 'string');
+        if (validImages.length > 0) {
+            coverImage = validImages[0];
+            totalImages = validImages.length;
+        }
+    } else if (buyRequestData?.reference_image && typeof buyRequestData.reference_image === 'string') {
+        coverImage = buyRequestData.reference_image;
+        totalImages = 1;
+    }
     
     return (
         <div className="bg-card rounded-lg border border-border p-6 shadow-sm flex flex-col gap-8">
+            {/* Mobile back button - only show on mobile */}
+            <div className="md:hidden">
+                <Button variant="ghost" asChild className="mb-4 self-start">
+                    <Link to="/marketplace" className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4" />
+                        Volver al mercado
+                    </Link>
+                </Button>
+            </div>
+
             <div className="flex flex-col gap-6">
                 <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant={isActive ? "default" : "secondary"}>
+                    {/* Hide status badge on mobile, show on desktop */}
+                    <Badge variant={isActive ? "default" : "secondary"} className="hidden md:flex">
                         {isActive ? 'ACTIVA' : 'CERRADA'}
                     </Badge>
                     {buyRequest.categories && (
@@ -70,6 +98,24 @@ const DetailsCard = ({ buyRequest }: { buyRequest: any }) => {
                             <p className="text-base text-foreground whitespace-pre-wrap">
                                 {buyRequest.description}
                             </p>
+                        </div>
+                    )}
+
+                    {/* Cover image section - only on mobile */}
+                    {coverImage && (
+                        <div className="md:hidden">
+                            <h3 className="text-sm font-semibold text-muted-foreground mb-3">Imagen</h3>
+                            <div className="relative">
+                                <img
+                                    src={coverImage}
+                                    alt="Imagen del producto"
+                                    className="w-full h-64 object-cover rounded-lg border border-border"
+                                />
+                                {/* Image position indicator */}
+                                <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                    1/{totalImages}
+                                </div>
+                            </div>
                         </div>
                     )}
 

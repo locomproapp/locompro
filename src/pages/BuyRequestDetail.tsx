@@ -110,7 +110,8 @@ const BuyRequestDetail = () => {
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
-        <Button variant="ghost" asChild className="mb-4 self-start">
+        {/* Desktop back button - only show on desktop */}
+        <Button variant="ghost" asChild className="mb-4 self-start hidden md:flex">
           <Link to="/marketplace" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Volver al mercado
@@ -119,7 +120,7 @@ const BuyRequestDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col gap-6">
-            <BuyRequestInformation buyRequest={buyRequest} />
+            <BuyRequestInformation buyRequest={buyRequest} buyRequestData={buyRequestData} />
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
               <PublisherCard buyRequest={buyRequest} />
             </div>
