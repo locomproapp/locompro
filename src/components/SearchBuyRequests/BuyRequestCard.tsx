@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -57,10 +58,10 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
   // Function to determine spacing based on title length
   // More precise estimation for when title will wrap to multiple lines
   const getTitleSpacingClass = (title: string) => {
-    // Approximate: if title is longer than ~30 characters, it will likely wrap
+    // Approximate: if title is longer than ~25 characters, it will likely wrap
     // This accounts for the text-sm size and typical mobile card width
     // For wrapped titles: no margin (mb-0), for single line: 1.5 units margin (mb-1.5) to match photo spacing
-    return title.length > 30 ? 'mb-0' : 'mb-1.5';
+    return title.length > 25 ? 'mb-0' : 'mb-1.5';
   };
 
   if (isDesktopHorizontal) {
@@ -186,3 +187,4 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
 };
 
 export default BuyRequestCard;
+
