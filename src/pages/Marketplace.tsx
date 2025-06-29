@@ -47,7 +47,8 @@ const Marketplace = () => {
                 state={{ from: "/marketplace" }}
               >
                 <Plus className="h-4 w-4" />
-                Crear publicación
+                <span className="block sm:hidden">Quiero comprar</span>
+                <span className="hidden sm:block">Crear publicación</span>
               </Link>
             </Button>
           </div>
