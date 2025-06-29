@@ -65,8 +65,6 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   const getCardClassName = () => {
     switch (offer.status) {
-      case 'rejected':
-        return 'ring-1 ring-red-200 bg-red-50';
       case 'accepted':
         return 'ring-1 ring-green-200 bg-green-50';
       case 'finalized':
@@ -102,16 +100,14 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
           
           {/* Action buttons moved here - below the description */}
           {(canAcceptOrReject || isOfferOwner) && (
-            <div className="mt-4 pt-3 border-t border-border">
-              <CompactOfferActionSection
-                canAcceptOrReject={canAcceptOrReject}
-                isOfferOwner={isOfferOwner}
-                offerId={offer.id}
-                buyRequestId={offer.buy_request_id}
-                status={offer.status}
-                onStatusUpdate={onStatusUpdate}
-              />
-            </div>
+            <CompactOfferActionSection
+              canAcceptOrReject={canAcceptOrReject}
+              isOfferOwner={isOfferOwner}
+              offerId={offer.id}
+              buyRequestId={offer.buy_request_id}
+              status={offer.status}
+              onStatusUpdate={onStatusUpdate}
+            />
           )}
         </CardContent>
       </Card>
