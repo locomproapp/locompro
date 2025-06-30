@@ -63,7 +63,7 @@ const CompactOfferOwnerActions = ({
   }
 
   return (
-    <div className="flex items-center justify-center gap-2 md:gap-3 w-full px-2 box-border flex-wrap">
+    <div className="flex items-center justify-center gap-3 w-full px-1 box-border flex-wrap">
       {/* For pending and rejected offers: show consistent button layout */}
       {(status === 'pending' || status === 'rejected') && (
         <>
@@ -71,7 +71,7 @@ const CompactOfferOwnerActions = ({
             variant="outline"
             size="sm"
             asChild
-            className="flex-1 text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-[110px] md:min-w-[100px] max-w-[150px] md:max-w-[140px] flex items-center justify-center"
+            className="flex-1 text-xs min-h-[36px] h-9 px-3 min-w-[100px] max-w-[140px] flex items-center justify-center"
           >
             <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
               {status === 'pending' ? (
@@ -93,7 +93,7 @@ const CompactOfferOwnerActions = ({
                 variant="outline"
                 size="sm"
                 disabled={isDeleting}
-                className="flex-1 text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-[110px] md:min-w-[100px] max-w-[150px] md:max-w-[140px] text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
+                className="flex-1 text-xs min-h-[36px] h-9 px-3 min-w-[100px] max-w-[140px] text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
               >
                 <Trash2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
                 <span className="truncate">{isDeleting ? 'Eliminando...' : 'Eliminar'}</span>
@@ -129,7 +129,7 @@ const CompactOfferOwnerActions = ({
               variant="outline"
               size="sm"
               disabled={isDeleting}
-              className="w-full max-w-[220px] md:max-w-[200px] text-xs min-h-[36px] h-9 px-2 md:px-3 text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
+              className="w-full max-w-[200px] text-xs min-h-[36px] h-9 px-3 text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
             >
               <Trash2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
               <span className="truncate">{isDeleting ? 'Eliminando...' : 'Eliminar'}</span>
