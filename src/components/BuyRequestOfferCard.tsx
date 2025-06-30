@@ -98,7 +98,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
     <>
       {/* Single unified card containing everything */}
       <Card className="w-full">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-4">
           <OfferHeader
             profileName={offer.profiles?.full_name}
             createdAt={offer.created_at}
@@ -106,7 +106,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 pb-6">
           <OfferContent
             title={offer.title}
             description={offer.description}
@@ -118,7 +118,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
 
           {/* Action buttons inside the card at the bottom */}
           {canAcceptOrReject && (
-            <div className="pt-4 border-t border-border">
+            <div className="pt-6 border-t border-border">
               <OfferActions
                 canAcceptOrReject={canAcceptOrReject}
                 isAccepting={isAccepting}
