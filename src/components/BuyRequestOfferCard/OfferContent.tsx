@@ -17,9 +17,12 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
     <div className="space-y-4">
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-        {description && (
-          <p className="text-muted-foreground text-sm">{description}</p>
-        )}
+        {/* Description with fixed height for 3 lines */}
+        <div className="min-h-[3.6rem] flex flex-col justify-start">
+          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+            {description || 'Sin descripción proporcionada'}
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
