@@ -12,8 +12,8 @@ interface SellerActionsProps {
 
 const SellerActions = ({ offerId, isLoading = false, onEdit, onDelete }: SellerActionsProps) => {
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded p-3">
-      <p className="text-sm font-medium text-blue-800 mb-3">Acciones de tu oferta:</p>
+    <div className="bg-red-50 border border-red-200 rounded p-3">
+      <p className="text-sm font-medium text-red-800 mb-3">Acciones de tu oferta:</p>
       <div className="flex gap-2">
         <Button
           variant="outline"
