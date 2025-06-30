@@ -71,7 +71,10 @@ const CompactOfferOwnerActions = ({
             variant="outline"
             size="sm"
             asChild
-            className="flex-1 text-xs md:text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none md:min-w-[100px] md:max-w-[140px] flex items-center justify-center"
+            className={status === 'rejected' 
+              ? "flex-[2] md:flex-1 text-xs md:text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none md:min-w-[100px] md:max-w-[140px] flex items-center justify-center"
+              : "flex-1 text-xs md:text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none md:min-w-[100px] md:max-w-[140px] flex items-center justify-center"
+            }
           >
             <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
               {status === 'pending' ? (
@@ -93,10 +96,15 @@ const CompactOfferOwnerActions = ({
                 variant="outline"
                 size="sm"
                 disabled={isDeleting}
-                className="flex-1 text-xs md:text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none md:min-w-[100px] md:max-w-[140px] text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
+                className={status === 'rejected'
+                  ? "w-9 md:flex-1 text-xs md:text-xs min-h-[36px] h-9 px-0 md:px-3 min-w-0 max-w-none md:min-w-[100px] md:max-w-[140px] text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
+                  : "flex-1 text-xs md:text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none md:min-w-[100px] md:max-w-[140px] text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
+                }
               >
-                <Trash2 className="h-3 w-3 mr-1 md:mr-1.5 flex-shrink-0" />
-                <span className="whitespace-nowrap">{isDeleting ? 'Eliminando...' : 'Eliminar'}</span>
+                <Trash2 className="h-3 w-3 md:mr-1.5 flex-shrink-0" />
+                <span className={status === 'rejected' ? "hidden md:inline whitespace-nowrap" : "whitespace-nowrap"}>
+                  {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                </span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
