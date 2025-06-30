@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -11,6 +10,7 @@ import OfferHeader from './BuyRequestOfferCard/OfferHeader';
 import OfferContent from './BuyRequestOfferCard/OfferContent';
 import OfferActions from './BuyRequestOfferCard/OfferActions';
 import RejectionReason from './BuyRequestOfferCard/RejectionReason';
+import SellerActions from './BuyRequestOfferCard/SellerActions';
 
 interface BuyRequestOfferCardProps {
   offer: BuyRequestOffer;
@@ -27,7 +27,9 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   const [isRejecting, setIsRejecting] = useState(false);
 
   const isOwner = user?.id === buyRequestOwnerId;
+  const isSeller = user?.id === offer.seller_id;
   const canAcceptOrReject = isOwner && offer.status === 'pending';
+  const canEditOrDelete = isSeller && offer.status === 'pending';
 
   const acceptOffer = async () => {
     try {
@@ -94,54 +96,76 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
     }
   };
 
+  const handleEdit = () => {
+    // TODO: Implement edit functionality
+    console.log('Edit offer:', offer.id);
+  };
+
+  const handleDelete = () => {
+    // TODO: Implement delete functionality
+    console.log('Delete offer:', offer.id);
+  };
+
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-3">
-        <OfferHeader
-          profileName={offer.profiles?.full_name}
-          createdAt={offer.created_at}
-          status={offer.status}
-        />
-      </CardHeader>
+    <div className="space-y-4">
+      <Card className="w-full">
+        <CardHeader className="pb-3">
+          <OfferHeader
+            profileName={offer.profiles?.full_name}
+            createdAt={offer.created_at}
+            status={offer.status}
+          />
+        </CardHeader>
 
-      <CardContent className="space-y-4">
-        <OfferContent
-          title={offer.title}
-          description={offer.description}
-          price={offer.price}
-          zone={offer.zone}
-          images={offer.images}
-          characteristics={offer.characteristics}
-        />
+        <CardContent className="space-y-4">
+          <OfferContent
+            title={offer.title}
+            description={offer.description}
+            price={offer.price}
+            zone={offer.zone}
+            images={offer.images}
+            characteristics={offer.characteristics}
+          />
 
-        <RejectionReason 
-          status={offer.status} 
-          rejectionReason={offer.rejection_reason} 
-        />
+          {canAcceptOrReject && (
+            <OfferActions
+              canAcceptOrReject={canAcceptOrReject}
+              isAccepting={isAccepting}
+              isRejecting={isRejecting}
+              onAccept={() => setShowAcceptDialog(true)}
+              onReject={() => setShowRejectDialog(true)}
+            />
+          )}
 
-        <OfferActions
-          canAcceptOrReject={canAcceptOrReject}
-          isAccepting={isAccepting}
-          isRejecting={isRejecting}
-          onAccept={() => setShowAcceptDialog(true)}
-          onReject={() => setShowRejectDialog(true)}
-        />
+          <AcceptOfferDialog
+            open={showAcceptDialog}
+            onOpenChange={setShowAcceptDialog}
+            onConfirm={acceptOffer}
+            isLoading={isAccepting}
+          />
 
-        <AcceptOfferDialog
-          open={showAcceptDialog}
-          onOpenChange={setShowAcceptDialog}
-          onConfirm={acceptOffer}
-          isLoading={isAccepting}
-        />
+          <RejectOfferDialog
+            open={showRejectDialog}
+            onOpenChange={setShowRejectDialog}
+            onConfirm={handleRejectOffer}
+            isLoading={isRejecting}
+          />
+        </CardContent>
+      </Card>
 
-        <RejectOfferDialog
-          open={showRejectDialog}
-          onOpenChange={setShowRejectDialog}
-          onConfirm={handleRejectOffer}
-          isLoading={isRejecting}
+      <RejectionReason 
+        status={offer.status} 
+        rejectionReason={offer.rejection_reason} 
+      />
+
+      {canEditOrDelete && (
+        <SellerActions
+          offerId={offer.id}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 
