@@ -51,7 +51,7 @@ const OfferContent = ({ offer }: OfferContentProps) => {
       )}
 
       {/* Description with fixed height for 3 lines */}
-      <div className="min-h-[3.6rem] flex flex-col justify-start">
+      <div className="h-[3.6rem] flex flex-col justify-start">
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
           {offer.description || 'Sin descripción proporcionada'}
         </p>
@@ -71,7 +71,10 @@ const OfferContent = ({ offer }: OfferContentProps) => {
       </div>
 
       {/* Price history */}
-      <PriceHistory priceHistory={offer.price_history} />
+      <PriceHistory 
+        currentPrice={offer.price}
+        priceHistory={offer.price_history} 
+      />
 
       {/* Contact info */}
       <ContactInfo contactInfo={offer.contact_info} />
