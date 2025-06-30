@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -94,8 +95,8 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="space-y-4 w-full">
-      {/* Main offer card - completely self-contained */}
+    <>
+      {/* Main offer card - NO action buttons inside */}
       <Card className="w-full">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -123,7 +124,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         rejectionReason={offer.rejection_reason} 
       />
 
-      {/* Action buttons in completely separate box - styled to match rejection reason box */}
+      {/* Action buttons in completely separate box */}
       {canAcceptOrReject && (
         <div className="w-full bg-red-50 border border-red-200 rounded p-3">
           <OfferActions
@@ -150,7 +151,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         onConfirm={handleRejectOffer}
         isLoading={isRejecting}
       />
-    </div>
+    </>
   );
 };
 
