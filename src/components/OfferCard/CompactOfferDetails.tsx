@@ -79,8 +79,8 @@ const CompactOfferDetails = ({
         )}
       </div>
 
-      {/* Description with fixed height for 3 lines */}
-      <div className="min-h-[2.7rem] flex flex-col justify-start">
+      {/* Description with fixed height for 3 lines - responsive */}
+      <div className="h-[3.6rem] sm:h-[2.7rem] flex flex-col justify-start">
         <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
           {description || 'Sin descripción proporcionada'}
         </p>

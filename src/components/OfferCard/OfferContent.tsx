@@ -50,8 +50,8 @@ const OfferContent = ({ offer }: OfferContentProps) => {
         </div>
       )}
 
-      {/* Description with fixed height for 3 lines */}
-      <div className="h-[3.6rem] flex flex-col justify-start">
+      {/* Description with fixed height for 3 lines - responsive */}
+      <div className="h-[4.2rem] sm:h-[3.6rem] flex flex-col justify-start">
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
           {offer.description || 'Sin descripción proporcionada'}
         </p>
