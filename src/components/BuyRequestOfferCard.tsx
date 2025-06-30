@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -96,6 +95,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
 
   return (
     <div className="space-y-4 w-full">
+      {/* Main offer card - completely self-contained */}
       <Card className="w-full">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -114,29 +114,16 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
             images={offer.images}
             characteristics={offer.characteristics}
           />
-
-          <RejectionReason 
-            status={offer.status} 
-            rejectionReason={offer.rejection_reason} 
-          />
-
-          <AcceptOfferDialog
-            open={showAcceptDialog}
-            onOpenChange={setShowAcceptDialog}
-            onConfirm={acceptOffer}
-            isLoading={isAccepting}
-          />
-
-          <RejectOfferDialog
-            open={showRejectDialog}
-            onOpenChange={setShowRejectDialog}
-            onConfirm={handleRejectOffer}
-            isLoading={isRejecting}
-          />
         </CardContent>
       </Card>
 
-      {/* Action buttons in separate box - styled to match rejection reason box */}
+      {/* Rejection reason in separate box */}
+      <RejectionReason 
+        status={offer.status} 
+        rejectionReason={offer.rejection_reason} 
+      />
+
+      {/* Action buttons in completely separate box - styled to match rejection reason box */}
       {canAcceptOrReject && (
         <div className="w-full bg-red-50 border border-red-200 rounded p-3">
           <OfferActions
@@ -148,6 +135,21 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </div>
       )}
+
+      {/* Dialogs */}
+      <AcceptOfferDialog
+        open={showAcceptDialog}
+        onOpenChange={setShowAcceptDialog}
+        onConfirm={acceptOffer}
+        isLoading={isAccepting}
+      />
+
+      <RejectOfferDialog
+        open={showRejectDialog}
+        onOpenChange={setShowRejectDialog}
+        onConfirm={handleRejectOffer}
+        isLoading={isRejecting}
+      />
     </div>
   );
 };
