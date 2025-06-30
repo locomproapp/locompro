@@ -3,6 +3,7 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import CompactOfferImageCarousel from './CompactOfferImageCarousel';
 import CompactOfferPrice from './CompactOfferPrice';
+import CompactOfferOwnerActions from './CompactOfferOwnerActions';
 
 interface CompactOfferDetailsProps {
   images: string[] | null;
@@ -17,6 +18,11 @@ interface CompactOfferDetailsProps {
   contactInfo: any;
   deliveryTime: string | null;
   description: string | null;
+  // New props for rejected offer handling
+  offerId?: string;
+  buyRequestId?: string;
+  isOfferOwner?: boolean;
+  onStatusUpdate?: () => void;
 }
 
 const CompactOfferDetails = ({ 
@@ -27,7 +33,11 @@ const CompactOfferDetails = ({
   status, 
   contactInfo, 
   deliveryTime, 
-  description 
+  description,
+  offerId,
+  buyRequestId,
+  isOfferOwner,
+  onStatusUpdate
 }: CompactOfferDetailsProps) => {
   const getConditionText = (condition: string) => {
     switch (condition) {
@@ -41,6 +51,9 @@ const CompactOfferDetails = ({
       default: return condition;
     }
   };
+
+  // Check if we should show action buttons instead of description
+  const shouldShowActionsInDescription = status === 'rejected' && isOfferOwner && offerId && buyRequestId;
 
   return (
     <div className="space-y-3 flex-1">
@@ -81,9 +94,23 @@ const CompactOfferDetails = ({
 
       {/* Description with fixed height for 3 lines - responsive */}
       <div className="h-[3.6rem] sm:h-[2.7rem] flex flex-col justify-start">
-        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-          {description || 'Sin descripción proporcionada'}
-        </p>
+        {shouldShowActionsInDescription ? (
+          // Show action buttons centered in the description space for rejected offers owned by current user
+          <div className="h-full flex items-center justify-center">
+            <CompactOfferOwnerActions
+              offerId={offerId}
+              buyRequestId={buyRequestId}
+              status={status}
+              isOfferOwner={true}
+              onStatusUpdate={onStatusUpdate}
+            />
+          </div>
+        ) : (
+          // Show description for all other cases
+          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+            {description || 'Sin descripción proporcionada'}
+          </p>
+        )}
       </div>
     </div>
   );
