@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import OfferHeader from './BuyRequestOfferCard/OfferHeader';
 import OfferContent from './BuyRequestOfferCard/OfferContent';
 import OfferActions from './BuyRequestOfferCard/OfferActions';
 import RejectionReason from './BuyRequestOfferCard/RejectionReason';
+import PendingOfferActions from './BuyRequestOfferCard/PendingOfferActions';
 
 interface BuyRequestOfferCardProps {
   offer: BuyRequestOffer;
@@ -26,6 +28,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   const [isRejecting, setIsRejecting] = useState(false);
 
   const isOwner = user?.id === buyRequestOwnerId;
+  const isOfferOwner = user?.id === offer.seller_id;
   const canAcceptOrReject = isOwner && offer.status === 'pending';
 
   const acceptOffer = async () => {
@@ -94,54 +97,65 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-3">
-        <OfferHeader
-          profileName={offer.profiles?.full_name}
-          createdAt={offer.created_at}
-          status={offer.status}
-        />
-      </CardHeader>
+    <div>
+      <Card className="w-full">
+        <CardHeader className="pb-3">
+          <OfferHeader
+            profileName={offer.profiles?.full_name}
+            createdAt={offer.created_at}
+            status={offer.status}
+            sellerId={offer.seller_id}
+          />
+        </CardHeader>
 
-      <CardContent className="space-y-4">
-        <OfferContent
-          title={offer.title}
-          description={offer.description}
-          price={offer.price}
-          zone={offer.zone}
-          images={offer.images}
-          characteristics={offer.characteristics}
-          status={offer.status}
-        />
+        <CardContent className="space-y-4">
+          <OfferContent
+            title={offer.title}
+            description={offer.description}
+            price={offer.price}
+            zone={offer.zone}
+            images={offer.images}
+            characteristics={offer.characteristics}
+            status={offer.status}
+          />
 
-        <RejectionReason 
-          status={offer.status} 
-          rejectionReason={offer.rejection_reason} 
-        />
+          <OfferActions
+            canAcceptOrReject={canAcceptOrReject}
+            isAccepting={isAccepting}
+            isRejecting={isRejecting}
+            onAccept={() => setShowAcceptDialog(true)}
+            onReject={() => setShowRejectDialog(true)}
+          />
 
-        <OfferActions
-          canAcceptOrReject={canAcceptOrReject}
-          isAccepting={isAccepting}
-          isRejecting={isRejecting}
-          onAccept={() => setShowAcceptDialog(true)}
-          onReject={() => setShowRejectDialog(true)}
-        />
+          <AcceptOfferDialog
+            open={showAcceptDialog}
+            onOpenChange={setShowAcceptDialog}
+            onConfirm={acceptOffer}
+            isLoading={isAccepting}
+          />
 
-        <AcceptOfferDialog
-          open={showAcceptDialog}
-          onOpenChange={setShowAcceptDialog}
-          onConfirm={acceptOffer}
-          isLoading={isAccepting}
-        />
+          <RejectOfferDialog
+            open={showRejectDialog}
+            onOpenChange={setShowRejectDialog}
+            onConfirm={handleRejectOffer}
+            isLoading={isRejecting}
+          />
+        </CardContent>
+      </Card>
 
-        <RejectOfferDialog
-          open={showRejectDialog}
-          onOpenChange={setShowRejectDialog}
-          onConfirm={handleRejectOffer}
-          isLoading={isRejecting}
-        />
-      </CardContent>
-    </Card>
+      {/* Rejection reason box - shown below card for rejected offers */}
+      <RejectionReason 
+        status={offer.status} 
+        rejectionReason={offer.rejection_reason} 
+      />
+
+      {/* Pending offer actions box - shown below card for user's own pending offers */}
+      <PendingOfferActions
+        offerId={offer.id}
+        isOfferOwner={isOfferOwner}
+        status={offer.status}
+      />
+    </div>
   );
 };
 
