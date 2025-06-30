@@ -10,24 +10,19 @@ interface OfferContentProps {
   zone: string;
   images: string[] | null;
   characteristics: any;
-  status: string;
 }
 
-const OfferContent = ({ title, description, price, zone, images, characteristics, status }: OfferContentProps) => {
-  const shouldShowDescription = status === 'pending' || status === 'accepted';
-  
+const OfferContent = ({ title, description, price, zone, images, characteristics }: OfferContentProps) => {
   return (
     <div className="space-y-4">
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-        {/* Show full description for pending and accepted offers */}
-        {shouldShowDescription && (
-          <div className="mb-4">
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {description || 'Sin descripción proporcionada'}
-            </p>
-          </div>
-        )}
+        {/* Description with fixed height for 3 lines - responsive */}
+        <div className="h-[4.2rem] sm:h-[3.6rem] flex flex-col justify-start">
+          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+            {description || 'Sin descripción proporcionada'}
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
