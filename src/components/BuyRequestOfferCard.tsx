@@ -136,9 +136,9 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         </CardContent>
       </Card>
 
-      {/* Action buttons in separate box - only show if user can accept/reject */}
+      {/* Action buttons in separate box - styled to match rejection reason box */}
       {canAcceptOrReject && (
-        <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="w-full bg-red-50 border border-red-200 rounded p-3">
           <OfferActions
             canAcceptOrReject={canAcceptOrReject}
             isAccepting={isAccepting}
