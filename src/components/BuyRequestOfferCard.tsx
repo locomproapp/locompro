@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -112,6 +111,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           zone={offer.zone}
           images={offer.images}
           characteristics={offer.characteristics}
+          status={offer.status}
         />
 
         <RejectionReason 
