@@ -1,9 +1,6 @@
 
 import React from 'react';
 import { MapPin } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 import CompactOfferImageCarousel from './CompactOfferImageCarousel';
 import CompactOfferPrice from './CompactOfferPrice';
 
@@ -32,10 +29,6 @@ const CompactOfferDetails = ({
   deliveryTime, 
   description 
 }: CompactOfferDetailsProps) => {
-  const isMobile = useIsMobile();
-  const isRejected = status === 'rejected';
-  const shouldHideDescription = isMobile && isRejected;
-
   const getConditionText = (condition: string) => {
     switch (condition) {
       case 'nuevo': return 'Nuevo';
@@ -86,23 +79,11 @@ const CompactOfferDetails = ({
         )}
       </div>
 
-      {/* Description with fixed height for 3 lines - responsive OR Status for rejected mobile */}
+      {/* Description with fixed height for 3 lines - responsive */}
       <div className="h-[3.6rem] sm:h-[2.7rem] flex flex-col justify-start">
-        {shouldHideDescription ? (
-          <div className="flex flex-col gap-2">
-            <Badge variant="destructive" className="flex items-center gap-1 text-xs w-fit">
-              <X className="h-3 w-3" />
-              Rechazada
-            </Badge>
-            <div className="text-xs text-muted-foreground">
-              Esta oferta fue rechazada por el comprador
-            </div>
-          </div>
-        ) : (
-          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-            {description || 'Sin descripción proporcionada'}
-          </p>
-        )}
+        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+          {description || 'Sin descripción proporcionada'}
+        </p>
       </div>
     </div>
   );
