@@ -20,7 +20,7 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
     <div className="space-y-4">
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-        {/* Show description for pending and accepted offers */}
+        {/* Show full description for pending and accepted offers */}
         {shouldShowDescription && (
           <div className="mb-4">
             <p className="text-muted-foreground text-sm leading-relaxed">
