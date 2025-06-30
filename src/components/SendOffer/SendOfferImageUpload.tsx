@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Control, useWatch } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -9,15 +8,18 @@ import { Upload, X, ZoomIn, ArrowRight, ArrowLeft as ArrowLeftIcon } from 'lucid
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { SendOfferFormData } from './SendOfferForm';
-
 interface SendOfferImageUploadProps {
   control: Control<SendOfferFormData>;
 }
-
-export const SendOfferImageUpload = ({ control }: SendOfferImageUploadProps) => {
+export const SendOfferImageUpload = ({
+  control
+}: SendOfferImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
-  const imagesValue = useWatch({ control, name: 'images' });
+  const imagesValue = useWatch({
+    control,
+    name: 'images'
+  });
 
   // Initialize images when form value changes (for edit mode)
   useEffect(() => {
@@ -25,7 +27,6 @@ export const SendOfferImageUpload = ({ control }: SendOfferImageUploadProps) => 
       setImages(imagesValue);
     }
   }, [imagesValue, images.length]);
-
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
@@ -40,30 +41,24 @@ export const SendOfferImageUpload = ({ control }: SendOfferImageUploadProps) => 
       event.target.value = '';
       return;
     }
-
     setUploading(true);
     try {
-      const uploadPromises = files.map(async (file) => {
+      const uploadPromises = files.map(async file => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-        
-        const { data, error } = await supabase.storage
-          .from('offer-images')
-          .upload(fileName, file);
-
+        const {
+          data,
+          error
+        } = await supabase.storage.from('offer-images').upload(fileName, file);
         if (error) throw error;
-
-        const { data: urlData } = supabase.storage
-          .from('offer-images')
-          .getPublicUrl(fileName);
-
+        const {
+          data: urlData
+        } = supabase.storage.from('offer-images').getPublicUrl(fileName);
         return urlData.publicUrl;
       });
-
       const uploadedUrls = await Promise.all(uploadPromises);
       const newImages = [...images, ...uploadedUrls];
       setImages(newImages);
-      
       toast({
         title: "Imágenes subidas",
         description: "Las imágenes se han subido correctamente"
@@ -80,81 +75,47 @@ export const SendOfferImageUpload = ({ control }: SendOfferImageUploadProps) => 
       event.target.value = '';
     }
   };
-
   const removeImage = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
   };
-
   const moveImage = (index: number, direction: 'left' | 'right') => {
     const newImages = [...images];
     const targetIndex = direction === 'left' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= newImages.length) return;
-
     [newImages[index], newImages[targetIndex]] = [newImages[targetIndex], newImages[index]];
     setImages(newImages);
   };
-
-  return (
-    <FormField
-      control={control}
-      name="images"
-      render={({ field }) => {
-        // Update form field when images change
-        React.useEffect(() => {
-          field.onChange(images);
-        }, [images, field]);
-
-        return (
-          <FormItem>
-            <FormLabel>Fotos del producto</FormLabel>
+  return <FormField control={control} name="images" render={({
+    field
+  }) => {
+    // Update form field when images change
+    React.useEffect(() => {
+      field.onChange(images);
+    }, [images, field]);
+    return <FormItem>
+            <FormLabel>Fotos</FormLabel>
             <div className="space-y-4">
-              <Input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageUpload}
-                disabled={uploading || images.length >= 5}
-                className="hidden"
-                id="images-upload"
-              />
+              <Input type="file" accept="image/*" multiple onChange={handleImageUpload} disabled={uploading || images.length >= 5} className="hidden" id="images-upload" />
               <label htmlFor="images-upload">
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={uploading || images.length >= 5}
-                  className="w-full border-dashed cursor-pointer h-20"
-                  asChild
-                >
+                <Button type="button" variant="outline" disabled={uploading || images.length >= 5} className="w-full border-dashed cursor-pointer h-20" asChild>
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Upload className="h-6 w-6" />
                     <span className="text-sm">
-                      {uploading 
-                        ? 'Subiendo...' 
-                        : images.length >= 5
-                          ? 'Máximo 5 imágenes permitidas'
-                          : `Subir fotos desde dispositivo (${images.length}/5)`}
+                      {uploading ? 'Subiendo...' : images.length >= 5 ? 'Máximo 5 imágenes permitidas' : `Subir fotos desde dispositivo (${images.length}/5)`}
                     </span>
                   </div>
                 </Button>
               </label>
               
-              {images.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center">
+              {images.length === 0 && <p className="text-sm text-muted-foreground text-center">
                   Tenés que subir al menos una imagen
-                </p>
-              )}
+                </p>}
               
-              {images.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative group">
+              {images.length > 0 && <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {images.map((image, index) => <div key={index} className="relative group">
                       <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
-                        <img 
-                          src={image} 
-                          alt={`Producto ${index + 1}`} 
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
+                        <img src={image} alt={`Producto ${index + 1}`} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                       </div>
                       
                       {/* Action buttons */}
@@ -186,22 +147,15 @@ export const SendOfferImageUpload = ({ control }: SendOfferImageUploadProps) => 
                       </div>
 
                       {/* Cover photo indicator */}
-                      {index === 0 && (
-                        <div className="absolute bottom-2 left-2">
+                      {index === 0 && <div className="absolute bottom-2 left-2">
                           <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
                             Principal
                           </span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                        </div>}
+                    </div>)}
+                </div>}
             </div>
             <FormMessage />
-          </FormItem>
-        );
-      }}
-    />
-  );
+          </FormItem>;
+  }} />;
 };
