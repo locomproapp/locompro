@@ -86,7 +86,7 @@ export const SendOfferFormFields = ({
       <FormField control={control} name="description" render={({
       field
     }) => <FormItem>
-            <FormLabel>Descripción adicional (opcional)</FormLabel>
+            <FormLabel>Descripción</FormLabel>
             <FormControl>
               <Textarea placeholder="Información adicional sobre el producto..." {...field} />
             </FormControl>
