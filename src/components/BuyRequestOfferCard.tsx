@@ -96,7 +96,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
 
   return (
     <>
-      {/* Main offer card - NO action buttons inside */}
+      {/* Single unified card containing everything */}
       <Card className="w-full">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -115,27 +115,27 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
             images={offer.images}
             characteristics={offer.characteristics}
           />
+
+          {/* Action buttons inside the card at the bottom */}
+          {canAcceptOrReject && (
+            <div className="pt-4 border-t border-border">
+              <OfferActions
+                canAcceptOrReject={canAcceptOrReject}
+                isAccepting={isAccepting}
+                isRejecting={isRejecting}
+                onAccept={() => setShowAcceptDialog(true)}
+                onReject={() => setShowRejectDialog(true)}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Rejection reason in separate box */}
+      {/* Rejection reason in separate box to match its bottom limit */}
       <RejectionReason 
         status={offer.status} 
         rejectionReason={offer.rejection_reason} 
       />
-
-      {/* Action buttons in completely separate box */}
-      {canAcceptOrReject && (
-        <div className="w-full bg-red-50 border border-red-200 rounded p-3">
-          <OfferActions
-            canAcceptOrReject={canAcceptOrReject}
-            isAccepting={isAccepting}
-            isRejecting={isRejecting}
-            onAccept={() => setShowAcceptDialog(true)}
-            onReject={() => setShowRejectDialog(true)}
-          />
-        </div>
-      )}
 
       {/* Dialogs */}
       <AcceptOfferDialog
