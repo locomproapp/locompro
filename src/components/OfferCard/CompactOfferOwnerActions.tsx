@@ -63,7 +63,7 @@ const CompactOfferOwnerActions = ({
   }
 
   return (
-    <div className="flex items-center justify-center gap-3 w-full max-w-[200px] mx-0 my-0 px-0 py-0">
+    <div className="flex items-center justify-center gap-2.5 w-full max-w-[220px] mx-auto px-2">
       {/* For pending and rejected offers: show consistent button layout */}
       {(status === 'pending' || status === 'rejected') && (
         <>
@@ -71,18 +71,18 @@ const CompactOfferOwnerActions = ({
             variant="outline"
             size="sm"
             asChild
-            className="flex-shrink-0 text-xs h-8 px-3 min-w-[85px]"
+            className="flex-1 text-xs min-h-[36px] h-9 px-2.5 min-w-[90px] max-w-[105px] flex items-center justify-center"
           >
             <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
               {status === 'pending' ? (
                 <>
-                  <Edit className="h-3 w-3 mr-1" />
-                  Editar
+                  <Edit className="h-3 w-3 mr-1.5 flex-shrink-0" />
+                  <span className="truncate">Editar</span>
                 </>
               ) : (
                 <>
-                  <RefreshCw className="h-3 w-3 mr-1" />
-                  Contraofertar
+                  <RefreshCw className="h-3 w-3 mr-1.5 flex-shrink-0" />
+                  <span className="truncate">Contraofertar</span>
                 </>
               )}
             </Link>
@@ -93,10 +93,10 @@ const CompactOfferOwnerActions = ({
                 variant="outline"
                 size="sm"
                 disabled={isDeleting}
-                className="flex-shrink-0 text-xs h-8 px-3 min-w-[85px] text-destructive hover:text-destructive hover:border-destructive"
+                className="flex-1 text-xs min-h-[36px] h-9 px-2.5 min-w-[90px] max-w-[105px] text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
               >
-                <Trash2 className="h-3 w-3 mr-1" />
-                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                <Trash2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
+                <span className="truncate">{isDeleting ? 'Eliminando...' : 'Eliminar'}</span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -129,10 +129,10 @@ const CompactOfferOwnerActions = ({
               variant="outline"
               size="sm"
               disabled={isDeleting}
-              className="w-full max-w-[170px] text-xs h-8 px-3 text-destructive hover:text-destructive hover:border-destructive"
+              className="w-full max-w-[180px] text-xs min-h-[36px] h-9 px-3 text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
             >
-              <Trash2 className="h-3 w-3 mr-1" />
-              {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              <Trash2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
+              <span className="truncate">{isDeleting ? 'Eliminando...' : 'Eliminar'}</span>
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
