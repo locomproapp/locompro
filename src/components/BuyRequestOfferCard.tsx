@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -127,6 +128,14 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
             characteristics={offer.characteristics}
           />
 
+          {canEditOrDelete && (
+            <SellerActions
+              offerId={offer.id}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+
           {canAcceptOrReject && (
             <OfferActions
               canAcceptOrReject={canAcceptOrReject}
@@ -157,14 +166,6 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         status={offer.status} 
         rejectionReason={offer.rejection_reason} 
       />
-
-      {canEditOrDelete && (
-        <SellerActions
-          offerId={offer.id}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      )}
     </div>
   );
 };
