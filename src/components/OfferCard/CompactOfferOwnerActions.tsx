@@ -63,7 +63,7 @@ const CompactOfferOwnerActions = ({
   }
 
   return (
-    <div className="flex gap-2 w-full max-w-[200px]">
+    <div className="flex gap-2 w-full max-w-[180px] mx-auto">
       {/* For pending and rejected offers: show consistent button layout */}
       {(status === 'pending' || status === 'rejected') && (
         <>
@@ -71,7 +71,7 @@ const CompactOfferOwnerActions = ({
             variant="outline"
             size="sm"
             asChild
-            className="flex-1 text-xs"
+            className="flex-1 text-xs h-8"
           >
             <Link to={`/send-offer/${buyRequestId}?edit=${offerId}`}>
               {status === 'pending' ? (
@@ -93,7 +93,7 @@ const CompactOfferOwnerActions = ({
                 variant="outline"
                 size="sm"
                 disabled={isDeleting}
-                className="flex-1 text-xs text-destructive hover:text-destructive hover:border-destructive"
+                className="flex-1 text-xs h-8 text-destructive hover:text-destructive hover:border-destructive"
               >
                 <Trash2 className="h-3 w-3 mr-1" />
                 {isDeleting ? 'Eliminando...' : 'Eliminar'}
@@ -129,7 +129,7 @@ const CompactOfferOwnerActions = ({
               variant="outline"
               size="sm"
               disabled={isDeleting}
-              className="w-full text-xs text-destructive hover:text-destructive hover:border-destructive"
+              className="w-full text-xs h-8 text-destructive hover:text-destructive hover:border-destructive"
             >
               <Trash2 className="h-3 w-3 mr-1" />
               {isDeleting ? 'Eliminando...' : 'Eliminar'}

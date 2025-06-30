@@ -93,10 +93,10 @@ const CompactOfferDetails = ({
       </div>
 
       {/* Description with fixed height for 3 lines - responsive */}
-      <div className="h-[3.6rem] sm:h-[2.7rem] flex flex-col justify-start">
+      <div className="h-[4.5rem] flex flex-col justify-center">
         {shouldShowActionsInDescription ? (
-          // Show action buttons centered in the description space for rejected offers owned by current user
-          <div className="h-full flex items-center justify-center">
+          // Show action buttons perfectly centered in the description space for rejected offers owned by current user
+          <div className="h-full flex items-center justify-center px-2">
             <CompactOfferOwnerActions
               offerId={offerId}
               buyRequestId={buyRequestId}
