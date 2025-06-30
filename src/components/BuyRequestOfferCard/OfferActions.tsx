@@ -21,24 +21,22 @@ const OfferActions = ({
   if (!canAcceptOrReject) return null;
 
   return (
-    <div className="flex gap-2 w-full">
+    <div className="flex gap-2 pt-2">
       <Button
         onClick={onAccept}
         disabled={isAccepting || isRejecting}
-        className="flex-1 text-xs md:text-sm"
-        size="sm"
+        className="flex-1"
       >
-        <Check className="h-3 w-3 mr-1" />
+        <Check className="h-4 w-4 mr-2" />
         {isAccepting ? 'Aceptando...' : 'Aceptar'}
       </Button>
       <Button
         variant="destructive"
         onClick={onReject}
         disabled={isAccepting || isRejecting}
-        className="flex-1 text-xs md:text-sm"
-        size="sm"
+        className="flex-1"
       >
-        <X className="h-3 w-3 mr-1" />
+        <X className="h-4 w-4 mr-2" />
         Rechazar
       </Button>
     </div>

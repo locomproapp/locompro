@@ -56,7 +56,7 @@ const CompactOfferDetails = ({
   const shouldShowActionsInDescription = status === 'rejected' && isOfferOwner && offerId && buyRequestId;
 
   return (
-    <div className="space-y-2 md:space-y-3 flex-1">
+    <div className="space-y-3 flex-1">
       {/* Image section */}
       <CompactOfferImageCarousel 
         images={images} 
@@ -92,8 +92,8 @@ const CompactOfferDetails = ({
         )}
       </div>
 
-      {/* Description with fixed height for mobile consistency */}
-      <div className="h-[3.5rem] md:h-[4.5rem]">
+      {/* Description with fixed height for 3 lines - responsive */}
+      <div className="h-[4.5rem]">
         {shouldShowActionsInDescription ? (
           // Perfect centering container for action buttons in rejected offers owned by current user
           <div className="h-full flex items-center justify-center p-0 m-0">
