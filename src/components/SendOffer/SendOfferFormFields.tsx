@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Control } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -9,49 +8,38 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { SendOfferFormData } from './SendOfferForm';
 import { SendOfferPriceInput } from './SendOfferPriceInput';
 import { SendOfferImageUpload } from './SendOfferImageUpload';
-
 interface SendOfferFormFieldsProps {
   control: Control<SendOfferFormData>;
 }
-
-export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
-  return (
-    <>
-      <FormField
-        control={control}
-        name="title"
-        render={({ field }) => (
-          <FormItem>
+export const SendOfferFormFields = ({
+  control
+}: SendOfferFormFieldsProps) => {
+  return <>
+      <FormField control={control} name="title" render={({
+      field
+    }) => <FormItem>
             <FormLabel>Título de tu oferta</FormLabel>
             <FormControl>
               <Input placeholder="Ej: iPhone 14 Pro Max 256GB Azul" {...field} />
             </FormControl>
             <FormMessage />
-          </FormItem>
-        )}
-      />
+          </FormItem>} />
 
       <SendOfferPriceInput control={control} />
 
-      <FormField
-        control={control}
-        name="zone"
-        render={({ field }) => (
-          <FormItem>
+      <FormField control={control} name="zone" render={({
+      field
+    }) => <FormItem>
             <FormLabel>Zona</FormLabel>
             <FormControl>
               <Input placeholder="Ej: CABA, Zona Norte, etc." {...field} />
             </FormControl>
             <FormMessage />
-          </FormItem>
-        )}
-      />
+          </FormItem>} />
 
-      <FormField
-        control={control}
-        name="condition"
-        render={({ field }) => (
-          <FormItem>
+      <FormField control={control} name="condition" render={({
+      field
+    }) => <FormItem>
             <FormLabel>Estado del producto</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
@@ -67,25 +55,17 @@ export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
               </SelectContent>
             </Select>
             <FormMessage />
-          </FormItem>
-        )}
-      />
+          </FormItem>} />
 
-      <FormField
-        control={control}
-        name="delivery_time"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Envío *</FormLabel>
+      <FormField control={control} name="delivery_time" render={({
+      field
+    }) => <FormItem>
+            <FormLabel>Envío</FormLabel>
             <FormControl>
-              <RadioGroup
-                onValueChange={(value) => {
-                  console.log('Delivery time selected:', value);
-                  field.onChange(value);
-                }}
-                value={field.value}
-                className="flex flex-row gap-6"
-              >
+              <RadioGroup onValueChange={value => {
+          console.log('Delivery time selected:', value);
+          field.onChange(value);
+        }} value={field.value} className="flex flex-row gap-6">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="En persona" id="en-persona" />
                   <label htmlFor="en-persona" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -101,28 +81,18 @@ export const SendOfferFormFields = ({ control }: SendOfferFormFieldsProps) => {
               </RadioGroup>
             </FormControl>
             <FormMessage />
-          </FormItem>
-        )}
-      />
+          </FormItem>} />
 
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
+      <FormField control={control} name="description" render={({
+      field
+    }) => <FormItem>
             <FormLabel>Descripción adicional (opcional)</FormLabel>
             <FormControl>
-              <Textarea 
-                placeholder="Información adicional sobre el producto..."
-                {...field}
-              />
+              <Textarea placeholder="Información adicional sobre el producto..." {...field} />
             </FormControl>
             <FormMessage />
-          </FormItem>
-        )}
-      />
+          </FormItem>} />
       
       <SendOfferImageUpload control={control} />
-    </>
-  );
+    </>;
 };
