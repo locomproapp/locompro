@@ -95,53 +95,60 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-3">
-        <OfferHeader
-          profileName={offer.profiles?.full_name}
-          createdAt={offer.created_at}
-          status={offer.status}
-        />
-      </CardHeader>
+    <div className="space-y-4 w-full">
+      <Card className="w-full">
+        <CardHeader className="pb-3">
+          <OfferHeader
+            profileName={offer.profiles?.full_name}
+            createdAt={offer.created_at}
+            status={offer.status}
+          />
+        </CardHeader>
 
-      <CardContent className="space-y-4">
-        <OfferContent
-          title={offer.title}
-          description={offer.description}
-          price={offer.price}
-          zone={offer.zone}
-          images={offer.images}
-          characteristics={offer.characteristics}
-        />
+        <CardContent className="space-y-4">
+          <OfferContent
+            title={offer.title}
+            description={offer.description}
+            price={offer.price}
+            zone={offer.zone}
+            images={offer.images}
+            characteristics={offer.characteristics}
+          />
 
-        <RejectionReason 
-          status={offer.status} 
-          rejectionReason={offer.rejection_reason} 
-        />
+          <RejectionReason 
+            status={offer.status} 
+            rejectionReason={offer.rejection_reason} 
+          />
 
-        <OfferActions
-          canAcceptOrReject={canAcceptOrReject}
-          isAccepting={isAccepting}
-          isRejecting={isRejecting}
-          onAccept={() => setShowAcceptDialog(true)}
-          onReject={() => setShowRejectDialog(true)}
-        />
+          <AcceptOfferDialog
+            open={showAcceptDialog}
+            onOpenChange={setShowAcceptDialog}
+            onConfirm={acceptOffer}
+            isLoading={isAccepting}
+          />
 
-        <AcceptOfferDialog
-          open={showAcceptDialog}
-          onOpenChange={setShowAcceptDialog}
-          onConfirm={acceptOffer}
-          isLoading={isAccepting}
-        />
+          <RejectOfferDialog
+            open={showRejectDialog}
+            onOpenChange={setShowRejectDialog}
+            onConfirm={handleRejectOffer}
+            isLoading={isRejecting}
+          />
+        </CardContent>
+      </Card>
 
-        <RejectOfferDialog
-          open={showRejectDialog}
-          onOpenChange={setShowRejectDialog}
-          onConfirm={handleRejectOffer}
-          isLoading={isRejecting}
-        />
-      </CardContent>
-    </Card>
+      {/* Action buttons in separate box - only show if user can accept/reject */}
+      {canAcceptOrReject && (
+        <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <OfferActions
+            canAcceptOrReject={canAcceptOrReject}
+            isAccepting={isAccepting}
+            isRejecting={isRejecting}
+            onAccept={() => setShowAcceptDialog(true)}
+            onReject={() => setShowRejectDialog(true)}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
