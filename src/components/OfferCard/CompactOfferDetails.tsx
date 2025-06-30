@@ -93,10 +93,10 @@ const CompactOfferDetails = ({
       </div>
 
       {/* Description with fixed height for 3 lines - responsive */}
-      <div className="h-[4.5rem] flex flex-col justify-center">
+      <div className="h-[4.5rem]">
         {shouldShowActionsInDescription ? (
-          // Show action buttons perfectly centered in the description space for rejected offers owned by current user
-          <div className="h-full flex items-center justify-center px-2">
+          // Perfect centering container for action buttons in rejected offers owned by current user
+          <div className="h-full flex items-center justify-center p-0 m-0">
             <CompactOfferOwnerActions
               offerId={offerId}
               buyRequestId={buyRequestId}
@@ -106,10 +106,12 @@ const CompactOfferDetails = ({
             />
           </div>
         ) : (
-          // Show description for all other cases
-          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-            {description || 'Sin descripción proporcionada'}
-          </p>
+          // Show description for all other cases with proper flex layout
+          <div className="h-full flex flex-col justify-start">
+            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+              {description || 'Sin descripción proporcionada'}
+            </p>
+          </div>
         )}
       </div>
     </div>
