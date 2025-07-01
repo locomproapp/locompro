@@ -14,19 +14,19 @@ interface OfferContentProps {
 
 const OfferContent = ({ title, description, price, zone, images, characteristics }: OfferContentProps) => {
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
+    <div className="w-full">
+      <div className="mb-4">
+        <h3 className="font-semibold text-lg text-foreground mb-3">{title}</h3>
         
-        {/* Description - no height constraints, expands naturally */}
-        <div className="w-full">
-          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words">
+        {/* Description with no height constraints - expands fully */}
+        <div className="w-full mb-4">
+          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words overflow-visible">
             {description || 'Sin descripción proporcionada'}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mb-4">
         <div className="text-2xl font-bold text-primary">
           ${formatPrice(price)}
         </div>
@@ -37,7 +37,7 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
       </div>
 
       {images && images.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
           {images.slice(0, 3).map((image, index) => (
             <img
               key={index}
@@ -55,16 +55,16 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
           )}
         </div>
       ) : (
-        <div className="w-full h-20 bg-muted rounded border flex items-center justify-center">
+        <div className="w-full h-20 bg-muted rounded border flex items-center justify-center mb-4">
           <ImageIcon className="h-6 w-6 text-muted-foreground" />
         </div>
       )}
 
       {characteristics && (
-        <div className="text-sm space-y-2">
-          <strong>Características:</strong>
+        <div className="text-sm">
+          <strong className="block mb-2">Características:</strong>
           <div className="bg-muted/50 rounded p-2">
-            <pre className="text-muted-foreground whitespace-pre-wrap text-xs break-words font-mono">
+            <pre className="text-muted-foreground whitespace-pre-wrap text-xs break-words font-mono overflow-visible">
               {JSON.stringify(characteristics, null, 2)}
             </pre>
           </div>

@@ -95,9 +95,9 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <>
-      {/* Offer Card - completely separate from buttons, no height constraints */}
-      <Card className="w-full">
+    <div className="w-full space-y-4">
+      {/* Card with no height restrictions - can expand naturally */}
+      <Card className="w-full overflow-visible">
         <CardHeader className="pb-3">
           <OfferHeader
             profileName={offer.profiles?.full_name}
@@ -106,26 +106,28 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardHeader>
 
-        <CardContent>
-          <OfferContent
-            title={offer.title}
-            description={offer.description}
-            price={offer.price}
-            zone={offer.zone}
-            images={offer.images}
-            characteristics={offer.characteristics}
-          />
+        <CardContent className="overflow-visible">
+          <div className="space-y-4">
+            <OfferContent
+              title={offer.title}
+              description={offer.description}
+              price={offer.price}
+              zone={offer.zone}
+              images={offer.images}
+              characteristics={offer.characteristics}
+            />
 
-          <RejectionReason 
-            status={offer.status} 
-            rejectionReason={offer.rejection_reason} 
-          />
+            <RejectionReason 
+              status={offer.status} 
+              rejectionReason={offer.rejection_reason} 
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {/* Action buttons - completely separate container outside the card */}
+      {/* Action buttons - completely outside the card */}
       {canAcceptOrReject && (
-        <div className="w-full mt-4">
+        <div className="w-full">
           <OfferActions
             canAcceptOrReject={canAcceptOrReject}
             isAccepting={isAccepting}
@@ -150,7 +152,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         onConfirm={handleRejectOffer}
         isLoading={isRejecting}
       />
-    </>
+    </div>
   );
 };
 
