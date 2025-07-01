@@ -6,8 +6,8 @@ import { formatPrice } from './utils';
 interface OfferContentProps {
   title: string;
   description: string | null;
-  price: number;
   zone: string;
+  price: number;
   images: string[] | null;
   characteristics: any;
 }
@@ -18,13 +18,11 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
         
-        {/* Description - completely unrestricted, natural expansion */}
-        <div className="space-y-2">
-          <div className="w-full">
-            <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words word-wrap">
-              {description || 'Sin descripción proporcionada'}
-            </p>
-          </div>
+        {/* Description - no height constraints, expands naturally */}
+        <div className="w-full">
+          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words">
+            {description || 'Sin descripción proporcionada'}
+          </p>
         </div>
       </div>
 

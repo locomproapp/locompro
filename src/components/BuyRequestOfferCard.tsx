@@ -95,8 +95,8 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="flex flex-col space-y-4">
-      {/* Main card - no height constraints, allows natural expansion */}
+    <>
+      {/* Offer Card - completely separate from buttons, no height constraints */}
       <Card className="w-full">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -106,29 +106,26 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          {/* Content section - completely unrestricted height */}
-          <div className="space-y-4">
-            <OfferContent
-              title={offer.title}
-              description={offer.description}
-              price={offer.price}
-              zone={offer.zone}
-              images={offer.images}
-              characteristics={offer.characteristics}
-            />
+        <CardContent>
+          <OfferContent
+            title={offer.title}
+            description={offer.description}
+            price={offer.price}
+            zone={offer.zone}
+            images={offer.images}
+            characteristics={offer.characteristics}
+          />
 
-            <RejectionReason 
-              status={offer.status} 
-              rejectionReason={offer.rejection_reason} 
-            />
-          </div>
+          <RejectionReason 
+            status={offer.status} 
+            rejectionReason={offer.rejection_reason} 
+          />
         </CardContent>
       </Card>
 
-      {/* Action buttons - completely separate from card, below it */}
+      {/* Action buttons - completely separate container outside the card */}
       {canAcceptOrReject && (
-        <div className="w-full">
+        <div className="w-full mt-4">
           <OfferActions
             canAcceptOrReject={canAcceptOrReject}
             isAccepting={isAccepting}
@@ -153,7 +150,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         onConfirm={handleRejectOffer}
         isLoading={isRejecting}
       />
-    </div>
+    </>
   );
 };
 
