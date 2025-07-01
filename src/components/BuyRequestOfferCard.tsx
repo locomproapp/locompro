@@ -118,13 +118,17 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         </CardContent>
       </Card>
 
-      {/* Rejection reason - separate section below card */}
-      <RejectionReason 
-        status={offer.status} 
-        rejectionReason={offer.rejection_reason} 
-      />
+      {/* Rejection reason - separate section below card with consistent styling */}
+      {offer.status === 'rejected' && offer.rejection_reason && (
+        <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
+          <RejectionReason 
+            status={offer.status} 
+            rejectionReason={offer.rejection_reason} 
+          />
+        </div>
+      )}
 
-      {/* Action buttons - separate styled container below card */}
+      {/* Action buttons - separate styled container below card, aligned with rejection reason */}
       {canAcceptOrReject && (
         <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
           <OfferActions
