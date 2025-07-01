@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -104,7 +103,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         />
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <OfferContent
           title={offer.title}
           description={offer.description}
@@ -119,13 +118,16 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           rejectionReason={offer.rejection_reason} 
         />
 
-        <OfferActions
-          canAcceptOrReject={canAcceptOrReject}
-          isAccepting={isAccepting}
-          isRejecting={isRejecting}
-          onAccept={() => setShowAcceptDialog(true)}
-          onReject={() => setShowRejectDialog(true)}
-        />
+        {/* Action buttons with proper spacing from content above */}
+        <div className="pt-4 border-t border-border/20">
+          <OfferActions
+            canAcceptOrReject={canAcceptOrReject}
+            isAccepting={isAccepting}
+            isRejecting={isRejecting}
+            onAccept={() => setShowAcceptDialog(true)}
+            onReject={() => setShowRejectDialog(true)}
+          />
+        </div>
 
         <AcceptOfferDialog
           open={showAcceptDialog}
