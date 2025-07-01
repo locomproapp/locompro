@@ -17,9 +17,9 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
     <div className="space-y-4">
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-        {/* Description with full expansion - no height limits */}
+        {/* Description - completely unrestricted, allow full natural expansion */}
         <div className="mb-4">
-          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words">
             {description || 'Sin descripción proporcionada'}
           </p>
         </div>
@@ -62,7 +62,7 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
       {characteristics && (
         <div className="text-sm">
           <strong>Características:</strong>
-          <pre className="mt-1 text-muted-foreground whitespace-pre-wrap text-xs">
+          <pre className="mt-1 text-muted-foreground whitespace-pre-wrap text-xs break-words">
             {JSON.stringify(characteristics, null, 2)}
           </pre>
         </div>

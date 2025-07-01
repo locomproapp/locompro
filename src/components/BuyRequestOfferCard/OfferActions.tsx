@@ -21,11 +21,11 @@ const OfferActions = ({
   if (!canAcceptOrReject) return null;
 
   return (
-    <div className="flex gap-2 pt-2">
+    <div className="flex gap-3 w-full">
       <Button
         onClick={onAccept}
         disabled={isAccepting || isRejecting}
-        className="flex-1"
+        className="flex-1 h-11"
       >
         <Check className="h-4 w-4 mr-2" />
         {isAccepting ? 'Aceptando...' : 'Aceptar'}
@@ -33,8 +33,8 @@ const OfferActions = ({
       <Button
         variant="destructive"
         onClick={onReject}
-        disabled={isAccepting || isRejecting}
-        className="flex-1"
+        disabled={isAccepting || isRejecting}  
+        className="flex-1 h-11"
       >
         <X className="h-4 w-4 mr-2" />
         Rechazar
