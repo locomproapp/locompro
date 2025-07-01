@@ -50,8 +50,8 @@ const BuyRequestOffersList = ({ buyRequestId, buyRequestOwnerId }: BuyRequestOff
         </p>
       </div>
       
-      {/* Increased spacing between offer cards to accommodate external action buttons */}
-      <div className="space-y-6">
+      {/* Generous spacing between cards to accommodate external action buttons */}
+      <div className="space-y-8">
         {offers.map((offer) => (
           <BuyRequestOfferCard
             key={offer.id}

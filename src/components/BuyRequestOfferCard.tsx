@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -94,8 +95,8 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="w-full">
-      {/* Main card container - no height constraints */}
+    <div className="flex flex-col space-y-4">
+      {/* Main card - no height constraints, allows natural expansion */}
       <Card className="w-full">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -106,26 +107,28 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Content section - allow natural expansion */}
-          <OfferContent
-            title={offer.title}
-            description={offer.description}
-            price={offer.price}
-            zone={offer.zone}
-            images={offer.images}
-            characteristics={offer.characteristics}
-          />
+          {/* Content section - completely unrestricted height */}
+          <div className="space-y-4">
+            <OfferContent
+              title={offer.title}
+              description={offer.description}
+              price={offer.price}
+              zone={offer.zone}
+              images={offer.images}
+              characteristics={offer.characteristics}
+            />
 
-          <RejectionReason 
-            status={offer.status} 
-            rejectionReason={offer.rejection_reason} 
-          />
+            <RejectionReason 
+              status={offer.status} 
+              rejectionReason={offer.rejection_reason} 
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {/* Action buttons rendered outside the card */}
+      {/* Action buttons - completely separate from card, below it */}
       {canAcceptOrReject && (
-        <div className="mt-4 px-1">
+        <div className="w-full">
           <OfferActions
             canAcceptOrReject={canAcceptOrReject}
             isAccepting={isAccepting}

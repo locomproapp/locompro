@@ -17,11 +17,14 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
     <div className="space-y-4">
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-        {/* Description - completely unrestricted, allow full natural expansion */}
-        <div className="mb-4">
-          <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words">
-            {description || 'Sin descripción proporcionada'}
-          </p>
+        
+        {/* Description - completely unrestricted, natural expansion */}
+        <div className="space-y-2">
+          <div className="w-full">
+            <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words word-wrap">
+              {description || 'Sin descripción proporcionada'}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -60,11 +63,13 @@ const OfferContent = ({ title, description, price, zone, images, characteristics
       )}
 
       {characteristics && (
-        <div className="text-sm">
+        <div className="text-sm space-y-2">
           <strong>Características:</strong>
-          <pre className="mt-1 text-muted-foreground whitespace-pre-wrap text-xs break-words">
-            {JSON.stringify(characteristics, null, 2)}
-          </pre>
+          <div className="bg-muted/50 rounded p-2">
+            <pre className="text-muted-foreground whitespace-pre-wrap text-xs break-words font-mono">
+              {JSON.stringify(characteristics, null, 2)}
+            </pre>
+          </div>
         </div>
       )}
     </div>
