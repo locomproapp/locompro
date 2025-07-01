@@ -116,7 +116,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardContent>
 
-        {/* Footer section inside card for rejection reason or action buttons */}
+        {/* Footer section with identical inner box styling for both cases */}
         {(offer.status === 'rejected' && offer.rejection_reason) && (
           <CardFooter className="pt-0">
             <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
