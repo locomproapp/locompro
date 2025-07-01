@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -95,8 +95,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="w-full space-y-4">
-      {/* Main offer card - unchanged layout */}
+    <div className="w-full">
       <Card className="w-full">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -116,30 +115,33 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
             characteristics={offer.characteristics}
           />
         </CardContent>
+
+        {/* Footer section inside card for rejection reason or action buttons */}
+        {(offer.status === 'rejected' && offer.rejection_reason) && (
+          <CardFooter className="pt-0">
+            <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
+              <RejectionReason 
+                status={offer.status} 
+                rejectionReason={offer.rejection_reason} 
+              />
+            </div>
+          </CardFooter>
+        )}
+
+        {canAcceptOrReject && (
+          <CardFooter className="pt-0">
+            <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <OfferActions
+                canAcceptOrReject={canAcceptOrReject}
+                isAccepting={isAccepting}
+                isRejecting={isRejecting}
+                onAccept={() => setShowAcceptDialog(true)}
+                onReject={() => setShowRejectDialog(true)}
+              />
+            </div>
+          </CardFooter>
+        )}
       </Card>
-
-      {/* Rejection reason - separate section below card with consistent styling */}
-      {offer.status === 'rejected' && offer.rejection_reason && (
-        <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
-          <RejectionReason 
-            status={offer.status} 
-            rejectionReason={offer.rejection_reason} 
-          />
-        </div>
-      )}
-
-      {/* Action buttons - separate styled container below card, aligned with rejection reason */}
-      {canAcceptOrReject && (
-        <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <OfferActions
-            canAcceptOrReject={canAcceptOrReject}
-            isAccepting={isAccepting}
-            isRejecting={isRejecting}
-            onAccept={() => setShowAcceptDialog(true)}
-            onReject={() => setShowRejectDialog(true)}
-          />
-        </div>
-      )}
 
       {/* Dialogs */}
       <AcceptOfferDialog
