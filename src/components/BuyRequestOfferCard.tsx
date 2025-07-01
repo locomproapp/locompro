@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
@@ -116,21 +115,15 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardContent>
 
-        {/* Footer section with identical inner box styling for both cases */}
-        {(offer.status === 'rejected' && offer.rejection_reason) && (
-          <CardFooter className="pt-0">
-            <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
+        {/* Footer section - all cards get a footer with identical inner box styling */}
+        <CardFooter className="pt-0">
+          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
+            {(offer.status === 'rejected' && offer.rejection_reason) ? (
               <RejectionReason 
                 status={offer.status} 
                 rejectionReason={offer.rejection_reason} 
               />
-            </div>
-          </CardFooter>
-        )}
-
-        {canAcceptOrReject && (
-          <CardFooter className="pt-0">
-            <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
+            ) : canAcceptOrReject ? (
               <OfferActions
                 canAcceptOrReject={canAcceptOrReject}
                 isAccepting={isAccepting}
@@ -138,9 +131,11 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
                 onAccept={() => setShowAcceptDialog(true)}
                 onReject={() => setShowRejectDialog(true)}
               />
-            </div>
-          </CardFooter>
-        )}
+            ) : (
+              <div className="h-[44px]" />
+            )}
+          </div>
+        </CardFooter>
       </Card>
 
       {/* Dialogs */}
