@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -103,31 +104,36 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         />
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        <OfferContent
-          title={offer.title}
-          description={offer.description}
-          price={offer.price}
-          zone={offer.zone}
-          images={offer.images}
-          characteristics={offer.characteristics}
-        />
+      <CardContent className="flex flex-col min-h-[200px]">
+        {/* Content section that can expand */}
+        <div className="flex-1 space-y-4 mb-6">
+          <OfferContent
+            title={offer.title}
+            description={offer.description}
+            price={offer.price}
+            zone={offer.zone}
+            images={offer.images}
+            characteristics={offer.characteristics}
+          />
 
-        <RejectionReason 
-          status={offer.status} 
-          rejectionReason={offer.rejection_reason} 
-        />
-
-        {/* Action buttons with proper spacing from content above */}
-        <div className="pt-4 border-t border-border/20">
-          <OfferActions
-            canAcceptOrReject={canAcceptOrReject}
-            isAccepting={isAccepting}
-            isRejecting={isRejecting}
-            onAccept={() => setShowAcceptDialog(true)}
-            onReject={() => setShowRejectDialog(true)}
+          <RejectionReason 
+            status={offer.status} 
+            rejectionReason={offer.rejection_reason} 
           />
         </div>
+
+        {/* Action buttons fixed at bottom with separator */}
+        {canAcceptOrReject && (
+          <div className="border-t border-border/20 pt-4 mt-auto">
+            <OfferActions
+              canAcceptOrReject={canAcceptOrReject}
+              isAccepting={isAccepting}
+              isRejecting={isRejecting}
+              onAccept={() => setShowAcceptDialog(true)}
+              onReject={() => setShowRejectDialog(true)}
+            />
+          </div>
+        )}
 
         <AcceptOfferDialog
           open={showAcceptDialog}
