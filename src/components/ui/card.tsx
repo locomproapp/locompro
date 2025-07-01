@@ -13,7 +13,6 @@ const Card = React.forwardRef<
       "rounded-lg border bg-card text-card-foreground shadow-sm",
       className
     )}
-    style={{ height: 'auto', maxHeight: 'none', overflow: 'visible' }}
     {...props}
   />
 ))
@@ -26,7 +25,6 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn("flex flex-col space-y-1.5 p-6", className)}
-    style={{ overflow: 'visible' }}
     {...props}
   />
 ))
@@ -66,7 +64,6 @@ const CardContent = React.forwardRef<
   <div 
     ref={ref} 
     className={cn("p-6 pt-0", className)} 
-    style={{ overflow: 'visible', height: 'auto', maxHeight: 'none' }}
     {...props} 
   />
 ))

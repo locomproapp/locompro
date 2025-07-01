@@ -95,9 +95,8 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="w-full space-y-4">
-      {/* Card with no height restrictions - can expand naturally */}
-      <Card className="w-full overflow-visible">
+    <div className="w-full">
+      <Card className="w-full min-h-[400px] flex flex-col">
         <CardHeader className="pb-3">
           <OfferHeader
             profileName={offer.profiles?.full_name}
@@ -106,8 +105,8 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardHeader>
 
-        <CardContent className="overflow-visible">
-          <div className="space-y-4">
+        <CardContent className="flex-1 flex flex-col">
+          <div className="flex-1">
             <OfferContent
               title={offer.title}
               description={offer.description}
@@ -116,27 +115,31 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
               images={offer.images}
               characteristics={offer.characteristics}
             />
+          </div>
 
-            <RejectionReason 
-              status={offer.status} 
-              rejectionReason={offer.rejection_reason} 
-            />
+          {/* Bottom section - consistent styling for both rejection reason and action buttons */}
+          <div className="mt-4">
+            {offer.status === 'rejected' && offer.rejection_reason && (
+              <RejectionReason 
+                status={offer.status} 
+                rejectionReason={offer.rejection_reason} 
+              />
+            )}
+            
+            {canAcceptOrReject && (
+              <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                <OfferActions
+                  canAcceptOrReject={canAcceptOrReject}
+                  isAccepting={isAccepting}
+                  isRejecting={isRejecting}
+                  onAccept={() => setShowAcceptDialog(true)}
+                  onReject={() => setShowRejectDialog(true)}
+                />
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
-
-      {/* Action buttons - completely outside the card */}
-      {canAcceptOrReject && (
-        <div className="w-full">
-          <OfferActions
-            canAcceptOrReject={canAcceptOrReject}
-            isAccepting={isAccepting}
-            isRejecting={isRejecting}
-            onAccept={() => setShowAcceptDialog(true)}
-            onReject={() => setShowRejectDialog(true)}
-          />
-        </div>
-      )}
 
       {/* Dialogs */}
       <AcceptOfferDialog
