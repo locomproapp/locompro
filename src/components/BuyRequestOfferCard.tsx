@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -123,9 +124,9 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
         rejectionReason={offer.rejection_reason} 
       />
 
-      {/* Action buttons - separate section below card, styled like rejection reason */}
+      {/* Action buttons - separate styled container below card */}
       {canAcceptOrReject && (
-        <div className="w-full bg-blue-50 border border-blue-200 rounded p-4">
+        <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
           <OfferActions
             canAcceptOrReject={canAcceptOrReject}
             isAccepting={isAccepting}
