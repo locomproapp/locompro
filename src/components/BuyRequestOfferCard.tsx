@@ -11,7 +11,6 @@ import OfferHeader from './BuyRequestOfferCard/OfferHeader';
 import OfferContent from './BuyRequestOfferCard/OfferContent';
 import OfferActions from './BuyRequestOfferCard/OfferActions';
 import RejectionReason from './BuyRequestOfferCard/RejectionReason';
-import SellerActions from './BuyRequestOfferCard/SellerActions';
 
 interface BuyRequestOfferCardProps {
   offer: BuyRequestOffer;
@@ -28,7 +27,6 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   const [isRejecting, setIsRejecting] = useState(false);
 
   const isOwner = user?.id === buyRequestOwnerId;
-  const isSeller = user?.id === offer.seller_id;
   const canAcceptOrReject = isOwner && offer.status === 'pending';
 
   const acceptOffer = async () => {
@@ -97,62 +95,53 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="space-y-4">
-      <Card className="w-full">
-        <CardHeader className="pb-3">
-          <OfferHeader
-            profileName={offer.profiles?.full_name}
-            createdAt={offer.created_at}
-            status={offer.status}
-            sellerId={offer.seller_id}
-          />
-        </CardHeader>
-
-        <CardContent className="space-y-4">
-          <OfferContent
-            title={offer.title}
-            description={offer.description}
-            price={offer.price}
-            zone={offer.zone}
-            images={offer.images}
-            characteristics={offer.characteristics}
-            status={offer.status}
-            rejectionReason={offer.rejection_reason}
-          />
-
-          <OfferActions
-            canAcceptOrReject={canAcceptOrReject}
-            isAccepting={isAccepting}
-            isRejecting={isRejecting}
-            onAccept={() => setShowAcceptDialog(true)}
-            onReject={() => setShowRejectDialog(true)}
-          />
-
-          <AcceptOfferDialog
-            open={showAcceptDialog}
-            onOpenChange={setShowAcceptDialog}
-            onConfirm={acceptOffer}
-            isLoading={isAccepting}
-          />
-
-          <RejectOfferDialog
-            open={showRejectDialog}
-            onOpenChange={setShowRejectDialog}
-            onConfirm={handleRejectOffer}
-            isLoading={isRejecting}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Seller actions outside the card */}
-      {isSeller && offer.status === 'rejected' && (
-        <SellerActions 
-          offerId={offer.id}
-          buyRequestId={offer.buy_request_id}
-          onUpdate={onUpdate}
+    <Card className="w-full">
+      <CardHeader className="pb-3">
+        <OfferHeader
+          profileName={offer.profiles?.full_name}
+          createdAt={offer.created_at}
+          status={offer.status}
         />
-      )}
-    </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        <OfferContent
+          title={offer.title}
+          description={offer.description}
+          price={offer.price}
+          zone={offer.zone}
+          images={offer.images}
+          characteristics={offer.characteristics}
+        />
+
+        <RejectionReason 
+          status={offer.status} 
+          rejectionReason={offer.rejection_reason} 
+        />
+
+        <OfferActions
+          canAcceptOrReject={canAcceptOrReject}
+          isAccepting={isAccepting}
+          isRejecting={isRejecting}
+          onAccept={() => setShowAcceptDialog(true)}
+          onReject={() => setShowRejectDialog(true)}
+        />
+
+        <AcceptOfferDialog
+          open={showAcceptDialog}
+          onOpenChange={setShowAcceptDialog}
+          onConfirm={acceptOffer}
+          isLoading={isAccepting}
+        />
+
+        <RejectOfferDialog
+          open={showRejectDialog}
+          onOpenChange={setShowRejectDialog}
+          onConfirm={handleRejectOffer}
+          isLoading={isRejecting}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

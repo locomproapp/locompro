@@ -10,27 +10,19 @@ interface OfferContentProps {
   zone: string;
   images: string[] | null;
   characteristics: any;
-  status: string;
-  rejectionReason: string | null;
 }
 
-const OfferContent = ({ 
-  title, 
-  description, 
-  price, 
-  zone, 
-  images, 
-  characteristics, 
-  status, 
-  rejectionReason 
-}: OfferContentProps) => {
+const OfferContent = ({ title, description, price, zone, images, characteristics }: OfferContentProps) => {
   return (
     <div className="space-y-4">
       <div>
         <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          {description || 'Sin descripción proporcionada'}
-        </p>
+        {/* Description with fixed height for 3 lines - responsive */}
+        <div className="h-[4.2rem] sm:h-[3.6rem] flex flex-col justify-start">
+          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+            {description || 'Sin descripción proporcionada'}
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
@@ -73,14 +65,6 @@ const OfferContent = ({
           <pre className="mt-1 text-muted-foreground whitespace-pre-wrap">
             {JSON.stringify(characteristics, null, 2)}
           </pre>
-        </div>
-      )}
-
-      {/* Rejection reason moved inside the card */}
-      {status === 'rejected' && rejectionReason && (
-        <div className="bg-red-50 border border-red-200 rounded p-3">
-          <p className="text-sm font-medium text-red-800">Motivo del rechazo:</p>
-          <p className="text-sm text-red-700 mt-1">{rejectionReason}</p>
         </div>
       )}
     </div>
