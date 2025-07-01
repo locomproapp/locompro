@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
@@ -115,24 +116,28 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardContent>
 
-        {/* Footer section - all cards get a footer with identical inner box styling */}
+        {/* Footer section - all cards get a footer with identical inner box styling and minimum height */}
         <CardFooter className="pt-0">
-          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 min-h-[80px] flex items-center">
             {(offer.status === 'rejected' && offer.rejection_reason) ? (
-              <RejectionReason 
-                status={offer.status} 
-                rejectionReason={offer.rejection_reason} 
-              />
+              <div className="w-full">
+                <RejectionReason 
+                  status={offer.status} 
+                  rejectionReason={offer.rejection_reason} 
+                />
+              </div>
             ) : canAcceptOrReject ? (
-              <OfferActions
-                canAcceptOrReject={canAcceptOrReject}
-                isAccepting={isAccepting}
-                isRejecting={isRejecting}
-                onAccept={() => setShowAcceptDialog(true)}
-                onReject={() => setShowRejectDialog(true)}
-              />
+              <div className="w-full">
+                <OfferActions
+                  canAcceptOrReject={canAcceptOrReject}
+                  isAccepting={isAccepting}
+                  isRejecting={isRejecting}
+                  onAccept={() => setShowAcceptDialog(true)}
+                  onReject={() => setShowRejectDialog(true)}
+                />
+              </div>
             ) : (
-              <div className="h-[44px]" />
+              <div className="w-full h-[44px]" />
             )}
           </div>
         </CardFooter>
