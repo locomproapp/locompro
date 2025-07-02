@@ -49,9 +49,7 @@ const OffersForRequest = ({
           <Package className="h-6 w-6 text-primary" />
         </div>
         <p className="text-muted-foreground text-sm">Aún no hay ofertas para este producto</p>
-        <p className="text-xs text-muted-foreground mt-2">
-          Las ofertas aparecerán aquí cuando otros usuarios las envíen
-        </p>
+        <p className="text-xs text-muted-foreground mt-2">Las ofertas van a aparecer acá cuando otros usuarios las envíen</p>
       </div>;
   }
   console.log('✅ OffersForRequest - Rendering', offers.length, 'offers for all users');
