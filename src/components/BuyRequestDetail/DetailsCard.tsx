@@ -166,14 +166,16 @@ const DetailsCard = ({
                                     <h3 className="text-sm font-semibold text-muted-foreground mb-1">Publicado por</h3>
                                     <p className="text-base text-foreground">{displayName}</p>
                                 </div>
-                                {/* Restored Edit/Delete actions */}
-                                <BuyRequestActions
-                                    buyRequestId={buyRequest.id}
-                                    buyRequestTitle={buyRequest.title}
-                                    buyRequestUserId={buyRequest.user_id}
-                                    onDelete={handleDelete}
-                                    onUpdate={handleUpdate}
-                                />
+                                {/* Actions only visible on mobile */}
+                                <div className="md:hidden">
+                                    <BuyRequestActions
+                                        buyRequestId={buyRequest.id}
+                                        buyRequestTitle={buyRequest.title}
+                                        buyRequestUserId={buyRequest.user_id}
+                                        onDelete={handleDelete}
+                                        onUpdate={handleUpdate}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
