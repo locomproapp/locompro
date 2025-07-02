@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, X } from 'lucide-react';
@@ -145,24 +146,24 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
 
   return (
     <>
-      <div className="flex items-center justify-center gap-3 w-full px-1">
+      <div className="flex items-center justify-center gap-2 md:gap-3 w-full px-0 md:px-1 box-border">
         <Button
           onClick={acceptOffer}
           disabled={isAccepting || isRejecting}
           size="sm"
-          className="flex-1 text-xs min-h-[36px] h-9 bg-blue-600 hover:bg-blue-700 text-white border-0 flex items-center justify-center"
+          className="flex-1 text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none bg-blue-500 hover:bg-blue-600 text-white border-0 flex items-center justify-center"
         >
-          <Check className="h-3 w-3 mr-1.5" />
-          {isAccepting ? 'Aceptando...' : 'Aceptar'}
+          <Check className="h-3 w-3 mr-1 md:mr-1.5 flex-shrink-0" />
+          <span className="whitespace-nowrap">{isAccepting ? 'Aceptando...' : 'Aceptar'}</span>
         </Button>
         <Button
           onClick={() => setShowRejectDialog(true)}
           disabled={isAccepting || isRejecting}
           size="sm"
-          className="flex-1 text-xs min-h-[36px] h-9 bg-red-600 hover:bg-red-700 text-white border-0 flex items-center justify-center"
+          className="flex-1 text-xs min-h-[36px] h-9 px-2 md:px-3 min-w-0 max-w-none bg-red-500 hover:bg-red-600 text-white border-0 flex items-center justify-center"
         >
-          <X className="h-3 w-3 mr-1.5" />
-          Rechazar
+          <X className="h-3 w-3 mr-1 md:mr-1.5 flex-shrink-0" />
+          <span className="whitespace-nowrap">Rechazar</span>
         </Button>
       </div>
 
