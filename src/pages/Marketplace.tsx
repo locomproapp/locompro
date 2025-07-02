@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -7,19 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
-
 const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
-
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchFromURL = urlParams.get('search') || '';
     setSearchQuery(searchFromURL);
   }, [location.search]);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
+  return <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
 
       <main className="w-full px-2 sm:px-6 lg:px-12 xl:px-16 py-8 flex-1">
@@ -27,7 +22,7 @@ const Marketplace = () => {
         <div className="max-w-6xl mx-auto">
           {/* Marketplace Heading & Main search bar */}
           <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-medium text-foreground mb-4">
+            <h1 className="text-3xl md:text-4xl text-foreground mb-4 font-semibold">
               Mercado
             </h1>
             <p className="text-lg text-muted-foreground mb-6 hidden sm:block">
@@ -36,18 +31,12 @@ const Marketplace = () => {
             {/* Search bar + button */}
             <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-3xl mx-auto gap-4 mt-8">
               <div className="flex-1 w-full">
-                <SearchBar
-                  placeholder="Qué quiero vender..."
-                  mobilePlaceholder="Qué quiero vender..."
-                  onSearch={setSearchQuery}
-                  value={searchQuery}
-                />
+                <SearchBar placeholder="Qué quiero vender..." mobilePlaceholder="Qué quiero vender..." onSearch={setSearchQuery} value={searchQuery} />
               </div>
               <Button asChild size="lg" className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap">
-                <Link 
-                  to="/create-buy-request" 
-                  state={{ from: "/marketplace" }}
-                >
+                <Link to="/create-buy-request" state={{
+                from: "/marketplace"
+              }}>
                   <Plus className="h-4 w-4" />
                   <span className="block sm:hidden">Quiero comprar</span>
                   <span className="hidden sm:block">Crear publicación</span>
@@ -64,8 +53,6 @@ const Marketplace = () => {
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Marketplace;
