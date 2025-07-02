@@ -145,28 +145,24 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
 
   return (
     <>
-      <div className="px-4 pb-4">
-        <div className="flex gap-2">
-          <Button
-            onClick={acceptOffer}
-            disabled={isAccepting || isRejecting}
-            size="sm"
-            className="flex-1 text-xs"
-          >
-            <Check className="h-3 w-3 mr-1" />
-            {isAccepting ? 'Aceptando...' : 'Aceptar'}
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={() => setShowRejectDialog(true)}
-            disabled={isAccepting || isRejecting}
-            size="sm"
-            className="flex-1 text-xs"
-          >
-            <X className="h-3 w-3 mr-1" />
-            Rechazar
-          </Button>
-        </div>
+      <div className="flex gap-2 w-full">
+        <Button
+          onClick={acceptOffer}
+          disabled={isAccepting || isRejecting}
+          className="flex-1 h-6 px-2.5 py-0.5 text-xs font-semibold rounded-full"
+        >
+          <Check className="h-3 w-3 mr-1" />
+          {isAccepting ? 'Aceptando...' : 'Aceptar'}
+        </Button>
+        <Button
+          variant="destructive"
+          onClick={() => setShowRejectDialog(true)}
+          disabled={isAccepting || isRejecting}
+          className="flex-1 h-6 px-2.5 py-0.5 text-xs font-semibold rounded-full"
+        >
+          <X className="h-3 w-3 mr-1" />
+          Rechazar
+        </Button>
       </div>
 
       <RejectOfferDialog
