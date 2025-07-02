@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Heart, Instagram, Youtube } from 'lucide-react';
 import {
@@ -25,7 +24,7 @@ const Footer = () => {
           </div>
 
           {/* Collapsible Sections - Mobile */}
-          <Accordion type="multiple" className="w-full mb-6">
+          <Accordion type="multiple" className="w-full mb-4">
             <AccordionItem value="comprar" className="border-border">
               <AccordionTrigger className="text-left font-semibold text-foreground py-3">
                 Comprar
