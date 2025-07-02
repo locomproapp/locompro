@@ -27,7 +27,7 @@ const OfferHeader = ({ profileName, createdAt, status, sellerId }: OfferHeaderPr
   );
 
   return (
-    <div className="flex items-start justify-between px-0">
+    <div className="flex items-start justify-between">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src={undefined} alt={displayName || 'Usuario'} />
