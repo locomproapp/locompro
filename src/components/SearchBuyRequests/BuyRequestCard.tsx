@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -85,7 +86,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
             <div className="flex items-start justify-between gap-4 h-full">
               <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
                 <div>
-                  <CardTitle className="text-lg line-clamp-2 font-bold mb-1">
+                  <CardTitle className="text-lg line-clamp-2 font-semibold mb-1">
                     {capitalizeFirstLetter(request.title)}
                   </CardTitle>
                   
@@ -109,7 +110,7 @@ const BuyRequestCard: React.FC<BuyRequestCardProps> = ({ request, isDesktopHoriz
               
               {/* Right side with price badge at top and button at bottom */}
               <div className="flex flex-col justify-between items-end h-full flex-shrink-0">
-                <Badge variant="outline" className="font-bold whitespace-nowrap text-base px-4 py-2">
+                <Badge variant="outline" className="font-semibold whitespace-nowrap text-base px-4 py-2">
                   {formatPrice(request.min_price, request.max_price)}
                 </Badge>
                 

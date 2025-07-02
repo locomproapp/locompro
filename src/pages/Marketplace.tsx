@@ -22,41 +22,44 @@ const Marketplace = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
 
-      <main className="w-full px-2 sm:px-6 lg:px-8 py-8 flex-1">
-        {/* Marketplace Heading & Main search bar */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Mercado
-          </h1>
-          <p className="text-lg text-muted-foreground mb-6 hidden sm:block">
-            Acá se encuentran las publicaciones de los que quieren comprar un producto
-          </p>
-          {/* Search bar + button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-3xl mx-auto gap-4 mt-8">
-            <div className="flex-1 w-full">
-              <SearchBar
-                placeholder="Qué quiero vender..."
-                mobilePlaceholder="Qué quiero vender..."
-                onSearch={setSearchQuery}
-                value={searchQuery}
-              />
+      <main className="w-full px-2 sm:px-6 lg:px-12 xl:px-16 py-8 flex-1">
+        {/* Container centrado para desktop */}
+        <div className="max-w-6xl mx-auto">
+          {/* Marketplace Heading & Main search bar */}
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Mercado
+            </h1>
+            <p className="text-lg text-muted-foreground mb-6 hidden sm:block">
+              Acá se encuentran las publicaciones de los que quieren comprar un producto
+            </p>
+            {/* Search bar + button */}
+            <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-3xl mx-auto gap-4 mt-8">
+              <div className="flex-1 w-full">
+                <SearchBar
+                  placeholder="Qué quiero vender..."
+                  mobilePlaceholder="Qué quiero vender..."
+                  onSearch={setSearchQuery}
+                  value={searchQuery}
+                />
+              </div>
+              <Button asChild size="lg" className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap">
+                <Link 
+                  to="/create-buy-request" 
+                  state={{ from: "/marketplace" }}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="block sm:hidden">Quiero comprar</span>
+                  <span className="hidden sm:block">Crear publicación</span>
+                </Link>
+              </Button>
             </div>
-            <Button asChild size="lg" className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap">
-              <Link 
-                to="/create-buy-request" 
-                state={{ from: "/marketplace" }}
-              >
-                <Plus className="h-4 w-4" />
-                <span className="block sm:hidden">Quiero comprar</span>
-                <span className="hidden sm:block">Crear publicación</span>
-              </Link>
-            </Button>
           </div>
-        </div>
 
-        {/* Resultados de búsqueda */}
-        <div className="mt-6 mb-8 sm:mb-16 w-full max-w-none">
-          <SearchBuyRequests searchQuery={searchQuery} />
+          {/* Resultados de búsqueda */}
+          <div className="mt-6 mb-8 sm:mb-16 w-full max-w-none">
+            <SearchBuyRequests searchQuery={searchQuery} />
+          </div>
         </div>
       </main>
 
