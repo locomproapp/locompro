@@ -1,20 +1,36 @@
+
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SearchBuyRequests from '@/components/SearchBuyRequests';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import SearchBar from '@/components/SearchBar';
+
 const Marketplace = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchFromURL = urlParams.get('search') || '';
     setSearchQuery(searchFromURL);
   }, [location.search]);
-  return <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
+
+  const handleCreateBuyRequest = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    navigate('/create-buy-request', { state: { from: "/marketplace" } });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
 
       <main className="w-full px-2 sm:px-6 lg:px-12 xl:px-16 py-8 flex-1">
@@ -33,14 +49,14 @@ const Marketplace = () => {
               <div className="flex-1 w-full">
                 <SearchBar placeholder="Qué quiero vender..." mobilePlaceholder="Qué quiero vender..." onSearch={setSearchQuery} value={searchQuery} />
               </div>
-              <Button asChild size="lg" className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap">
-                <Link to="/create-buy-request" state={{
-                from: "/marketplace"
-              }}>
-                  <Plus className="h-4 w-4" />
-                  <span className="block sm:hidden">Quiero comprar</span>
-                  <span className="hidden sm:block">Crear publicación</span>
-                </Link>
+              <Button 
+                size="lg" 
+                className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap"
+                onClick={handleCreateBuyRequest}
+              >
+                <Plus className="h-4 w-4" />
+                <span className="block sm:hidden">Quiero comprar</span>
+                <span className="hidden sm:block">Crear publicación</span>
               </Button>
             </div>
           </div>
@@ -53,6 +69,8 @@ const Marketplace = () => {
       </main>
 
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Marketplace;

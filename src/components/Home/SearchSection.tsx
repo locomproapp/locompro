@@ -2,7 +2,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Plus, Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SearchSectionProps {
   searchQuery: string;
@@ -11,6 +12,17 @@ interface SearchSectionProps {
 }
 
 const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCreateBuyRequest = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    navigate('/create-buy-request', { state: { from: "/" } });
+  };
+
   return (
     <>
       <div className="mb-6 sm:mb-10 mt-10 sm:mt-6 flex justify-center">
@@ -43,14 +55,14 @@ const SearchSection = ({ searchQuery, onInputChange, onSubmit }: SearchSectionPr
             <span className="text-base sm:text-lg hidden sm:block">Explorar Mercado</span>
           </Link>
         </Button>
-        <Button asChild size="sm" className="text-base sm:text-lg px-4 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none">
-          <Link to="/create-buy-request" state={{
-            from: "/"
-          }}>
-            <Plus className="mr-1 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
-            <span className="text-base sm:text-lg block sm:hidden">Quiero comprar</span>
-            <span className="text-base sm:text-lg hidden sm:block">Crear Búsqueda</span>
-          </Link>
+        <Button 
+          size="sm" 
+          className="text-base sm:text-lg px-4 py-6 sm:px-8 sm:py-6 flex-1 sm:flex-none max-w-[160px] sm:max-w-none"
+          onClick={handleCreateBuyRequest}
+        >
+          <Plus className="mr-1 sm:mr-2 h-6 w-6 sm:h-5 sm:w-5" />
+          <span className="text-base sm:text-lg block sm:hidden">Quiero comprar</span>
+          <span className="text-base sm:text-lg hidden sm:block">Crear Búsqueda</span>
         </Button>
       </div>
     </>

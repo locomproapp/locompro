@@ -4,11 +4,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import CreatePostForm from './CreatePostForm';
 import { useCreatePostForm } from './useCreatePostForm';
 import { CreatePostDialogProps } from './types';
 
 const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const {
     form,
@@ -21,6 +25,14 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
     handleSubmit,
     resetForm,
   } = useCreatePostForm(onPostCreated);
+
+  const handleOpenDialog = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setOpen(true);
+  };
 
   const handleCancel = () => {
     setOpen(false);
@@ -43,7 +55,7 @@ const CreatePostDialog = ({ onPostCreated }: CreatePostDialogProps) => {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={handleOpenDialog}>
           <Plus className="h-4 w-4" />
           Crear Publicación
         </Button>

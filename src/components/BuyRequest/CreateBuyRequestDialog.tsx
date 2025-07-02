@@ -1,8 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import CreateBuyRequestForm from './CreateBuyRequestForm';
 
 interface CreateBuyRequestDialogProps {
@@ -10,7 +12,17 @@ interface CreateBuyRequestDialogProps {
 }
 
 const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setOpen(true);
+  };
 
   const handleCancel = () => {
     setOpen(false);
@@ -19,7 +31,7 @@ const CreateBuyRequestDialog = ({ onRequestCreated }: CreateBuyRequestDialogProp
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={handleOpenDialog}>
           <Plus className="h-4 w-4" />
           Crear Publicación
         </Button>
