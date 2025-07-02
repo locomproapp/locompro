@@ -81,17 +81,6 @@ const OfferCard = ({
             </Alert>
           )}
 
-          {/* Owner actions (Edit/Delete) - for pending offers and always show delete */}
-          {isSeller && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
-            <OfferOwnerActions
-              offerId={offer.id}
-              offerTitle={offer.title}
-              buyRequestId={offer.buy_request_id}
-              status={offer.status}
-              onUpdate={onStatusUpdate}
-            />
-          )}
-
           {/* Actions for buy request owners (accept/reject) - only for pending offers */}
           {isBuyRequestOwner && offer.status === 'pending' && (
             <OfferActions
@@ -113,6 +102,19 @@ const OfferCard = ({
           )}
         </div>
       </Card>
+
+      {/* Owner actions (Edit/Delete) - separate box below the main card */}
+      {isSeller && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
+        <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <OfferOwnerActions
+            offerId={offer.id}
+            offerTitle={offer.title}
+            buyRequestId={offer.buy_request_id}
+            status={offer.status}
+            onUpdate={onStatusUpdate}
+          />
+        </div>
+      )}
 
       <OfferChat 
         offer={offer}
