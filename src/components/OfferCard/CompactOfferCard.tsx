@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MessageCircle } from 'lucide-react';
@@ -109,9 +108,9 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         </CardContent>
       </Card>
 
-      {/* External action box for accept/reject buttons - separate from main card */}
+      {/* External action box for accept/reject buttons - expanded to full width */}
       {canAcceptOrReject && (
-        <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+        <div className="w-full max-w-none bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferActionSection
             canAcceptOrReject={canAcceptOrReject}
             offerId={offer.id}
@@ -120,10 +119,9 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         </div>
       )}
 
-      {/* Owner actions (Edit/Delete) - separate box below the main card */}
-      {/* Exclude rejected offers as they already have integrated buttons */}
+      {/* Owner actions (Edit/Delete) - expanded to full width */}
       {isOfferOwner && (offer.status === 'pending' || offer.status === 'accepted' || offer.status === 'finalized') && (
-        <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+        <div className="w-full max-w-none bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferOwnerActions
             offerId={offer.id}
             buyRequestId={offer.buy_request_id}
@@ -134,9 +132,9 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         </div>
       )}
 
-      {/* Rejection reason - separate box below the main card */}
+      {/* Rejection reason - expanded to full width */}
       {offer.status === 'rejected' && offer.rejection_reason && (
-        <div className="w-full max-w-[260px] md:max-w-[320px] bg-red-50 border border-red-200 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+        <div className="w-full max-w-none bg-red-50 border border-red-200 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <div className="w-full">
             <p className="text-xs font-medium text-red-800 mb-1">Motivo del rechazo:</p>
             <p className="text-xs text-red-700">{offer.rejection_reason}</p>

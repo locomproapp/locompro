@@ -13,16 +13,16 @@ const CompactOfferActionSection = ({
   offerId,
   onStatusUpdate
 }: CompactOfferActionSectionProps) => {
+  if (!canAcceptOrReject) {
+    return null;
+  }
+
   return (
-    <div>
-      {canAcceptOrReject && (
-        <CompactOfferActions
-          offerId={offerId}
-          canAcceptOrReject={canAcceptOrReject}
-          onStatusUpdate={onStatusUpdate}
-        />
-      )}
-    </div>
+    <CompactOfferActions
+      offerId={offerId}
+      canAcceptOrReject={canAcceptOrReject}
+      onStatusUpdate={onStatusUpdate}
+    />
   );
 };
 
