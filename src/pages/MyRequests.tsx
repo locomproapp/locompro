@@ -59,7 +59,7 @@ const MyRequests = () => {
 
         {/* Header - Mobile */}
         <div className="mb-8 block sm:hidden">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl text-foreground mb-2 font-semibold">
             Mis Publicaciones
           </h1>
           <p className="text-muted-foreground mb-6">Acá podés ver las publicaciones que creaste.</p>
