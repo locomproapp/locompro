@@ -145,7 +145,7 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
 
   return (
     <>
-      <div className="flex items-center justify-center gap-2 md:gap-3 w-full px-0 md:px-1 box-border">
+      <div className="flex items-center justify-center gap-2 md:gap-3 w-full px-2 box-border">
         <Button
           variant="outline"
           onClick={acceptOffer}
