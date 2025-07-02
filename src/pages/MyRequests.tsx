@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import { CreateBuyRequestDialog } from '@/components/BuyRequest';
@@ -7,14 +6,18 @@ import { useUserBuyRequests } from '@/hooks/useUserBuyRequests';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, Search } from 'lucide-react';
 import Footer from '@/components/Footer';
-
 const MyRequests = () => {
-  const { user } = useAuth();
-  const { buyRequests, loading, refetch, deleteBuyRequest } = useUserBuyRequests();
-
+  const {
+    user
+  } = useAuth();
+  const {
+    buyRequests,
+    loading,
+    refetch,
+    deleteBuyRequest
+  } = useUserBuyRequests();
   if (!user) {
-    return (
-      <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
+    return <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
         <Navigation />
         <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
           <div className="bg-card rounded-lg border border-border shadow-sm p-12 text-center">
@@ -27,8 +30,7 @@ const MyRequests = () => {
           </div>
         </main>
         <Footer />
-      </div>
-    );
+      </div>;
   }
 
   // Triple check - only show requests that are 100% owned by the current user
@@ -38,9 +40,7 @@ const MyRequests = () => {
     return isStrictlyOwned;
   });
   console.log('Final requests to display:', strictlyUserOwnedRequests.length);
-
-  return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
+  return <div className="flex flex-col min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full min-h-[calc(100vh-4rem)]">
@@ -48,7 +48,7 @@ const MyRequests = () => {
         <div className="mb-8 hidden sm:block">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Mis Publicaciones</h1>
+              <h1 className="text-3xl md:text-4xl text-foreground mb-2 font-semibold">Mis Publicaciones</h1>
               <p className="text-lg text-muted-foreground">
                 Acá podés ver las publicaciones que creaste.
               </p>
@@ -66,35 +66,21 @@ const MyRequests = () => {
           <CreateBuyRequestDialog onRequestCreated={refetch} />
         </div>
 
-        {loading ? (
-          <div className="text-center py-12">
+        {loading ? <div className="text-center py-12">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="h-8 w-8 text-primary animate-pulse" />
             </div>
             <p className="text-muted-foreground">Cargando tus publicaciones...</p>
-          </div>
-        ) : strictlyUserOwnedRequests.length > 0 ? (
-          <>
+          </div> : strictlyUserOwnedRequests.length > 0 ? <>
             <div className="mb-6">
               <p className="text-muted-foreground">
                 {strictlyUserOwnedRequests.length} {strictlyUserOwnedRequests.length === 1 ? 'publicación' : 'publicaciones'}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {strictlyUserOwnedRequests.map(request => (
-                <BuyRequestCard 
-                  key={request.id} 
-                  buyRequest={request} 
-                  showActions={true} 
-                  onDelete={deleteBuyRequest} 
-                  onUpdate={refetch} 
-                  hideBuscoTag={true} 
-                />
-              ))}
+              {strictlyUserOwnedRequests.map(request => <BuyRequestCard key={request.id} buyRequest={request} showActions={true} onDelete={deleteBuyRequest} onUpdate={refetch} hideBuscoTag={true} />)}
             </div>
-          </>
-        ) : (
-          <div className="text-center py-12">
+          </> : <div className="text-center py-12">
             {/* Mobile Layout */}
             <div className="block sm:hidden">
               <div className="bg-card rounded-lg border border-border shadow-sm p-6 text-center">
@@ -126,12 +112,9 @@ const MyRequests = () => {
                 </p>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default MyRequests;
