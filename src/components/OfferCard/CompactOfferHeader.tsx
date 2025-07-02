@@ -52,7 +52,7 @@ const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOf
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 px-0">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-foreground truncate">
