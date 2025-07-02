@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -151,7 +150,11 @@ export const useOfferSubmission = () => {
         });
       }
 
-      navigate(`/buy-request/${targetBuyRequestId}`);
+      // Force a page reload to show the new offer immediately
+      setTimeout(() => {
+        window.location.href = `/buy-request/${targetBuyRequestId}`;
+      }, 1000);
+
     } catch (error) {
       console.error('Error creating/updating offer:', error);
       toast({
