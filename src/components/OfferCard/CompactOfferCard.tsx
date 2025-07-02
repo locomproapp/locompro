@@ -7,6 +7,7 @@ import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
 import CompactOfferHeader from './CompactOfferHeader';
 import CompactOfferDetails from './CompactOfferDetails';
 import CompactOfferActionSection from './CompactOfferActionSection';
+import CompactOfferOwnerActions from './CompactOfferOwnerActions';
 import Chat from '@/components/Chat';
 
 interface Offer {
@@ -76,9 +77,6 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     }
   };
 
-  // For rejected offers owned by current user, don't show separate action buttons since they're in the description space
-  const shouldShowSeparateActions = (canAcceptOrReject || isOfferOwner) && !(offer.status === 'rejected' && isOfferOwner);
-
   return (
     <div className="space-y-4 w-full min-w-[260px] max-w-[260px] md:min-w-[320px] md:max-w-[320px]">
       <Card className={`w-full flex-shrink-0 flex flex-col border ${getCardClassName()} h-[360px] md:max-h-[400px] md:h-auto`}>
@@ -109,21 +107,31 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             />
           </div>
           
-          {/* Action buttons pushed to bottom with consistent spacing - only for non-rejected owner offers */}
-          {shouldShowSeparateActions && (
+          {/* Action buttons pushed to bottom with consistent spacing - only for accept/reject */}
+          {canAcceptOrReject && (
             <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-border/20 flex-shrink-0">
               <CompactOfferActionSection
                 canAcceptOrReject={canAcceptOrReject}
-                isOfferOwner={isOfferOwner}
                 offerId={offer.id}
-                buyRequestId={offer.buy_request_id}
-                status={offer.status}
                 onStatusUpdate={onStatusUpdate}
               />
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Owner actions (Edit/Delete) - separate box below the main card */}
+      {isOfferOwner && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
+        <div className="w-full max-w-[260px] md:max-w-[320px] bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <CompactOfferOwnerActions
+            offerId={offer.id}
+            buyRequestId={offer.buy_request_id}
+            status={offer.status}
+            isOfferOwner={isOfferOwner}
+            onStatusUpdate={onStatusUpdate}
+          />
+        </div>
+      )}
 
       {/* Rejection reason - separate box below the main card */}
       {offer.status === 'rejected' && offer.rejection_reason && (
