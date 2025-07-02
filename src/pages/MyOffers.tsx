@@ -44,7 +44,7 @@ const MyOffers = () => {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 w-full min-h-[calc(100vh-4rem)]">
         {/* Header - Desktop */}
         <div className="mb-8 hidden sm:block">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl md:text-4xl font-medium text-foreground mb-2">
             Mis Ofertas
           </h1>
           <p className="text-lg text-muted-foreground">Gestioná todas las ofertas que has enviado</p>
@@ -52,7 +52,7 @@ const MyOffers = () => {
 
         {/* Header - Mobile */}
         <div className="mb-8 block sm:hidden">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl font-medium text-foreground mb-2">
             Mis Ofertas
           </h1>
           <p className="text-muted-foreground mb-6">Gestioná todas las ofertas que has enviado</p>

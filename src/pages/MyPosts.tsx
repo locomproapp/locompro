@@ -27,7 +27,7 @@ const MyPosts = () => {
         <Navigation />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-card rounded-lg border border-border shadow-sm p-6 sm:p-12 text-center">
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+            <h1 className="text-xl sm:text-2xl font-medium text-foreground mb-4">
               Inicia sesión para ver tus publicaciones
             </h1>
             <p className="text-muted-foreground">
@@ -48,7 +48,7 @@ const MyPosts = () => {
         <div className="mb-8 hidden sm:block">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              <h1 className="text-3xl md:text-4xl font-medium text-foreground mb-2">
                 Mis Publicaciones
               </h1>
               <p className="text-lg text-muted-foreground">
@@ -61,7 +61,7 @@ const MyPosts = () => {
 
         {/* Header - Mobile */}
         <div className="mb-8 block sm:hidden">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl font-medium text-foreground mb-2">
             Mis Publicaciones
           </h1>
           <p className="text-muted-foreground mb-6">Gestiona tus productos publicados</p>
