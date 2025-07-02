@@ -121,7 +121,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
       </Card>
 
       {/* Owner actions (Edit/Delete) - separate box below the main card */}
-      {isOfferOwner && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
+      {/* Exclude rejected offers as they already have integrated buttons */}
+      {isOfferOwner && (offer.status === 'pending' || offer.status === 'accepted' || offer.status === 'finalized') && (
         <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferOwnerActions
             offerId={offer.id}
