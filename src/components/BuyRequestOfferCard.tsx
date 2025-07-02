@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
-import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -10,7 +10,6 @@ import AcceptOfferDialog from '@/components/AcceptOfferDialog';
 import OfferHeader from './BuyRequestOfferCard/OfferHeader';
 import OfferContent from './BuyRequestOfferCard/OfferContent';
 import OfferActions from './BuyRequestOfferCard/OfferActions';
-import RejectionReason from './BuyRequestOfferCard/RejectionReason';
 
 interface BuyRequestOfferCardProps {
   offer: BuyRequestOffer;
@@ -28,18 +27,6 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
 
   const isOwner = user?.id === buyRequestOwnerId;
   const canAcceptOrReject = isOwner && offer.status === 'pending';
-
-  // Get footer styles based on offer status
-  const getFooterStyles = () => {
-    switch (offer.status) {
-      case 'rejected':
-        return 'bg-red-50 border border-red-200';
-      case 'accepted':
-        return 'bg-green-50 border border-green-200';
-      default:
-        return 'bg-background border border-border';
-    }
-  };
 
   const acceptOffer = async () => {
     try {
@@ -107,7 +94,8 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
+      {/* Main card without footer actions */}
       <Card className="w-full h-full flex flex-col">
         <CardHeader className="pb-3">
           <OfferHeader
@@ -127,33 +115,30 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
             characteristics={offer.characteristics}
           />
         </CardContent>
-
-        {/* Footer section with conditional styling based on status */}
-        <CardFooter className="pt-0">
-          <div className={`w-full ${getFooterStyles()} rounded-lg p-4 min-h-[76px] flex items-center justify-center`}>
-            {(offer.status === 'rejected' && offer.rejection_reason) ? (
-              <div className="w-full flex items-center justify-center min-h-[68px]">
-                <RejectionReason 
-                  status={offer.status} 
-                  rejectionReason={offer.rejection_reason} 
-                />
-              </div>
-            ) : canAcceptOrReject ? (
-              <div className="w-full flex items-center justify-center min-h-[68px]">
-                <OfferActions
-                  canAcceptOrReject={canAcceptOrReject}
-                  isAccepting={isAccepting}
-                  isRejecting={isRejecting}
-                  onAccept={() => setShowAcceptDialog(true)}
-                  onReject={() => setShowRejectDialog(true)}
-                />
-              </div>
-            ) : (
-              <div className="w-full min-h-[68px]" />
-            )}
-          </div>
-        </CardFooter>
       </Card>
+
+      {/* External action box for accept/reject buttons */}
+      {canAcceptOrReject && (
+        <div className="w-full bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+          <OfferActions
+            canAcceptOrReject={canAcceptOrReject}
+            isAccepting={isAccepting}
+            isRejecting={isRejecting}
+            onAccept={() => setShowAcceptDialog(true)}
+            onReject={() => setShowRejectDialog(true)}
+          />
+        </div>
+      )}
+
+      {/* External rejection reason box */}
+      {offer.status === 'rejected' && offer.rejection_reason && (
+        <div className="w-full bg-red-50 border border-red-200 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+          <div className="w-full">
+            <p className="text-sm font-medium text-red-800 mb-1">Motivo del rechazo:</p>
+            <p className="text-sm text-red-700">{offer.rejection_reason}</p>
+          </div>
+        </div>
+      )}
 
       {/* Dialogs */}
       <AcceptOfferDialog
