@@ -66,7 +66,7 @@ const OfferCard = ({
 
   return (
     <div className="space-y-4">
-      <Card className={`p-4 ${offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : offer.status === 'finalized' ? 'ring-1 ring-gray-200 bg-gray-50' : ''}`}>
+      <Card className={`p-4 ${offer.status === 'rejected' ? 'ring-1 ring-red-200 bg-red-50' : offer.status === 'accepted' ? 'ring-1 ring-green-200 bg-green-50' : ''}`}>
         <div className="space-y-3">
           <OfferHeader offer={offer} />
           <OfferContent offer={offer} />
@@ -77,16 +77,6 @@ const OfferCard = ({
               <Info className="h-4 w-4" />
               <AlertDescription>
                 Tu oferta está pendiente. El comprador debe aceptarla o rechazarla.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Status explanation for finalized offers */}
-          {isSeller && offer.status === 'finalized' && (
-            <Alert>
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                Esta oferta no fue seleccionada. El comprador aceptó otra oferta.
               </AlertDescription>
             </Alert>
           )}
@@ -113,8 +103,8 @@ const OfferCard = ({
         </div>
       </Card>
 
-      {/* Owner actions (Edit/Delete) - only show for pending and rejected offers */}
-      {isSeller && (offer.status === 'pending' || offer.status === 'rejected') && (
+      {/* Owner actions (Edit/Delete) - separate box below the main card */}
+      {isSeller && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
         <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-4">
           <OfferOwnerActions
             offerId={offer.id}

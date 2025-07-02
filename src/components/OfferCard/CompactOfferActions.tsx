@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, X } from 'lucide-react';
@@ -21,7 +20,6 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
   const acceptOffer = async () => {
     try {
       setIsAccepting(true);
-      console.log('CompactOfferActions: Starting accept process for offer:', offerId);
       
       // First, get the offer details and buy request info
       const { data: offerData, error: offerError } = await supabase
@@ -37,12 +35,7 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
         .eq('id', offerId)
         .single();
 
-      if (offerError) {
-        console.error('CompactOfferActions: Error fetching offer data:', offerError);
-        throw offerError;
-      }
-
-      console.log('CompactOfferActions: Offer data:', offerData);
+      if (offerError) throw offerError;
 
       // Update the accepted offer status
       const { error: updateError } = await supabase
@@ -53,12 +46,7 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
         })
         .eq('id', offerId);
 
-      if (updateError) {
-        console.error('CompactOfferActions: Database error:', updateError);
-        throw updateError;
-      }
-
-      console.log('CompactOfferActions: Database update successful');
+      if (updateError) throw updateError;
 
       // Mark all other offers for this buy request as 'finalized'
       const { error: finalizeError } = await supabase
@@ -71,16 +59,11 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
         .neq('id', offerId)
         .eq('status', 'pending');
 
-      if (finalizeError) {
-        console.error('CompactOfferActions: Error finalizing other offers:', finalizeError);
-        throw finalizeError;
-      }
+      if (finalizeError) throw finalizeError;
 
       // Create or get chat between buyer and seller
       const buyerId = offerData.buy_requests.user_id;
       const sellerId = offerData.seller_id;
-
-      console.log('CompactOfferActions: Creating chat between buyer:', buyerId, 'and seller:', sellerId);
 
       // Check if chat already exists
       const { data: existingChat } = await supabase
@@ -102,37 +85,17 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
             offer_id: offerId
           });
 
-        if (chatError) {
-          console.error('CompactOfferActions: Error creating chat:', chatError);
-          throw chatError;
-        }
-
-        console.log('CompactOfferActions: Chat created successfully');
-      } else {
-        console.log('CompactOfferActions: Chat already exists');
+        if (chatError) throw chatError;
       }
 
       toast({
-        title: '¡Oferta aceptada!',
+        title: 'Oferta aceptada',
         description: 'La oferta ha sido aceptada exitosamente. Se ha creado un chat para coordinar la transacción.',
       });
 
-      // Force immediate callback
-      if (onStatusUpdate) {
-        console.log('CompactOfferActions: Triggering status update callback');
-        onStatusUpdate();
-        setTimeout(() => {
-          onStatusUpdate();
-        }, 500);
-      }
-
-      // Force a complete page refresh to ensure all offers show the correct status
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-
+      onStatusUpdate?.();
     } catch (err) {
-      console.error('CompactOfferActions: Error accepting offer:', err);
+      console.error('Error accepting offer:', err);
       toast({
         title: 'Error',
         description: 'No se pudo aceptar la oferta',
@@ -162,12 +125,7 @@ const CompactOfferActions = ({ offerId, canAcceptOrReject, onStatusUpdate }: Com
         description: 'La oferta ha sido rechazada exitosamente',
       });
 
-      if (onStatusUpdate) {
-        onStatusUpdate();
-        setTimeout(() => {
-          onStatusUpdate();
-        }, 500);
-      }
+      onStatusUpdate?.();
     } catch (err) {
       console.error('Error rejecting offer:', err);
       toast({

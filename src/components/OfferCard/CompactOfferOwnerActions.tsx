@@ -59,8 +59,8 @@ const CompactOfferOwnerActions = ({
     return null;
   }
 
-  // Don't show any actions for accepted or finalized offers
-  if (status === 'accepted' || status === 'finalized') {
+  // Don't show any actions for accepted offers (no delete button)
+  if (status === 'accepted') {
     return null;
   }
 
@@ -125,6 +125,41 @@ const CompactOfferOwnerActions = ({
             </AlertDialogContent>
           </AlertDialog>
         </>
+      )}
+
+      {/* For finalized offers: show Delete button only */}
+      {status === 'finalized' && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isDeleting}
+              className="w-full max-w-[200px] text-xs min-h-[36px] h-9 px-3 text-destructive hover:text-destructive hover:border-destructive flex items-center justify-center"
+            >
+              <Trash2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
+              <span className="truncate">{isDeleting ? 'Eliminando...' : 'Eliminar'}</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción eliminará permanentemente tu oferta. Esta acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteOffer}
+                disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );
