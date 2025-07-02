@@ -1,17 +1,21 @@
+
 import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import BuyRequestOffersList from '@/components/BuyRequestOffersList';
 import { useBuyRequestDetail } from '@/hooks/useBuyRequestDetail';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import BuyRequestInformation from '@/components/BuyRequestDetail/BuyRequestInformation';
 import PublisherCard from '@/components/BuyRequestDetail/PublisherCard';
 import ImageAndActionsCard from '@/components/BuyRequestDetail/ImageAndActionsCard';
 import { OfferSubmissionModal } from '@/components/OfferSubmission';
 import OffersForRequest from '@/components/OffersForRequest';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface BuyRequestDetailType {
   id: string;
@@ -33,8 +37,53 @@ interface BuyRequestDetailType {
 const BuyRequestDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: buyRequestData, isLoading, error, refetch } = useBuyRequestDetail(id || '');
+
+  const handleDeleteBuyRequest = async () => {
+    if (!id || !user) return;
+
+    try {
+      // First delete related offers
+      const { error: offersError } = await supabase
+        .from('offers')
+        .delete()
+        .eq('buy_request_id', id);
+
+      if (offersError) {
+        console.error('Error deleting offers:', offersError);
+        // Continue with deletion even if offers deletion fails
+      }
+
+      // Then delete the buy request
+      const { error: deleteError } = await supabase
+        .from('buy_requests')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (deleteError) {
+        throw deleteError;
+      }
+
+      toast({
+        title: "Publicación eliminada",
+        description: "La publicación ha sido eliminada exitosamente"
+      });
+
+      // Navigate back to marketplace
+      navigate('/marketplace', { replace: true });
+    } catch (error) {
+      console.error('Error deleting buy request:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la publicación",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleOfferSubmitted = () => {
     console.log('🔄 Offer submitted, refreshing data...');
@@ -109,13 +158,44 @@ const BuyRequestDetail = () => {
       <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
-        {/* Desktop back button - only show on desktop */}
-        <Button variant="ghost" asChild className="mb-4 self-start hidden md:flex">
-          <Link to="/marketplace" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Volver al mercado
-          </Link>
-        </Button>
+        {/* Desktop back button and delete button - only show on desktop */}
+        <div className="mb-4 self-start hidden md:flex items-center gap-4">
+          <Button variant="ghost" asChild>
+            <Link to="/marketplace" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Volver al mercado
+            </Link>
+          </Button>
+          
+          {isOwner && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="flex items-center gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Eliminar publicación
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Eliminar publicación?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción eliminará permanentemente la publicación "{buyRequest.title}" y todas las ofertas asociadas.
+                    Esta acción no se puede deshacer.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteBuyRequest}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Eliminar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col gap-6">
