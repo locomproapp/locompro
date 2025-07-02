@@ -121,7 +121,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Owner actions (Edit/Delete) - separate box below the main card */}
       {isOfferOwner && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
-        <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3">
+        <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3 min-h-[68px] flex items-center justify-center">
           <CompactOfferOwnerActions
             offerId={offer.id}
             buyRequestId={offer.buy_request_id}
@@ -134,9 +134,11 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Rejection reason - separate box below the main card */}
       {offer.status === 'rejected' && offer.rejection_reason && (
-        <div className="w-full max-w-[260px] md:max-w-[320px] bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-xs font-medium text-red-800 mb-1">Motivo del rechazo:</p>
-          <p className="text-xs text-red-700">{offer.rejection_reason}</p>
+        <div className="w-full max-w-[260px] md:max-w-[320px] bg-red-50 border border-red-200 rounded-lg p-3 min-h-[68px] flex items-center justify-center">
+          <div className="w-full">
+            <p className="text-xs font-medium text-red-800 mb-1">Motivo del rechazo:</p>
+            <p className="text-xs text-red-700">{offer.rejection_reason}</p>
+          </div>
         </div>
       )}
 
