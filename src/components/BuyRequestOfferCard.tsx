@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
@@ -96,7 +95,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
 
   return (
     <div className="w-full">
-      <Card className="w-full">
+      <Card className="w-full h-full flex flex-col">
         <CardHeader className="pb-3">
           <OfferHeader
             profileName={offer.profiles?.full_name}
@@ -105,7 +104,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="flex-1">
           <OfferContent
             title={offer.title}
             description={offer.description}
@@ -116,18 +115,18 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardContent>
 
-        {/* Footer section - all cards get a footer with identical inner box styling and minimum height */}
+        {/* Footer section - all cards get identical footer height and styling */}
         <CardFooter className="pt-0">
-          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 min-h-[80px] flex items-center">
+          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 min-h-[100px] flex items-center justify-center">
             {(offer.status === 'rejected' && offer.rejection_reason) ? (
-              <div className="w-full">
+              <div className="w-full flex items-center justify-center min-h-[68px]">
                 <RejectionReason 
                   status={offer.status} 
                   rejectionReason={offer.rejection_reason} 
                 />
               </div>
             ) : canAcceptOrReject ? (
-              <div className="w-full">
+              <div className="w-full flex items-center justify-center min-h-[68px]">
                 <OfferActions
                   canAcceptOrReject={canAcceptOrReject}
                   isAccepting={isAccepting}
@@ -137,7 +136,7 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
                 />
               </div>
             ) : (
-              <div className="w-full h-[44px]" />
+              <div className="w-full min-h-[68px]" />
             )}
           </div>
         </CardFooter>
