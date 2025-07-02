@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MessageCircle } from 'lucide-react';
@@ -122,7 +121,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Owner actions (Edit/Delete) - separate box below the main card */}
       {isOfferOwner && (offer.status === 'pending' || offer.status === 'rejected' || offer.status === 'accepted') && (
-        <div className="w-full max-w-[260px] md:max-w-[320px] bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3">
           <CompactOfferOwnerActions
             offerId={offer.id}
             buyRequestId={offer.buy_request_id}
