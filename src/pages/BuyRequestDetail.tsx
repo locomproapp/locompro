@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -12,6 +13,8 @@ import PublisherCard from '@/components/BuyRequestDetail/PublisherCard';
 import ImageAndActionsCard from '@/components/BuyRequestDetail/ImageAndActionsCard';
 import { OfferSubmissionModal } from '@/components/OfferSubmission';
 import OffersForRequest from '@/components/OffersForRequest';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 interface BuyRequestDetailType {
   id: string;
@@ -103,6 +106,7 @@ const BuyRequestDetail = () => {
 
   const isOwner = user?.id === buyRequest.user_id;
   const isActive = buyRequest.status === 'active';
+  const isFinalized = buyRequest.status === 'finalized';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -116,6 +120,16 @@ const BuyRequestDetail = () => {
             Volver al mercado
           </Link>
         </Button>
+
+        {/* Finalized status alert */}
+        {isFinalized && (
+          <Alert className="bg-orange-50 border-orange-200">
+            <Info className="h-4 w-4 text-orange-600" />
+            <AlertDescription className="text-orange-800">
+              Esta solicitud está finalizada. Se ha aceptado una oferta y ya no se pueden enviar más ofertas.
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col gap-6">
@@ -132,11 +146,14 @@ const BuyRequestDetail = () => {
               buyRequest={buyRequestData}
               user={user}
               onUpdate={() => refetch()}
+              // Disable actions if finalized
+              disableActions={isFinalized}
             />
           </div>
         </div>
 
-        {!isOwner && isActive && (
+        {/* Only show offer submission if not owner, is active, and not finalized */}
+        {!isOwner && isActive && !isFinalized && (
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
             <OfferSubmissionModal 
               buyRequestId={buyRequest.id}

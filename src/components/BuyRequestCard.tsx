@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, ExternalLink, Calendar, Search } from 'lucide-react';
+import { MapPin, ExternalLink, Calendar, Search, CheckCircle } from 'lucide-react';
 import OfferForm from './OfferForm';
 import BuyRequestActions from './BuyRequestActions';
 import { getDisplayNameWithCurrentUser } from '@/utils/displayName';
@@ -69,8 +69,11 @@ const BuyRequestCard = ({
     user?.id
   );
 
+  const isFinalized = buyRequest.status === 'finalized';
+  const isActive = buyRequest.status === 'active';
+
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+    <Card className={`overflow-hidden hover:shadow-md transition-shadow ${isFinalized ? 'border-orange-200 bg-orange-50' : ''}`}>
       {/* Imagen principal */}
       {buyRequest.reference_image && (
         <Link to={`/buy-request/${buyRequest.id}`}>
@@ -89,10 +92,21 @@ const BuyRequestCard = ({
           <div className="flex-1">
             {!hideBuscoTag && (
               <div className="flex items-center gap-2 mb-2">
-                <Search className="h-4 w-4 text-primary" />
-                <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                  BUSCO
-                </span>
+                {isFinalized ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 text-orange-600" />
+                    <span className="text-xs font-medium text-orange-700 bg-orange-100 px-2 py-1 rounded-full">
+                      FINALIZADA
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+                      BUSCO
+                    </span>
+                  </>
+                )}
               </div>
             )}
             <Link to={`/buy-request/${buyRequest.id}`}>
@@ -111,6 +125,7 @@ const BuyRequestCard = ({
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
               buyRequestUserId={buyRequest.user_id}
+              buyRequestStatus={buyRequest.status}
               onDelete={onDelete}
               onUpdate={onUpdate}
             />
@@ -135,12 +150,22 @@ const BuyRequestCard = ({
           <span>Por: {displayName}</span>
         </div>
 
-        {showOfferButton && (
+        {/* Only show offer button if request is active and not finalized */}
+        {showOfferButton && isActive && !isFinalized && (
           <div className="pt-2">
             <OfferForm 
               buyRequestId={buyRequest.id}
               buyRequestTitle={buyRequest.title}
             />
+          </div>
+        )}
+
+        {/* Show message if finalized */}
+        {isFinalized && (
+          <div className="pt-2 text-center">
+            <p className="text-xs text-orange-700 bg-orange-100 px-3 py-2 rounded-md">
+              Esta solicitud ha sido finalizada
+            </p>
           </div>
         )}
       </div>

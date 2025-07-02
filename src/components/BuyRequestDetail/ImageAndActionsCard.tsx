@@ -1,222 +1,209 @@
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ImageGallery from '@/components/ImageGallery';
-import { Edit, Trash2 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import EditBuyRequestDialog from '@/components/EditBuyRequestDialog';
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
-interface ImageAndActionsCardProps {
-  buyRequest: any;
-  user?: { id: string };
-  onUpdate?: () => void;
+interface BuyRequestData {
+  id: string;
+  title: string;
+  description: string | null;
+  min_price: number;
+  max_price: number;
+  zone: string;
+  condition: string;
+  reference_image: string | null;
+  reference_url: string | null;
+  status: string;
+  created_at: string;
+  user_id: string;
+  images: string[] | null;
+  profiles: {
+    full_name: string | null;
+  } | null;
 }
 
-const ImageAndActionsCard = ({
-  buyRequest,
-  user,
-  onUpdate,
-}: ImageAndActionsCardProps) => {
-  // Lógica para construir el array de imágenes
-  let allImages: string[] = [];
-  
-  if (buyRequest.images && Array.isArray(buyRequest.images) && buyRequest.images.length > 0) {
-    // Si hay un array de imágenes, usarlo
-    allImages = buyRequest.images.filter((img: any) => img && typeof img === 'string');
-  } else if (buyRequest.reference_image && typeof buyRequest.reference_image === 'string') {
-    // Si no hay array pero sí reference_image, usar solo esa
-    allImages = [buyRequest.reference_image];
-  }
+interface User {
+  id: string;
+  email?: string;
+}
+
+interface ImageAndActionsCardProps {
+  buyRequest: BuyRequestData;
+  user: User | null;
+  onUpdate: () => void;
+  disableActions?: boolean;
+}
+
+const ImageAndActionsCard = ({ buyRequest, user, onUpdate, disableActions = false }: ImageAndActionsCardProps) => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const isOwner = user?.id === buyRequest.user_id;
-  const [editOpen, setEditOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { toast } = useToast();
-  const [deleting, setDeleting] = useState(false);
-  const navigate = useNavigate();
+  const isFinalized = buyRequest.status === 'finalized';
 
-  const handleDeleteRequest = async () => {
-    setDeleting(true);
-    try {
-      console.log('=== STARTING DELETION PROCESS ===');
-      console.log('Buy request ID:', buyRequest.id);
-      console.log('Current user ID:', user?.id);
-      console.log('Buy request owner ID:', buyRequest.user_id);
-      
-      if (!user?.id) {
-        throw new Error('Usuario no autenticado');
-      }
-
-      if (user.id !== buyRequest.user_id) {
-        throw new Error('No tienes permisos para eliminar esta publicación');
-      }
-
-      // First, verify the buy request exists and user owns it
-      console.log('=== VERIFYING BUY REQUEST EXISTS ===');
-      const { data: existingRequest, error: checkError } = await supabase
-        .from('buy_requests')
-        .select('id, user_id, title, status')
-        .eq('id', buyRequest.id)
-        .single();
-
-      if (checkError) {
-        console.error('Error checking buy request:', checkError);
-        throw new Error('Error al verificar la publicación');
-      }
-
-      if (!existingRequest) {
-        throw new Error('La publicación no existe o ya fue eliminada');
-      }
-
-      console.log('✅ Buy request verified:', existingRequest);
-
-      // Delete related offers first (if any)
-      console.log('=== DELETING RELATED OFFERS ===');
-      const { error: offersError } = await supabase
-        .from('buy_request_offers')
-        .delete()
-        .eq('buy_request_id', buyRequest.id);
-
-      if (offersError) {
-        console.error('Error deleting related offers:', offersError);
-        // Continue with deletion even if offers deletion fails
-      }
-
-      // Now delete the buy request - the RLS policy will ensure only the owner can delete
-      console.log('=== DELETING BUY REQUEST ===');
-      const { data: deletedData, error: deleteError } = await supabase
-        .from('buy_requests')
-        .delete()
-        .eq('id', buyRequest.id)
-        .select(); // This will return the deleted row if successful
-
-      if (deleteError) {
-        console.error('Supabase delete error:', deleteError);
-        throw new Error(`Error al eliminar: ${deleteError.message}`);
-      }
-
-      console.log('Delete operation result:', deletedData);
-
-      if (!deletedData || deletedData.length === 0) {
-        throw new Error('No se pudo eliminar la publicación - posiblemente ya fue eliminada o no tienes permisos');
-      }
-
-      console.log('✅ Deletion successful - deleted:', deletedData.length, 'row(s)');
-      
-      toast({
-        title: '¡Publicación eliminada!',
-        description: 'La publicación fue borrada exitosamente.'
-      });
-      
-      setDeleteDialogOpen(false);
-
-      // Dispatch global deletion event
-      console.log('=== DISPATCHING DELETION EVENT ===');
-      window.dispatchEvent(new CustomEvent('buyRequestDeleted', { 
-        detail: { buyRequestId: buyRequest.id } 
-      }));
-      
-      // Small delay to ensure event is processed
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Navigate with deletion flag
-      console.log('=== NAVIGATING TO MARKETPLACE ===');
-      navigate('/marketplace', { 
-        state: { 
-          deletedRequestId: buyRequest.id,
-          refresh: true,
-          timestamp: Date.now()
-        },
-        replace: true
-      });
-      
-    } catch (error) {
-      console.error('=== DELETION ERROR ===', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'No se pudo eliminar la publicación. Por favor, intenta nuevamente.',
-        variant: 'destructive'
-      });
-    } finally {
-      setDeleting(false);
-    }
+  const formatPrice = (min: number, max: number) => {
+    const format = (p: number) => '$' + p.toLocaleString('es-AR');
+    if (min === max) return format(min);
+    return `${format(min)} - ${format(max)}`;
   };
 
-  const handleEditUpdate = () => {
-    if (onUpdate) {
-      onUpdate();
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const { error } = await supabase
+        .from('buy_requests')
+        .delete()
+        .eq('id', buyRequest.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Solicitud eliminada",
+        description: "La solicitud ha sido eliminada exitosamente"
+      });
+
+      navigate('/marketplace');
+    } catch (error) {
+      console.error('Error deleting buy request:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la solicitud",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
     }
-    // Dispatch global event to update marketplace and other views
-    window.dispatchEvent(new CustomEvent('buyRequestUpdated', { 
-      detail: { buyRequestId: buyRequest.id } 
-    }));
   };
 
   return (
-    <div className="flex flex-col gap-4 sticky top-24">
-      <div className="bg-card rounded-lg border border-border p-4 shadow-sm flex flex-col gap-4">
-        {isOwner && (
-          <div className="flex gap-2 justify-end">
-            <button
-              aria-label="Editar"
-              onClick={() => setEditOpen(true)}
-              className="p-1 rounded hover:bg-transparent transition group"
-              tabIndex={0}
-              type="button"
+    <Card className="overflow-hidden">
+      {/* Image Gallery */}
+      <div className="aspect-video bg-muted overflow-hidden">
+        {buyRequest.reference_image ? (
+          <img
+            src={buyRequest.reference_image}
+            alt={buyRequest.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400">Sin imagen</span>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <Badge variant="secondary" className="text-lg font-semibold px-3 py-1">
+            {formatPrice(buyRequest.min_price, buyRequest.max_price)}
+          </Badge>
+          
+          {/* Status badge */}
+          {isFinalized && (
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+              Finalizada
+            </Badge>
+          )}
+        </div>
+
+        {buyRequest.reference_url && (
+          <div className="flex items-center gap-2">
+            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+            <a
+              href={buyRequest.reference_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline text-sm"
             >
-              <Edit className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-            </button>
-            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+              Ver referencia externa
+            </a>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="font-medium text-muted-foreground">Zona:</span>
+            <p className="mt-1">{buyRequest.zone}</p>
+          </div>
+          <div>
+            <span className="font-medium text-muted-foreground">Condición:</span>
+            <p className="mt-1 capitalize">{buyRequest.condition}</p>
+          </div>
+        </div>
+
+        {/* Owner Actions - only show if owner and not finalized and not disabled */}
+        {isOwner && !isFinalized && !disableActions && (
+          <div className="flex gap-2 pt-4 border-t">
+            <EditBuyRequestDialog 
+              buyRequestId={buyRequest.id}
+              onUpdate={onUpdate}
+            >
+              <Button variant="outline" className="flex-1">
+                <Edit className="h-4 w-4 mr-2" />
+                Editar
+              </Button>
+            </EditBuyRequestDialog>
+            
+            <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button
-                  aria-label="Eliminar"
-                  className="p-1 rounded hover:bg-transparent transition group"
-                  tabIndex={0}
-                  type="button"
-                >
-                  <Trash2 className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </button>
+                <Button variant="outline" className="flex-1 text-destructive hover:text-destructive">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Eliminar
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>¿Eliminar publicación?</AlertDialogTitle>
+                  <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    ¿Estás seguro de que querés borrar esta solicitud? Esta acción no se puede deshacer.
+                    Esta acción eliminará permanentemente la solicitud "{buyRequest.title}".
+                    Esta acción no se puede deshacer.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteRequest} disabled={deleting}>
-                    {deleting ? "Eliminando..." : "Eliminar"}
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {isDeleting ? 'Eliminando...' : 'Eliminar'}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           </div>
         )}
-        
-        <ImageGallery images={allImages} />
+
+        {/* Show message if finalized */}
+        {isFinalized && (
+          <div className="pt-4 border-t">
+            <p className="text-sm text-center text-orange-700 bg-orange-50 px-3 py-2 rounded-md">
+              Esta solicitud ha sido finalizada. Se aceptó una oferta y ya no se pueden realizar cambios.
+            </p>
+          </div>
+        )}
       </div>
-
-      {isOwner && (
-        <EditBuyRequestDialog
-          buyRequestId={buyRequest.id}
-          open={editOpen}
-          onOpenChange={setEditOpen}
-          onUpdate={handleEditUpdate}
-        />
-      )}
-
-      {buyRequest.reference_url && buyRequest.reference_url !== null && buyRequest.reference_url !== 'null' && buyRequest.reference_url.trim() !== '' && (
-        <Button asChild className="w-full">
-          <a href={buyRequest.reference_url} target="_blank" rel="noopener noreferrer">
-            Ver producto de referencia
-          </a>
-        </Button>
-      )}
-    </div>
+    </Card>
   );
 };
 
