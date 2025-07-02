@@ -106,19 +106,19 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
               onStatusUpdate={onStatusUpdate}
             />
           </div>
-          
-          {/* Action buttons pushed to bottom with consistent spacing - only for accept/reject */}
-          {canAcceptOrReject && (
-            <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-border/20 flex-shrink-0">
-              <CompactOfferActionSection
-                canAcceptOrReject={canAcceptOrReject}
-                offerId={offer.id}
-                onStatusUpdate={onStatusUpdate}
-              />
-            </div>
-          )}
         </CardContent>
       </Card>
+
+      {/* External action box for accept/reject buttons - separate from main card */}
+      {canAcceptOrReject && (
+        <div className="w-full max-w-[260px] md:max-w-[320px] bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+          <CompactOfferActionSection
+            canAcceptOrReject={canAcceptOrReject}
+            offerId={offer.id}
+            onStatusUpdate={onStatusUpdate}
+          />
+        </div>
+      )}
 
       {/* Owner actions (Edit/Delete) - separate box below the main card */}
       {/* Exclude rejected offers as they already have integrated buttons */}
