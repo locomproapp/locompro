@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Heart, Instagram, Youtube } from 'lucide-react';
 import {
@@ -13,6 +14,16 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Mobile Layout */}
         <div className="block md:hidden">
+          {/* LoCompro Logo - Mobile Only */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <img 
+              src="/lovable-uploads/0fb22d35-f8de-48a5-89c9-00c4749e4881.png" 
+              alt="LoCompro" 
+              className="h-6 w-6"
+            />
+            <h3 className="text-lg font-semibold text-foreground">LoCompro</h3>
+          </div>
+
           {/* Collapsible Sections - Mobile */}
           <Accordion type="multiple" className="w-full mb-6">
             <AccordionItem value="comprar" className="border-border">
