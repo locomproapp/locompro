@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BuyRequestOffer } from '@/types/buyRequestOffer';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
@@ -27,6 +28,18 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
 
   const isOwner = user?.id === buyRequestOwnerId;
   const canAcceptOrReject = isOwner && offer.status === 'pending';
+
+  // Get footer styles based on offer status
+  const getFooterStyles = () => {
+    switch (offer.status) {
+      case 'rejected':
+        return 'bg-red-50 border border-red-200';
+      case 'accepted':
+        return 'bg-green-50 border border-green-200';
+      default:
+        return 'bg-background border border-border';
+    }
+  };
 
   const acceptOffer = async () => {
     try {
@@ -115,9 +128,9 @@ const BuyRequestOfferCard = ({ offer, buyRequestOwnerId, onUpdate }: BuyRequestO
           />
         </CardContent>
 
-        {/* Footer section - all cards get identical footer height and styling */}
+        {/* Footer section with conditional styling based on status */}
         <CardFooter className="pt-0">
-          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 min-h-[100px] flex items-center justify-center">
+          <div className={`w-full ${getFooterStyles()} rounded-lg p-4 min-h-[76px] flex items-center justify-center`}>
             {(offer.status === 'rejected' && offer.rejection_reason) ? (
               <div className="w-full flex items-center justify-center min-h-[68px]">
                 <RejectionReason 
