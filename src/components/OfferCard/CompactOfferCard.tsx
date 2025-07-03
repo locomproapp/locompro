@@ -67,19 +67,19 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   const getCardClassName = () => {
     switch (offer.status) {
       case 'accepted':
-        return 'ring-1 ring-green-200 bg-green-50';
+        return 'border-2 border-green-500 bg-green-50';
       case 'rejected':
-        return 'border-red-200 bg-red-50';
+        return 'border-2 border-red-300 bg-red-50';
       case 'finalized':
-        return 'ring-1 ring-gray-300 bg-gray-100 opacity-75';
+        return 'border-2 border-gray-300 bg-gray-100 opacity-75';
       default:
-        return '';
+        return 'border-2 border-border';
     }
   };
 
   return (
-    <div className="space-y-4 w-full min-w-[260px] max-w-[260px] md:min-w-[320px] md:max-w-[320px]">
-      <Card className={`w-full flex-shrink-0 flex flex-col border ${getCardClassName()} h-[360px] md:max-h-[400px] md:h-auto`}>
+    <div className="space-y-4 w-full max-w-[90vw] md:min-w-[320px] md:max-w-[320px]">
+      <Card className={`w-full flex-shrink-0 flex flex-col ${getCardClassName()} h-[360px] md:max-h-[400px] md:h-auto`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <CompactOfferHeader
             displayName={displayName}
@@ -111,7 +111,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* External action box for accept/reject buttons - expanded to full width */}
       {canAcceptOrReject && (
-        <div className="w-full max-w-none bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+        <div className="w-full bg-background border-2 border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferActionSection
             canAcceptOrReject={canAcceptOrReject}
             offerId={offer.id}
@@ -122,7 +122,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Owner actions (Edit/Delete) - ONLY for pending offers */}
       {isOfferOwner && offer.status === 'pending' && (
-        <div className="w-full max-w-none bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+        <div className="w-full bg-background border-2 border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferOwnerActions
             offerId={offer.id}
             buyRequestId={offer.buy_request_id}
@@ -135,7 +135,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Rejection reason - expanded to full width */}
       {offer.status === 'rejected' && offer.rejection_reason && (
-        <div className="w-full max-w-none bg-red-50 border border-red-200 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+        <div className="w-full bg-red-50 border-2 border-red-200 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <div className="w-full">
             <p className="text-xs font-medium text-red-800 mb-1">Motivo del rechazo:</p>
             <p className="text-xs text-red-700">{offer.rejection_reason}</p>
@@ -145,7 +145,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Chat section for accepted offers - matches full width of container/table */}
       {shouldShowChat && (
-        <div className="w-full max-w-none bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="w-full bg-green-50 border-2 border-green-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-4">
             <MessageCircle className="h-5 w-5 text-green-600" />
             <h4 className="font-medium text-green-800">
