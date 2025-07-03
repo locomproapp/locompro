@@ -77,18 +77,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
     }
   };
 
-  // Determine container width based on status
-  const getContainerWidth = () => {
-    // Finalized offers should be wider to visually match accepted offers
-    if (offer.status === 'finalized') {
-      return 'max-w-[350px] md:min-w-[350px] md:max-w-[350px]';
-    }
-    // All other offers use the original width
-    return 'max-w-[280px] md:min-w-[320px] md:max-w-[320px]';
-  };
-
   return (
-    <div className={`space-y-4 w-full ${getContainerWidth()}`}>
+    <div className="space-y-4 w-full max-w-[280px] md:min-w-[320px] md:max-w-[320px]">
       <Card className={`w-full flex-shrink-0 flex flex-col ${getCardClassName()} h-[360px] md:max-h-[400px] md:h-auto`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <CompactOfferHeader
