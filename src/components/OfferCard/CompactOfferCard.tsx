@@ -145,7 +145,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
       {/* Chat section for accepted offers - matches full width of container/table */}
       {shouldShowChat && (
-        <div className="w-full bg-background border-2 border-green-200 rounded-lg p-4">
+        <div className="w-full bg-green-50 border-2 border-green-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-4">
             <MessageCircle className="h-5 w-5 text-green-600" />
             <h4 className="font-medium text-green-800">
