@@ -120,8 +120,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         </div>
       )}
 
-      {/* Owner actions (Edit/Delete) - expanded to full width - HIDE for finalized offers */}
-      {isOfferOwner && (offer.status === 'pending' || offer.status === 'accepted') && (
+      {/* Owner actions (Edit/Delete) - ONLY for pending offers */}
+      {isOfferOwner && offer.status === 'pending' && (
         <div className="w-full max-w-none bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferOwnerActions
             offerId={offer.id}
@@ -130,16 +130,6 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             isOfferOwner={isOfferOwner}
             onStatusUpdate={onStatusUpdate}
           />
-        </div>
-      )}
-
-      {/* Finalized status indicator - show for finalized offers */}
-      {offer.status === 'finalized' && (
-        <div className="w-full max-w-none bg-gray-100 border border-gray-300 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
-          <div className="w-full text-center">
-            <p className="text-sm font-medium text-gray-600 mb-1">Oferta no seleccionada</p>
-            <p className="text-xs text-gray-500">Esta oferta no fue elegida por el comprador</p>
-          </div>
         </div>
       )}
 

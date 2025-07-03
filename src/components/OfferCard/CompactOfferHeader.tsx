@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Check, X, AlertTriangle, ArrowLeft } from 'lucide-react';
@@ -36,7 +35,7 @@ const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOf
       case 'finalized':
         return <Badge variant="outline" className="flex items-center gap-1 text-xs bg-gray-100 text-gray-600 border-gray-300">
           <AlertTriangle className="h-3 w-3" />
-          No seleccionada
+          Finalizada
         </Badge>;
       default:
         return null;
