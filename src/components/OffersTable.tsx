@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Table, TableBody } from '@/components/ui/table';
 import { useAuth } from '@/hooks/useAuth';
 import OffersTableHeader from './OffersTable/TableHeader';
@@ -84,8 +84,31 @@ const OffersTable = ({ offers, buyRequestOwnerId, onOfferUpdate }: OffersTablePr
     setDeliveryFilters(prev => ({ ...prev, [delivery]: checked }));
   };
 
+  // Pre-sort offers by status priority before applying filters
+  const statusSortedOffers = useMemo(() => {
+    return [...offers].sort((a, b) => {
+      // Status priority: accepted > pending > rejected > finalized
+      const statusOrder = {
+        'accepted': 1,
+        'pending': 2,
+        'rejected': 3,
+        'finalized': 4
+      };
+      
+      const aOrder = statusOrder[a.status as keyof typeof statusOrder] || 5;
+      const bOrder = statusOrder[b.status as keyof typeof statusOrder] || 5;
+      
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder;
+      }
+      
+      // Within same status, sort by creation date (newest first)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  }, [offers]);
+
   const filteredAndSortedOffers = useOffersFiltering({
-    offers,
+    offers: statusSortedOffers,
     sortField,
     sortDirection,
     statusFilters,
