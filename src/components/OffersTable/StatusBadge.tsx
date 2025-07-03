@@ -15,7 +15,7 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
     case 'rejected':
       return <Badge variant="destructive">Rechazada</Badge>;
     case 'finalized':
-      return <Badge variant="secondary">Finalizada</Badge>;
+      return <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-300">No seleccionada</Badge>;
     default:
       return <Badge variant="outline">Desconocido</Badge>;
   }

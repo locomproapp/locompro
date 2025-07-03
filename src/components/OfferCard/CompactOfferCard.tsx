@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MessageCircle } from 'lucide-react';
@@ -70,7 +71,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
       case 'rejected':
         return 'border-red-200 bg-red-50';
       case 'finalized':
-        return 'ring-1 ring-gray-200 bg-gray-50';
+        return 'ring-1 ring-gray-300 bg-gray-100 opacity-75';
       default:
         return '';
     }
@@ -119,8 +120,8 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
         </div>
       )}
 
-      {/* Owner actions (Edit/Delete) - expanded to full width */}
-      {isOfferOwner && (offer.status === 'pending' || offer.status === 'accepted' || offer.status === 'finalized') && (
+      {/* Owner actions (Edit/Delete) - expanded to full width - HIDE for finalized offers */}
+      {isOfferOwner && (offer.status === 'pending' || offer.status === 'accepted') && (
         <div className="w-full max-w-none bg-background border border-border rounded-lg p-3 min-h-[76px] flex items-center justify-center">
           <CompactOfferOwnerActions
             offerId={offer.id}
@@ -129,6 +130,16 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
             isOfferOwner={isOfferOwner}
             onStatusUpdate={onStatusUpdate}
           />
+        </div>
+      )}
+
+      {/* Finalized status indicator - show for finalized offers */}
+      {offer.status === 'finalized' && (
+        <div className="w-full max-w-none bg-gray-100 border border-gray-300 rounded-lg p-3 min-h-[76px] flex items-center justify-center">
+          <div className="w-full text-center">
+            <p className="text-sm font-medium text-gray-600 mb-1">Oferta no seleccionada</p>
+            <p className="text-xs text-gray-500">Esta oferta no fue elegida por el comprador</p>
+          </div>
         </div>
       )}
 

@@ -34,7 +34,7 @@ const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOf
           Retirada
         </Badge>;
       case 'finalized':
-        return <Badge variant="outline" className="flex items-center gap-1 text-xs">
+        return <Badge variant="outline" className="flex items-center gap-1 text-xs bg-gray-100 text-gray-600 border-gray-300">
           <AlertTriangle className="h-3 w-3" />
           No seleccionada
         </Badge>;
@@ -55,7 +55,9 @@ const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOf
     <div className="space-y-2">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground truncate">
+          <p className={`text-sm font-medium truncate ${
+            status === 'finalized' ? 'text-gray-500' : 'text-foreground'
+          }`}>
             {displayName}
           </p>
           <p className="text-xs text-muted-foreground">
@@ -65,7 +67,9 @@ const CompactOfferHeader = ({ displayName, createdAt, title, status }: CompactOf
         {getStatusBadge(status)}
       </div>
       
-      <h4 className="font-medium text-sm text-foreground line-clamp-2 leading-tight">
+      <h4 className={`font-medium text-sm line-clamp-2 leading-tight ${
+        status === 'finalized' ? 'text-gray-500' : 'text-foreground'
+      }`}>
         {title}
       </h4>
     </div>
