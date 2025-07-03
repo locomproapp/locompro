@@ -67,7 +67,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   const getCardClassName = () => {
     switch (offer.status) {
       case 'accepted':
-        return 'border-2 border-green-500 bg-green-50';
+        return 'border-2 border-green-200 bg-green-50';
       case 'rejected':
         return 'border-2 border-red-300 bg-red-50';
       case 'finalized':
@@ -78,7 +78,7 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
   };
 
   return (
-    <div className="space-y-4 w-full max-w-[90vw] md:min-w-[320px] md:max-w-[320px]">
+    <div className="space-y-4 w-full max-w-[calc(100vw-2rem)] md:min-w-[320px] md:max-w-[320px]">
       <Card className={`w-full flex-shrink-0 flex flex-col ${getCardClassName()} h-[360px] md:max-h-[400px] md:h-auto`}>
         <CardHeader className="pb-2 flex-shrink-0">
           <CompactOfferHeader

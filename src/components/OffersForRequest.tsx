@@ -96,7 +96,7 @@ const OffersForRequest = ({
         </div>
         
         <div 
-          className="flex gap-3 md:gap-6 overflow-x-auto pb-4 px-2 md:px-0 -mx-2 md:mx-0 scrollbar-hide"
+          className="flex gap-3 md:gap-6 overflow-x-auto pb-4 px-3 md:px-0 -mx-3 md:mx-0 scrollbar-hide"
           style={{
             scrollSnapType: 'x mandatory',
             scrollBehavior: 'smooth'
@@ -107,7 +107,7 @@ const OffersForRequest = ({
             return (
               <div 
                 key={offer.id} 
-                className="flex-shrink-0 w-[90vw] md:w-auto"
+                className="flex-shrink-0"
                 style={{
                   scrollSnapAlign: 'center'
                 }}
