@@ -79,9 +79,9 @@ const CompactOfferCard = ({ offer, buyRequestOwnerId, onStatusUpdate }: CompactO
 
   // Determine container width based on status
   const getContainerWidth = () => {
-    // Finalized offers should be wider to match the visual width of accepted offers
+    // Finalized offers should be wider to visually match accepted offers
     if (offer.status === 'finalized') {
-      return 'max-w-[320px] md:min-w-[320px] md:max-w-[320px]';
+      return 'max-w-[350px] md:min-w-[350px] md:max-w-[350px]';
     }
     // All other offers use the original width
     return 'max-w-[280px] md:min-w-[320px] md:max-w-[320px]';
