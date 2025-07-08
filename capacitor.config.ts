@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.36ecd1807b8144e9989da0c23d56bc27',
+  appId: 'com.locompro.app',
   appName: 'locompro',
   webDir: 'dist',
   server: {
