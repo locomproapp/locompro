@@ -1,9 +1,9 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Shield, Users, Lock, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Privacy = () => {
@@ -21,147 +21,177 @@ const Privacy = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Volver al inicio
         </Button>
-        <div className="space-y-8">
-          <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+        <div className="space-y-6 sm:space-y-8">
+          <div className="text-center space-y-4">
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
               Política de Privacidad
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
               Tu privacidad es importante para nosotros. Esta política explica cómo recopilamos, usamos y protegemos tu información cuando utilizás LoCompro.
             </p>
           </div>
 
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Información que recopilamos</CardTitle>
+          {/* Info Cards Grid */}
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Información de cuenta */}
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Users className="h-5 w-5 text-primary" />
+                  Tu cuenta
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground">
-                  Podemos recopilar los siguientes tipos de datos:
+              <CardContent className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Nombre, email y datos de contacto que nos brindás voluntariamente al registrarte.
                 </p>
-                <div>
-                  <h4 className="font-medium text-foreground mb-2">Información de la cuenta</h4>
-                  <p className="text-muted-foreground">
-                    Cuando creás una cuenta, recopilamos información como tu nombre, dirección de correo electrónico y otros datos de contacto que nos brindás voluntariamente.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium text-foreground mb-2">Información de uso</h4>
-                  <p className="text-muted-foreground">
-                    Registramos tu actividad dentro de la plataforma, incluyendo publicaciones creadas, ofertas enviadas y búsquedas realizadas.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium text-foreground mb-2">Información técnica</h4>
-                  <p className="text-muted-foreground">
-                    Recopilamos datos técnicos como dirección IP, tipo de navegador, sistema operativo y cookies, para mejorar la seguridad y experiencia de uso.
-                  </p>
-                </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Cómo usamos tu información</CardTitle>
+            {/* Información de uso */}
+            <Card className="border-l-4 border-l-secondary">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Eye className="h-5 w-5 text-secondary" />
+                  Tu actividad
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground mb-4">
-                  Utilizamos los datos que recopilamos para:
+              <CardContent className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Publicaciones, ofertas y búsquedas que realizás en la plataforma.
                 </p>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Operar y mantener nuestros servicios de compraventa</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Facilitar la comunicación entre compradores y vendedores</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Mejorar y personalizar tu experiencia</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Enviarte notificaciones relevantes sobre tu cuenta o actividad</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Detectar y prevenir fraudes o actividades indebidas</span>
-                  </li>
-                </ul>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Compartir información</CardTitle>
+            {/* Información técnica */}
+            <Card className="border-l-4 border-l-accent md:col-span-2 lg:col-span-1">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Settings className="h-5 w-5 text-accent-foreground" />
+                  Datos técnicos
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground">
-                  No vendemos, alquilamos ni intercambiamos tu información personal con terceros. Solo compartimos información en los siguientes casos:
-                </p>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Con otros usuarios cuando publicás ofertas o solicitudes (visible públicamente)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Con proveedores de servicios que nos asisten en el funcionamiento de la plataforma</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Cuando sea requerido por ley o para proteger nuestros derechos legales</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Tus derechos</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground mb-4">
-                  Tenés derecho a:
-                </p>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Acceder a la información que tenemos sobre vos</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Modificar o actualizar tus datos</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Solicitar la eliminación de tu cuenta y la información asociada</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Elegir no recibir ciertos tipos de comunicaciones</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Seguridad de los datos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Aplicamos medidas de seguridad técnicas y organizativas para proteger tu información contra accesos no autorizados, alteraciones o eliminaciones. Esto incluye cifrado, controles de acceso y auditorías periódicas.
-                </p>
-                <p className="text-muted-foreground mt-6 font-medium">
-                  Última actualización: julio de 2025
+              <CardContent className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  IP, navegador y cookies para mejorar tu experiencia y seguridad.
                 </p>
               </CardContent>
             </Card>
           </div>
+
+          {/* Cómo usamos tu info */}
+          <Card className="bg-gradient-to-br from-primary/5 to-primary/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <CheckCircle className="h-6 w-6 text-primary" />
+                ¿Para qué usamos tu información?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                  <span className="text-sm">Operar nuestros servicios</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                  <span className="text-sm">Conectar compradores y vendedores</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                  <span className="text-sm">Mejorar tu experiencia</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                  <span className="text-sm">Prevenir fraudes</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Dos columnas para el resto */}
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+            {/* Compartir info */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-muted-foreground" />
+                  Compartir información
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="bg-green-50 dark:bg-green-950 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+                    ✅ No vendemos tus datos
+                  </p>
+                  <p className="text-xs text-green-700 dark:text-green-300">
+                    Jamás vendemos, alquilamos o intercambiamos tu información personal.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">Solo compartimos cuando:</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li>• Publicás algo (visible públicamente)</li>
+                    <li>• Usamos servicios técnicos</li>
+                    <li>• La ley lo requiere</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tus derechos */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-muted-foreground" />
+                  Tus derechos
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid gap-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Ver tu información</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Modificar tus datos</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Eliminar tu cuenta</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Controlar notificaciones</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Seguridad - destacada */}
+          <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-blue-200 dark:border-blue-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                <Shield className="h-6 w-6" />
+                🔒 Seguridad de los datos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
+                Protegemos tu información con cifrado, controles de acceso y auditorías periódicas para mantener tus datos seguros.
+              </p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-3 font-medium">
+                Última actualización: julio de 2025
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </main>
       
