@@ -54,10 +54,10 @@ const Privacy = () => {
             </Card>
 
             {/* Información de uso */}
-            <Card className="border-l-4 border-l-secondary">
+            <Card className="border-l-4 border-l-primary">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Eye className="h-5 w-5 text-secondary" />
+                  <Eye className="h-5 w-5 text-primary" />
                   Información de uso
                 </CardTitle>
               </CardHeader>
@@ -69,10 +69,10 @@ const Privacy = () => {
             </Card>
 
             {/* Información técnica */}
-            <Card className="border-l-4 border-l-accent md:col-span-2 lg:col-span-1">
+            <Card className="border-l-4 border-l-primary md:col-span-2 lg:col-span-1">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Settings className="h-5 w-5 text-accent-foreground" />
+                  <Settings className="h-5 w-5 text-primary" />
                   Información técnica
                 </CardTitle>
               </CardHeader>
@@ -120,7 +120,7 @@ const Privacy = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-muted-foreground" />
+                  <Users className="h-5 w-5 text-primary" />
                   Compartir información
                 </CardTitle>
               </CardHeader>
@@ -149,7 +149,7 @@ const Privacy = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Lock className="h-5 w-5 text-muted-foreground" />
+                  <Lock className="h-5 w-5 text-primary" />
                   Derechos del usuario
                 </CardTitle>
               </CardHeader>
