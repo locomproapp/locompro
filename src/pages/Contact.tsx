@@ -80,7 +80,7 @@ const Contact = () => {
           </div>
 
           {/* Contact Info Cards */}
-          <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             <Card className="border-l-4 border-l-primary text-center">
               <CardHeader className="pb-3">
                 <div className="flex justify-center mb-2">
@@ -91,20 +91,6 @@ const Contact = () => {
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   contacto@locompro.com.ar
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-primary text-center">
-              <CardHeader className="pb-3">
-                <div className="flex justify-center mb-2">
-                  <Phone className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-lg">Teléfono</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  +54 11 1234-5678
                 </p>
               </CardContent>
             </Card>
