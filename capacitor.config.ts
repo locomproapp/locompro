@@ -1,39 +1,14 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.locompro.app',
-  appName: 'LoComPro',
+  appId: 'app.lovable.36ecd1807b8144e9989da0c23d56bc27',
+  appName: 'locompro',
   webDir: 'dist',
   server: {
-    url: 'https://locompro.com.ar',
+    url: 'https://36ecd180-7b81-44e9-989d-a0c23d56bc27.lovableproject.com?forceHideBadge=true',
     cleartext: true,
   },
-  bundledWebRuntime: false,
-  ios: {
-    contentInset: 'never',
-    scrollEnabled: false,
-    backgroundColor: '#ffffff',
-    allowsLinkPreview: false,
-    presentationStyle: 'fullscreen',
-    hideLogs: true,
-    webContentsDebuggingEnabled: false
-  },
-  plugins: {
-    SplashScreen: {
-      launchShowDuration: 3000,
-      backgroundColor: '#ffffff',
-      showSpinner: true,
-      spinnerColor: '#007AFF',
-      androidSpinnerStyle: 'large',
-      iosSpinnerStyle: 'small',
-      splashFullScreen: true,
-      splashImmersive: true
-    },
-    StatusBar: {
-      style: 'DARK',
-      backgroundColor: '#ffffff'
-    }
-  }
+  bundledWebRuntime: false
 };
 
 export default config;
