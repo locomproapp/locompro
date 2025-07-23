@@ -15,35 +15,35 @@ const Privacy = () => {
               Política de Privacidad
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Tu privacidad es importante para nosotros. Aquí te explicamos cómo recopilamos, usamos y protegemos tu información.
+              Tu privacidad es importante para nosotros. Esta política explica cómo recopilamos, usamos y protegemos tu información cuando utilizás LoCompro.
             </p>
           </div>
 
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Información que Recopilamos</CardTitle>
-                <CardDescription>
-                  Tipos de datos que podemos recopilar cuando usas LoCompro
-                </CardDescription>
+                <CardTitle>Información que recopilamos</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  Podemos recopilar los siguientes tipos de datos:
+                </p>
                 <div>
-                  <h4 className="font-medium text-foreground mb-2">Información de la Cuenta</h4>
+                  <h4 className="font-medium text-foreground mb-2">Información de la cuenta</h4>
                   <p className="text-muted-foreground">
-                    Cuando creas una cuenta, recopilamos información como tu nombre, dirección de correo electrónico y datos de contacto que nos proporcionas voluntariamente.
+                    Cuando creás una cuenta, recopilamos información como tu nombre, dirección de correo electrónico y otros datos de contacto que nos brindás voluntariamente.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-foreground mb-2">Información de Uso</h4>
+                  <h4 className="font-medium text-foreground mb-2">Información de uso</h4>
                   <p className="text-muted-foreground">
-                    Recopilamos información sobre cómo interactúas con nuestra plataforma, incluyendo las publicaciones que creas, las ofertas que realizas y las búsquedas que haces.
+                    Registramos tu actividad dentro de la plataforma, incluyendo publicaciones creadas, ofertas enviadas y búsquedas realizadas.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-foreground mb-2">Información Técnica</h4>
+                  <h4 className="font-medium text-foreground mb-2">Información técnica</h4>
                   <p className="text-muted-foreground">
-                    Podemos recopilar información técnica como tu dirección IP, tipo de navegador, sistema operativo y datos de cookies para mejorar tu experiencia.
+                    Recopilamos datos técnicos como dirección IP, tipo de navegador, sistema operativo y cookies, para mejorar la seguridad y experiencia de uso.
                   </p>
                 </div>
               </CardContent>
@@ -51,16 +51,16 @@ const Privacy = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Cómo Usamos tu Información</CardTitle>
-                <CardDescription>
-                  Las formas en que utilizamos los datos que recopilamos
-                </CardDescription>
+                <CardTitle>Cómo usamos tu información</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <p className="text-muted-foreground mb-4">
+                  Utilizamos los datos que recopilamos para:
+                </p>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Proporcionar y mantener nuestros servicios de marketplace</span>
+                    <span>Operar y mantener nuestros servicios de compraventa</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -68,15 +68,15 @@ const Privacy = () => {
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Mejorar y personalizar tu experiencia en la plataforma</span>
+                    <span>Mejorar y personalizar tu experiencia</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Enviarte notificaciones importantes sobre tu cuenta y actividad</span>
+                    <span>Enviarte notificaciones relevantes sobre tu cuenta o actividad</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Prevenir fraudes y mantener la seguridad de la plataforma</span>
+                    <span>Detectar y prevenir fraudes o actividades indebidas</span>
                   </li>
                 </ul>
               </CardContent>
@@ -84,27 +84,24 @@ const Privacy = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Compartir Información</CardTitle>
-                <CardDescription>
-                  Cuándo y con quién podemos compartir tu información
-                </CardDescription>
+                <CardTitle>Compartir información</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  No vendemos, alquilamos ni intercambiamos tu información personal con terceros. Solo compartimos información en las siguientes circunstancias:
+                  No vendemos, alquilamos ni intercambiamos tu información personal con terceros. Solo compartimos información en los siguientes casos:
                 </p>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Con otros usuarios cuando publicas ofertas o solicitudes (información pública del perfil)</span>
+                    <span>Con otros usuarios cuando publicás ofertas o solicitudes (visible públicamente)</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Con proveedores de servicios que nos ayudan a operar la plataforma</span>
+                    <span>Con proveedores de servicios que nos asisten en el funcionamiento de la plataforma</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Cuando sea requerido por ley o para proteger nuestros derechos</span>
+                    <span>Cuando sea requerido por ley o para proteger nuestros derechos legales</span>
                   </li>
                 </ul>
               </CardContent>
@@ -112,31 +109,28 @@ const Privacy = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Tus Derechos</CardTitle>
-                <CardDescription>
-                  Control sobre tu información personal
-                </CardDescription>
+                <CardTitle>Tus derechos</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-muted-foreground">
-                  Tienes derecho a:
+                <p className="text-muted-foreground mb-4">
+                  Tenés derecho a:
                 </p>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Acceder a la información que tenemos sobre ti</span>
+                    <span>Acceder a la información que tenemos sobre vos</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Corregir o actualizar tu información</span>
+                    <span>Modificar o actualizar tus datos</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Eliminar tu cuenta y datos asociados</span>
+                    <span>Solicitar la eliminación de tu cuenta y la información asociada</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>Optar por no recibir ciertos tipos de comunicaciones</span>
+                    <span>Elegir no recibir ciertos tipos de comunicaciones</span>
                   </li>
                 </ul>
               </CardContent>
@@ -144,31 +138,14 @@ const Privacy = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Seguridad de los Datos</CardTitle>
-                <CardDescription>
-                  Cómo protegemos tu información
-                </CardDescription>
+                <CardTitle>Seguridad de los datos</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Implementamos medidas de seguridad técnicas y organizativas apropiadas para proteger tu información personal contra acceso no autorizado, alteración, divulgación o destrucción. Esto incluye encriptación de datos, acceso restringido y auditorías regulares de seguridad.
+                  Aplicamos medidas de seguridad técnicas y organizativas para proteger tu información contra accesos no autorizados, alteraciones o eliminaciones. Esto incluye cifrado, controles de acceso y auditorías periódicas.
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Contacto</CardTitle>
-                <CardDescription>
-                  ¿Tienes preguntas sobre esta política?
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Si tienes preguntas sobre esta Política de Privacidad o sobre cómo manejamos tu información personal, puedes contactarnos a través de nuestros canales oficiales. Nos comprometemos a responder a tus consultas de manera oportuna.
-                </p>
-                <p className="text-muted-foreground mt-4">
-                  <strong>Última actualización:</strong> Enero 2025
+                <p className="text-muted-foreground mt-6 font-medium">
+                  Última actualización: julio de 2025
                 </p>
               </CardContent>
             </Card>
