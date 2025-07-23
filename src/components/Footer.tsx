@@ -58,10 +58,10 @@ const Footer = () => {
               </AccordionTrigger>
               <AccordionContent>
                 <ul className="space-y-2 text-sm text-muted-foreground pl-4">
-                  <li><a href="#" className="hover:text-primary block py-1">Términos y condiciones</a></li>
+                  <li><a href="/terms" className="hover:text-primary block py-1">Términos y condiciones</a></li>
                   <li><a href="#" className="hover:text-primary block py-1">Centro de ayuda</a></li>
                   <li><a href="/privacy" className="hover:text-primary block py-1">Privacidad</a></li>
-                  <li><a href="#" className="hover:text-primary block py-1">Contacto</a></li>
+                  <li><a href="/contact" className="hover:text-primary block py-1">Contacto</a></li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -145,10 +145,10 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Ayuda</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary">Términos y condiciones</a></li>
+              <li><a href="/terms" className="hover:text-primary">Términos y condiciones</a></li>
               <li><a href="#" className="hover:text-primary">Centro de ayuda</a></li>
               <li><a href="/privacy" className="hover:text-primary">Privacidad</a></li>
-              <li><a href="#" className="hover:text-primary">Contacto</a></li>
+              <li><a href="/contact" className="hover:text-primary">Contacto</a></li>
             </ul>
           </div>
         </div>
