@@ -43,12 +43,12 @@ const Privacy = () => {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Users className="h-5 w-5 text-primary" />
-                  Tu cuenta
+                  Información de cuenta
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Nombre, email y datos de contacto que nos brindás voluntariamente al registrarte.
+                  Nombre, dirección de correo electrónico y datos de contacto que proporciona voluntariamente al registrarse.
                 </p>
               </CardContent>
             </Card>
@@ -58,12 +58,12 @@ const Privacy = () => {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Eye className="h-5 w-5 text-secondary" />
-                  Tu actividad
+                  Información de uso
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Publicaciones, ofertas y búsquedas que realizás en la plataforma.
+                  Actividad registrada en la plataforma, incluyendo publicaciones creadas, ofertas enviadas y búsquedas realizadas.
                 </p>
               </CardContent>
             </Card>
@@ -73,42 +73,42 @@ const Privacy = () => {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Settings className="h-5 w-5 text-accent-foreground" />
-                  Datos técnicos
+                  Información técnica
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  IP, navegador y cookies para mejorar tu experiencia y seguridad.
+                  Dirección IP, tipo de navegador, sistema operativo y cookies para garantizar la seguridad y mejorar la experiencia de usuario.
                 </p>
               </CardContent>
             </Card>
           </div>
 
           {/* Cómo usamos tu info */}
-          <Card className="bg-gradient-to-br from-primary/5 to-primary/10">
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <CheckCircle className="h-6 w-6 text-primary" />
-                ¿Para qué usamos tu información?
+                Uso de la información
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                  <span className="text-sm">Operar nuestros servicios</span>
+                  <span className="text-sm">Operar y mantener nuestros servicios</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                  <span className="text-sm">Conectar compradores y vendedores</span>
+                  <span className="text-sm">Facilitar la comunicación entre usuarios</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                  <span className="text-sm">Mejorar tu experiencia</span>
+                  <span className="text-sm">Mejorar y personalizar la experiencia</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                  <span className="text-sm">Prevenir fraudes</span>
+                  <span className="text-sm">Detectar y prevenir actividades fraudulentas</span>
                 </div>
               </div>
             </CardContent>
@@ -125,22 +125,23 @@ const Privacy = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="bg-green-50 dark:bg-green-950 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">
-                    ✅ No vendemos tus datos
-                  </p>
-                  <p className="text-xs text-green-700 dark:text-green-300">
-                    Jamás vendemos, alquilamos o intercambiamos tu información personal.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">Solo compartimos cuando:</p>
-                  <ul className="space-y-1 text-xs text-muted-foreground">
-                    <li>• Publicás algo (visible públicamente)</li>
-                    <li>• Usamos servicios técnicos</li>
-                    <li>• La ley lo requiere</li>
-                  </ul>
-                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  La información personal se comparte únicamente en los siguientes casos:
+                </p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Información pública del perfil al realizar publicaciones</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Proveedores de servicios técnicos necesarios</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Cumplimiento de obligaciones legales</span>
+                  </li>
+                </ul>
               </CardContent>
             </Card>
 
@@ -149,26 +150,26 @@ const Privacy = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lock className="h-5 w-5 text-muted-foreground" />
-                  Tus derechos
+                  Derechos del usuario
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="grid gap-2">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Ver tu información</span>
+                    <span className="text-sm">Acceder a su información personal</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Modificar tus datos</span>
+                    <span className="text-sm">Rectificar o actualizar datos</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Eliminar tu cuenta</span>
+                    <span className="text-sm">Solicitar eliminación de cuenta</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Controlar notificaciones</span>
+                    <span className="text-sm">Gestionar preferencias de comunicación</span>
                   </div>
                 </div>
               </CardContent>
@@ -176,18 +177,18 @@ const Privacy = () => {
           </div>
 
           {/* Seguridad - destacada */}
-          <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-blue-200 dark:border-blue-800">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
-                <Shield className="h-6 w-6" />
-                🔒 Seguridad de los datos
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-6 w-6 text-primary" />
+                Seguridad de los datos
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
-                Protegemos tu información con cifrado, controles de acceso y auditorías periódicas para mantener tus datos seguros.
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Se implementan medidas de seguridad técnicas y organizativas para proteger la información personal contra accesos no autorizados, alteraciones o eliminaciones. Esto incluye cifrado de datos, controles de acceso y auditorías periódicas de seguridad.
               </p>
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-3 font-medium">
+              <p className="text-sm text-muted-foreground mt-4 font-medium">
                 Última actualización: julio de 2025
               </p>
             </CardContent>
