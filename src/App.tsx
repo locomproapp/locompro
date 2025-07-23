@@ -1,53 +1,35 @@
 
 import React from 'react';
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
-import CreateBuyRequest from "./pages/CreateBuyRequest";
-import BuyRequestDetail from "./pages/BuyRequestDetail";
-import Marketplace from "./pages/Marketplace";
-import MyRequests from "./pages/MyRequests";
-import MyOffers from "./pages/MyOffers";
-import MyPosts from "./pages/MyPosts";
-import PostDetail from "./pages/PostDetail";
-import SendOffer from "./pages/SendOffer";
-import OfferDetail from "./pages/OfferDetail";
-import NotFound from "./pages/NotFound";
+import { Capacitor } from '@capacitor/core';
+import WebViewApp from './WebViewApp';
 
-const queryClient = new QueryClient();
+const App = () => {
+  // If running on native platform, use WebView wrapper
+  if (Capacitor.isNativePlatform()) {
+    return <WebViewApp />;
+  }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme="light">
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/create-buy-request" element={<CreateBuyRequest />} />
-            <Route path="/buy-request/:id" element={<BuyRequestDetail />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/my-requests" element={<MyRequests />} />
-            <Route path="/my-offers" element={<MyOffers />} />
-            <Route path="/my-posts" element={<MyPosts />} />
-            <Route path="/post-detail/:id" element={<PostDetail />} />
-            <Route path="/send-offer/:buyRequestId" element={<SendOffer />} />
-            <Route path="/offer/:id" element={<OfferDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+  // For web development, show a message
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+      <div className="text-center max-w-md">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          LoComPro iOS App
+        </h1>
+        <p className="text-gray-600 mb-6">
+          Esta es la versión web de desarrollo. La app nativa redirigirá a https://locompro.com.ar
+        </p>
+        <a 
+          href="https://locompro.com.ar" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors inline-block"
+        >
+          Ir a LoComPro
+        </a>
+      </div>
+    </div>
+  );
+};
 
 export default App;
