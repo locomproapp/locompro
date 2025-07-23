@@ -19,6 +19,7 @@ import PostDetail from "./pages/PostDetail";
 import SendOffer from "./pages/SendOffer";
 import OfferDetail from "./pages/OfferDetail";
 import NotFound from "./pages/NotFound";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/post-detail/:id" element={<PostDetail />} />
             <Route path="/send-offer/:buyRequestId" element={<SendOffer />} />
             <Route path="/offer/:id" element={<OfferDetail />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
