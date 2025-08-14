@@ -441,6 +441,56 @@ export type Database = {
       }
     }
     Views: {
+      public_buy_request_offers: {
+        Row: {
+          buy_request_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          images: string[] | null
+          price: number | null
+          seller_id: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          zone: string | null
+        }
+        Insert: {
+          buy_request_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          price?: number | null
+          seller_id?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          zone?: string | null
+        }
+        Update: {
+          buy_request_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          price?: number | null
+          seller_id?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buy_request_offers_buy_request_id_fkey"
+            columns: ["buy_request_id"]
+            isOneToOne: false
+            referencedRelation: "buy_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       public_offers: {
         Row: {
           buy_request_id: string | null
@@ -516,10 +566,67 @@ export type Database = {
           },
         ]
       }
+      public_posts: {
+        Row: {
+          characteristics: Json | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          images: string[] | null
+          max_price: number | null
+          min_price: number | null
+          reference_link: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+          zone: string | null
+        }
+        Insert: {
+          characteristics?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          max_price?: number | null
+          min_price?: number | null
+          reference_link?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          zone?: string | null
+        }
+        Update: {
+          characteristics?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          max_price?: number | null
+          min_price?: number | null
+          reference_link?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_posts_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_basic_profile_data: {
         Args: { profile_id: string }
+        Returns: Json
+      }
+      get_buy_request_offer_contact_info: {
+        Args: { offer_id: string; requesting_user_id: string }
         Returns: Json
       }
       get_offer_contact_info: {
@@ -528,6 +635,14 @@ export type Database = {
       }
       get_offer_for_user: {
         Args: { offer_id: string; user_id?: string }
+        Returns: Json
+      }
+      get_post_contact_info: {
+        Args: { post_id: string; requesting_user_id: string }
+        Returns: Json
+      }
+      get_public_profile_data: {
+        Args: { profile_id: string }
         Returns: Json
       }
       get_safe_profile_data: {
