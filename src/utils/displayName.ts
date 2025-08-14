@@ -15,16 +15,9 @@ export const getDisplayName = (profiles: ProfileData | null | undefined): string
     return profiles.full_name.trim();
   }
   
-  // Fallback to email username if available
-  if (profiles?.email && profiles.email.trim() !== '') {
-    const emailUsername = profiles.email.split('@')[0];
-    if (emailUsername && emailUsername.trim() !== '') {
-      return emailUsername.trim();
-    }
-  }
-  
-  // Last resort fallback
-  return 'Usuario anónimo';
+  // Note: Email access is now restricted for privacy
+  // Fallback directly to anonymous user if no full_name is available
+  return 'Usuario';
 };
 
 export const getDisplayNameWithLogging = (profiles: ProfileData | null | undefined, context: string = 'Unknown'): string => {
