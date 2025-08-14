@@ -430,6 +430,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_basic_profile_data: {
+        Args: { profile_id: string }
+        Returns: Json
+      }
+      get_offer_contact_info: {
+        Args: { offer_id: string; requesting_user_id: string }
+        Returns: Json
+      }
       get_safe_profile_data: {
         Args: { profile_id: string }
         Returns: Json
