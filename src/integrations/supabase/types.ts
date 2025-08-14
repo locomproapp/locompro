@@ -218,6 +218,13 @@ export type Database = {
             referencedRelation: "offers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "chats_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "public_offers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       offers: {
@@ -423,11 +430,92 @@ export type Database = {
             referencedRelation: "offers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "public_offers"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      public_offers: {
+        Row: {
+          buy_request_id: string | null
+          buyer_rating: number | null
+          contact_info: Json | null
+          created_at: string | null
+          delivery_time: string | null
+          description: string | null
+          id: string | null
+          images: string[] | null
+          message: string | null
+          price: number | null
+          price_history: Json | null
+          public_visibility: boolean | null
+          rejection_reason: string | null
+          seller_id: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buy_request_id?: string | null
+          buyer_rating?: number | null
+          contact_info?: never
+          created_at?: string | null
+          delivery_time?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          message?: string | null
+          price?: number | null
+          price_history?: Json | null
+          public_visibility?: boolean | null
+          rejection_reason?: string | null
+          seller_id?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buy_request_id?: string | null
+          buyer_rating?: number | null
+          contact_info?: never
+          created_at?: string | null
+          delivery_time?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          message?: string | null
+          price?: number | null
+          price_history?: Json | null
+          public_visibility?: boolean | null
+          rejection_reason?: string | null
+          seller_id?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_buy_request_id_fkey"
+            columns: ["buy_request_id"]
+            isOneToOne: false
+            referencedRelation: "buy_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_basic_profile_data: {
@@ -436,6 +524,10 @@ export type Database = {
       }
       get_offer_contact_info: {
         Args: { offer_id: string; requesting_user_id: string }
+        Returns: Json
+      }
+      get_offer_for_user: {
+        Args: { offer_id: string; user_id?: string }
         Returns: Json
       }
       get_safe_profile_data: {
