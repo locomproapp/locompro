@@ -495,7 +495,6 @@ export type Database = {
         Row: {
           buy_request_id: string | null
           buyer_rating: number | null
-          contact_info: Json | null
           created_at: string | null
           delivery_time: string | null
           description: string | null
@@ -514,7 +513,6 @@ export type Database = {
         Insert: {
           buy_request_id?: string | null
           buyer_rating?: number | null
-          contact_info?: never
           created_at?: string | null
           delivery_time?: string | null
           description?: string | null
@@ -533,7 +531,6 @@ export type Database = {
         Update: {
           buy_request_id?: string | null
           buyer_rating?: number | null
-          contact_info?: never
           created_at?: string | null
           delivery_time?: string | null
           description?: string | null
