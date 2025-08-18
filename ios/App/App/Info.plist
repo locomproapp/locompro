@@ -54,5 +54,19 @@
 	<string>UIStatusBarStyleDefault</string>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>NSCameraUsageDescription</key>
+	<string>LoCompro necesita acceso a la cámara para subir fotos de productos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>LoCompro necesita acceso a la galería para seleccionar fotos de productos</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>LoCompro puede usar tu ubicación para mostrar productos cerca tuyo</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>tel</string>
+		<string>mailto</string>
+	</array>
 </dict>
 </plist>

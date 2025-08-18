@@ -14,9 +14,13 @@ const config: CapacitorConfig = {
     limitsNavigationsToAppBoundDomains: true,
     scheme: 'https',
     allowsLinkPreview: false,
-    scrollEnabled: false,
+    scrollEnabled: true,
     overrideUserAgent: 'LoCompro/1.0 (iOS)',
-    contentInset: 'never'
+    contentInset: 'automatic',
+    preferredContentMode: 'mobile',
+    allowsInlineMediaPlayback: true,
+    mediaPlaybackRequiresUserAction: false,
+    suppressesIncrementalRendering: false
   },
   plugins: {
     SplashScreen: {

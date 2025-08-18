@@ -4,6 +4,33 @@ import WebKit
 
 class CAPBridgeViewController: CAPBridgeViewController {
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Configure WebView for better mobile experience
+        if let webView = self.webView {
+            webView.scrollView.bounces = true
+            webView.scrollView.alwaysBounceVertical = true
+            webView.allowsBackForwardNavigationGestures = true
+            webView.configuration.allowsInlineMediaPlayback = true
+            webView.configuration.mediaTypesRequiringUserActionForPlayback = []
+            
+            // Inject mobile-optimized CSS
+            let mobileCSS = """
+                var style = document.createElement('style');
+                style.innerHTML = `
+                    * { -webkit-touch-callout: none; -webkit-user-select: none; }
+                    input, textarea { -webkit-user-select: text; }
+                    body { -webkit-text-size-adjust: 100%; }
+                `;
+                document.head.appendChild(style);
+            """
+            
+            let script = WKUserScript(source: mobileCSS, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            webView.configuration.userContentController.addUserScript(script)
+        }
+    }
+    
     override func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
         guard let url = navigationAction.request.url else {
@@ -11,9 +38,23 @@ class CAPBridgeViewController: CAPBridgeViewController {
             return
         }
         
-        // Check if it's an external link
-        if url.host != "locompro.com.ar" && url.host != "www.locompro.com.ar" {
-            // Open external links in Safari
+        let urlString = url.absoluteString.lowercased()
+        
+        // Handle special schemes
+        if url.scheme == "tel" || url.scheme == "mailto" || url.scheme == "whatsapp" {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            decisionHandler(.cancel)
+            return
+        }
+        
+        // Allow main domain and subdomains
+        if url.host?.contains("locompro.com.ar") == true || url.host?.contains("lovableproject.com") == true {
+            decisionHandler(.allow)
+            return
+        }
+        
+        // Check if it's an external link that should open in Safari
+        if navigationAction.navigationType == .linkActivated {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
             decisionHandler(.cancel)
             return
