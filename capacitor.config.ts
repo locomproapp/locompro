@@ -4,10 +4,6 @@ const config: CapacitorConfig = {
   appId: 'app.locompro.ar',
   appName: 'LoCompro',
   webDir: 'dist',
-  server: {
-    url: 'https://locompro.com.ar',
-    cleartext: true
-  },
   ios: {
     backgroundColor: '#ffffff',
     webContentsDebuggingEnabled: false,
