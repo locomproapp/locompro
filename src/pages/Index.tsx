@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,11 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(true);
+
+  // Auto scroll to top when app opens to avoid iPhone status bar overlap
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
