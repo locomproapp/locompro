@@ -4,10 +4,10 @@ const config: CapacitorConfig = {
   appId: 'app.locompro.ar',
   appName: 'LoCompro',
   webDir: 'dist',
-  server: {
-    url: 'https://36ecd180-7b81-44e9-989d-a0c23d56bc27.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  },
+  // server: {
+  //   url: 'https://36ecd180-7b81-44e9-989d-a0c23d56bc27.lovableproject.com?forceHideBadge=true',
+  //   cleartext: true
+  // },
   ios: {
     backgroundColor: '#ffffff',
     webContentsDebuggingEnabled: false,
