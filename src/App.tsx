@@ -29,28 +29,30 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme="light">
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/create-buy-request" element={<CreateBuyRequest />} />
-            <Route path="/buy-request/:id" element={<BuyRequestDetail />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/my-requests" element={<MyRequests />} />
-            <Route path="/my-offers" element={<MyOffers />} />
-            <Route path="/my-posts" element={<MyPosts />} />
-            <Route path="/post-detail/:id" element={<PostDetail />} />
-            <Route path="/send-offer/:buyRequestId" element={<SendOffer />} />
-            <Route path="/offer/:id" element={<OfferDetail />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <div className="safe-all min-h-screen">
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/create-buy-request" element={<CreateBuyRequest />} />
+              <Route path="/buy-request/:id" element={<BuyRequestDetail />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/my-requests" element={<MyRequests />} />
+              <Route path="/my-offers" element={<MyOffers />} />
+              <Route path="/my-posts" element={<MyPosts />} />
+              <Route path="/post-detail/:id" element={<PostDetail />} />
+              <Route path="/send-offer/:buyRequestId" element={<SendOffer />} />
+              <Route path="/offer/:id" element={<OfferDetail />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
