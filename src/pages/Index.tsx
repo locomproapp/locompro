@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,15 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(true);
+
+  useEffect(() => {
+    // Auto-scroll to position content properly below iPhone status bar
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 20, behavior: 'smooth' });
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
 
   const handleSearch = (query: string) => {
