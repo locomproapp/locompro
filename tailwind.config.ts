@@ -23,6 +23,7 @@ export default {
 			},
 			padding: {
 				'safe-area-top': 'max(1rem, env(safe-area-inset-top))',
+				'safe-area-inset-top': 'env(safe-area-inset-top)',
 			},
 			colors: {
 				border: 'hsl(var(--border))',

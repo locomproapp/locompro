@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -12,15 +12,6 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(true);
-
-  useEffect(() => {
-    // Auto-scroll to position content properly below iPhone status bar
-    const timer = setTimeout(() => {
-      window.scrollTo({ top: 20, behavior: 'smooth' });
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
 
   const handleSearch = (query: string) => {
@@ -42,7 +33,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 py-8 sm:py-12 w-full flex-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[calc(3.5rem+env(safe-area-inset-top)+2rem)] py-8 sm:py-12 w-full flex-1">
         <HeroSection />
         
         <SearchSection 

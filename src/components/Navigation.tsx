@@ -19,7 +19,7 @@ export default function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background pt-safe-area-inset-top">
       <div className="container flex h-14 items-center">
         {/* LOGO + Inicio + Mercado button */}
         <Logo />
