@@ -33,7 +33,7 @@ const Marketplace = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
 
-      <main className="w-full px-2 sm:px-6 lg:px-12 xl:px-16 py-8 flex-1">
+      <main className="w-full px-2 sm:px-6 lg:px-12 xl:px-16 pt-8 pb-12 flex-1">
         {/* Container centrado para desktop */}
         <div className="max-w-6xl mx-auto">
           {/* Marketplace Heading & Main search bar */}

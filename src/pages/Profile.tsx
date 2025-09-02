@@ -67,7 +67,7 @@ const Profile = () => {
 
   return <div className="flex flex-col min-h-screen bg-muted/40">
       <Navigation />
-      <main className="flex-1 w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8" style={{ minHeight: 'calc(100vh - 4rem)' }}>
+      <main className="flex-1 w-full max-w-3xl mx-auto pt-8 pb-12 px-4 sm:px-6 lg:px-8" style={{ minHeight: 'calc(100vh - 4rem)' }}>
         <Card>
           <CardHeader>
             <CardTitle>Mi Perfil</CardTitle>
