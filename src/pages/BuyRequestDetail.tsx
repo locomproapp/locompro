@@ -54,7 +54,7 @@ const BuyRequestDetail = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
         <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 py-8">
           <div className="text-center py-12">
             <p className="text-muted-foreground">Cargando solicitud...</p>
           </div>
@@ -68,7 +68,7 @@ const BuyRequestDetail = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
         <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 py-8">
           <div className="text-center py-12">
             <h1 className="text-2xl font-bold text-foreground mb-4">
               Solicitud no encontrada
@@ -108,7 +108,7 @@ const BuyRequestDetail = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 py-8 flex flex-col gap-8">
         {/* Desktop back button - only show on desktop */}
         <Button variant="ghost" asChild className="mb-4 self-start hidden md:flex">
           <Link to="/marketplace" className="flex items-center gap-2">

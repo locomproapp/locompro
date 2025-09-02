@@ -19,7 +19,7 @@ const CreateBuyRequest = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Navigation />
       
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-[calc(3.5rem+env(safe-area-inset-top)+2rem)] py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 py-8">
         <div className="bg-card rounded-lg border border-border p-8">
           <div className="mb-4">
             <Link to={backLinkHref} className="text-sm text-muted-foreground hover:text-primary transition-colors">
