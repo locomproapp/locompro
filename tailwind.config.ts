@@ -18,13 +18,6 @@ export default {
 			}
 		},
 		extend: {
-			spacing: {
-				'safe-area-top': 'env(safe-area-inset-top)',
-			},
-			padding: {
-				'safe-area-top': 'max(1rem, env(safe-area-inset-top))',
-				'safe-area-inset-top': 'env(safe-area-inset-top)',
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
