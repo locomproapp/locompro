@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -13,10 +13,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(true);
 
-  // Auto scroll to top when app opens to avoid iPhone status bar overlap
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
 
   const handleSearch = (query: string) => {
     if (query && query.trim()) {
@@ -37,7 +33,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-safe-area-top py-8 sm:py-12 w-full flex-1">
         <HeroSection />
         
         <SearchSection 
