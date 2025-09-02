@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# LoCompro - Alguien lo espera
 
 ## Project info
 
