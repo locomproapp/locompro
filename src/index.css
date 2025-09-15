@@ -138,3 +138,16 @@
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* Fixed header offset for all pages */
+body {
+  padding-top: calc(64px + env(safe-area-inset-top));
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure scroll position starts at top */
+html, body {
+  scroll-behavior: smooth;
+  overscroll-behavior: none;
+}

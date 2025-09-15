@@ -19,8 +19,8 @@ export default function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background safe-top" style={{ height: '64px' }}>
+      <div className="container flex h-full items-center px-4" style={{ height: '64px' }}>
         {/* LOGO + Inicio + Mercado button */}
         <Logo />
 
