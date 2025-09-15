@@ -141,7 +141,7 @@
 
 /* Fixed header offset for all pages */
 body {
-  padding-top: calc(64px + env(safe-area-inset-top));
+  padding-top: 64px;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
