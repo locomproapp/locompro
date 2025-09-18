@@ -115,43 +115,45 @@ const Profile = () => {
                 <Label htmlFor="fullName">Nombre Completo</Label>
                 <Input id="fullName" type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Tu nombre completo" />
               </div>
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Guardando...' : 'Guardar Cambios'}
-              </Button>
-            </form>
-            
-            {/* Delete Account Section */}
-            <div className="mt-8 pt-6 border-t border-border">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="destructive" 
-                    className="w-full bg-red-500 hover:bg-red-600 text-white"
-                    disabled={loading}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Eliminar mi cuenta
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      ¿Estás seguro de que querés eliminar tu cuenta? Esta acción es irreversible.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction 
-                      onClick={handleDeleteAccount}
-                      className="bg-red-500 hover:bg-red-600 text-white"
+              
+              {/* Buttons Row */}
+              <div className="flex gap-3 pt-2">
+                <Button type="submit" disabled={loading} className="flex-1">
+                  {loading ? 'Guardando...' : 'Guardar Cambios'}
+                </Button>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      type="button"
+                      variant="destructive" 
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                      disabled={loading}
                     >
-                      Eliminar definitivamente
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar mi cuenta
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        ¿Estás seguro de que querés eliminar tu cuenta? Esta acción es irreversible.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleDeleteAccount}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
+                        Eliminar definitivamente
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </form>
           </CardContent>
         </Card>
         
