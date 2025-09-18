@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import { LogOut, Trash2 } from 'lucide-react';
 
 const Profile = () => {
   const {
@@ -55,6 +56,37 @@ const Profile = () => {
     navigate('/');
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    
+    try {
+      // Call the edge function to delete the user account
+      const { error } = await supabase.functions.invoke('delete-user-account', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+      
+      if (error) {
+        console.error('Error from edge function:', error);
+        toast.error('Error al eliminar la cuenta: ' + error.message);
+        setLoading(false);
+        return;
+      }
+
+      // Sign out and redirect
+      await signOut();
+      toast.success('Cuenta eliminada exitosamente');
+      navigate('/');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast.error('Error al eliminar la cuenta');
+      setLoading(false);
+    }
+  };
+
   if (authLoading || !user) {
     return <div className="flex flex-col min-h-screen">
         <Navigation />
@@ -87,6 +119,39 @@ const Profile = () => {
                 {loading ? 'Guardando...' : 'Guardar Cambios'}
               </Button>
             </form>
+            
+            {/* Delete Account Section */}
+            <div className="mt-8 pt-6 border-t border-border">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="destructive" 
+                    className="w-full bg-red-500 hover:bg-red-600 text-white"
+                    disabled={loading}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Eliminar mi cuenta
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      ¿Estás seguro de que querés eliminar tu cuenta? Esta acción es irreversible.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDeleteAccount}
+                      className="bg-red-500 hover:bg-red-600 text-white"
+                    >
+                      Eliminar definitivamente
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </CardContent>
         </Card>
         
